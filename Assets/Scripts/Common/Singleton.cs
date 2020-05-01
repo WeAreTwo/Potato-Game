@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Potato
+namespace PotatoGame
 {
     //ref: http://wiki.unity3d.com/index.php/Singleton
     public class Singleton<T> : MonoBehaviour where T : MonoBehaviour

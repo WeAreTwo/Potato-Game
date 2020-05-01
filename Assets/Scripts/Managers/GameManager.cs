@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Potato
+namespace PotatoGame
 {
 
     public class GameManager : Singleton<GameManager>
@@ -12,7 +12,7 @@ namespace Potato
 
         public PlayerController playerController;
         public TopViewCameraController cameraController;
-
+        public PlantsController plantsController;
     }
 
 }
