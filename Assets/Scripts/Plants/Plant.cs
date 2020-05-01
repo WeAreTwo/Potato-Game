@@ -14,7 +14,7 @@ namespace PotatoGame
     //BASE CLASS FOR ALL LIVING THINGS THAT GROW
     public abstract class Plant : MonoBehaviour
     {
-        
+        //GROWTH PARAMS
         [SerializeField] protected float growthRadius = 1.0f;  
         [SerializeField] protected float growthPace = 1.001f;                    
     
@@ -23,6 +23,9 @@ namespace PotatoGame
         [SerializeField] protected float growthCompletionTime = 10.0f;      //time where it finished growing
 
         [SerializeField] protected bool isGrowing;
+        
+        //NEIGHBOUGRING PLANTS
+        [SerializeField] protected List<Plant> neighbouringPlants = new List<Plant>();
         
         protected virtual void Awake(){}
         protected virtual void Start(){}
@@ -35,7 +38,7 @@ namespace PotatoGame
 
         protected virtual void Grow()
         {
-            if (growthTime < growthCompletionTime)
+            if (growthTime < growthCompletionTime && !IsCollidingNeighbouringPlants())
             {
                 growthTime += Time.deltaTime;
                 isGrowing = true;
@@ -50,6 +53,20 @@ namespace PotatoGame
         {
             if(isGrowing)
                 this.transform.localScale *= growthPace;
+        }
+
+        protected virtual bool IsCollidingNeighbouringPlants()
+        {
+            if (neighbouringPlants != null)
+            {
+                foreach (var plant in neighbouringPlants)
+                {
+                    if(Vector3.Distance(this.transform.position, plant.transform.position) < this.growthRadius + plant.growthRadius)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         protected virtual void OnEnable()
