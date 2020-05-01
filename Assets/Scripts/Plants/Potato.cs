@@ -9,16 +9,10 @@ namespace PotatoGame
     {
         //potato params
         
-        // Start is called before the first frame update
-        void Start()
+
+        protected override void Grow()
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            base.Grow();
         }
     }
 
