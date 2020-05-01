@@ -9,20 +9,20 @@ namespace Potato
     {
         // public variables -------------------------
         [ProgressBar("m_zoomMin", "m_zoomMax", Height = 20)]
-        public float m_currentZoom; // Current player's zoom
+        public float m_currentZoom;                     // Current player's zoom
 
         [Space(10)] [Title("Target and Position")]
-        public Transform m_target; // The target that should be the subject to follow
+        public Transform m_target;                      // The target that should be the subject to follow
 
-        public float m_smoothSpeed = 0.125f; // Smooth float for following movement
-        public Vector3 offset; // Position of the camera arround the target
+        public float m_smoothSpeed = 0.125f;            // Smooth float for following movement
+        public Vector3 offset;                          // Position of the camera arround the target
 
 
         // private variables ------------------------
-        private GameObject m_player; // Instance of the player object
-        private Camera m_cam; // Instance of the camera component
-        private float m_zoomMin; // Minimum zoom of the camera
-        private float m_zoomMax; // Maximum zoom of the camera
+        private GameObject m_player;                    // Instance of the player object
+        private Camera m_cam;                           // Instance of the camera component
+        private float m_zoomMin;                        // Minimum zoom of the camera
+        private float m_zoomMax;                        // Maximum zoom of the camera
 
 
         // ------------------------------------------
@@ -35,9 +35,9 @@ namespace Potato
             m_cam = GetComponent<Camera>();
 
             // Set zoom range and get the current zoom
-            m_zoomMin = 2f;
-            m_zoomMax = 10f;
-            m_currentZoom = m_cam.orthographicSize;
+            m_zoomMin = 10f;
+            m_zoomMax = 35f;
+            m_currentZoom = m_cam.fieldOfView;
 
             // Set the initial Position
             SetPosition(3, offset);
@@ -75,7 +75,7 @@ namespace Potato
             float step = 250f * Time.deltaTime;
 
             // Get the zoom directly from the mouse scroll input
-            m_currentZoom += Input.GetAxis("Mouse ScrollWheel") * step;
+            m_currentZoom += Input.GetAxis("Mouse ScrollWheel") * -step;
 
             // Safe net it
             if (m_currentZoom < m_zoomMin)
@@ -84,10 +84,10 @@ namespace Potato
                 m_currentZoom = m_zoomMax;
 
             // Smooth zoom
-            float smoothZoom = Mathf.Lerp(m_cam.orthographicSize, m_currentZoom, m_smoothSpeed);
+            float smoothZoom = Mathf.Lerp(m_cam.fieldOfView, m_currentZoom, m_smoothSpeed);
 
             // Update current zoom
-            m_cam.orthographicSize = smoothZoom;
+            m_cam.fieldOfView = smoothZoom;
         }
 
 
@@ -95,10 +95,6 @@ namespace Potato
         private void SetPosition(int side, Vector3 nextPosition)
         {
             // Tell the player from which side the camera is standing (1 to 4 : N, W, S, E)
-            /*
-             * im gonna use the singleton game manager for global referencing
-             * so we dont need to call GetComponent<>() all the time 
-             */
             var playerController = GameManager.Instance.playerController;
             playerController.UpdateCamera(side);
 

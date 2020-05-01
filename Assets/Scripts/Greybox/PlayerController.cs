@@ -9,19 +9,19 @@ namespace Potato
     public class PlayerController : MonoBehaviour
     {
         // public variables -------------------------
-        public float m_movementSpeed = 10f; // Movement speed of the player
+        public float m_movementSpeed = 10f;             // Movement speed of the player
 
         [Title("Main Camera Position (Read Only)", "Changes the player's inputs based on the camera's position")]
         [ReadOnly]
-        public bool m_cameraIsNorth; // Specify if the camera's position is North
+        public bool m_cameraIsNorth;                    // Specify if the camera's position is North
 
-        [ReadOnly] public bool m_cameraIsWest; // Specify if the camera's position is West
-        [ReadOnly] public bool m_cameraIsSouth; // Specify if the camera's position is South
-        [ReadOnly] public bool m_cameraIsEast; // Specify if the camera's position is East
+        [ReadOnly] public bool m_cameraIsWest;          // Specify if the camera's position is West
+        [ReadOnly] public bool m_cameraIsSouth;         // Specify if the camera's position is South
+        [ReadOnly] public bool m_cameraIsEast;          // Specify if the camera's position is East
 
 
         // private variables ------------------------
-        private Rigidbody m_rb; // Instance of the rigidbody
+        private Rigidbody m_rb;                         // Instance of the rigidbody
         private Vector3 m_direction = new Vector3(0, 0, 0); // Direction of the player's velocity 
 
 
@@ -74,40 +74,33 @@ namespace Potato
         // Update camera's position ------------------------------------------------
         public void UpdateCamera(int camIndex)
         {
-            // If the camera is at North (1)
-            if (camIndex == 1)
+            // If the camera is North (1), is West (2), is South (3)
+            switch (camIndex)
             {
-                m_cameraIsNorth = true;
-                m_cameraIsWest = false;
-                m_cameraIsSouth = false;
-                m_cameraIsEast = false;
-            }
-
-            // If the camera is at West (2)
-            if (camIndex == 2)
-            {
-                m_cameraIsNorth = false;
-                m_cameraIsWest = true;
-                m_cameraIsSouth = false;
-                m_cameraIsEast = false;
-            }
-
-            // If the camera is at South (3)
-            if (camIndex == 3)
-            {
-                m_cameraIsNorth = false;
-                m_cameraIsWest = false;
-                m_cameraIsSouth = true;
-                m_cameraIsEast = false;
-            }
-
-            // If the camera is at East (4)
-            if (camIndex == 4)
-            {
-                m_cameraIsNorth = false;
-                m_cameraIsWest = false;
-                m_cameraIsSouth = false;
-                m_cameraIsEast = true;
+                case 1:
+                    m_cameraIsNorth = true;
+                    m_cameraIsWest = false;
+                    m_cameraIsSouth = false;
+                    m_cameraIsEast = false;
+                    break;
+                case 2:
+                    m_cameraIsNorth = false;
+                    m_cameraIsWest = true;
+                    m_cameraIsSouth = false;
+                    m_cameraIsEast = false;
+                    break;
+                case 3:
+                    m_cameraIsNorth = false;
+                    m_cameraIsWest = false;
+                    m_cameraIsSouth = true;
+                    m_cameraIsEast = false;
+                    break;
+                case 4:
+                    m_cameraIsNorth = false;
+                    m_cameraIsWest = false;
+                    m_cameraIsSouth = false;
+                    m_cameraIsEast = true;
+                    break;
             }
 
             // Make a warning if camIndex is out of range
