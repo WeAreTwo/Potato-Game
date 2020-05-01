@@ -5,15 +5,22 @@ using UnityEngine;
 
 namespace PotatoGame
 {
+    [System.Serializable]
+    public class GrowthParameters
+    {
+        
+    }
+    
     //BASE CLASS FOR ALL LIVING THINGS THAT GROW
     public abstract class Plant : MonoBehaviour
     {
         
-        [SerializeField] protected float growthRadius;                  //growth counter   
-
-        [SerializeField] protected float growthTime = 0.0f;                  //growth counter   
+        [SerializeField] protected float growthRadius = 1.0f;  
+        [SerializeField] protected float growthPace = 1.001f;                    
+    
+        [SerializeField] protected float growthTime = 0.0f;           //growth counter   
         [SerializeField] protected float growthStartTime;             //time from when it was planted and growing
-        [SerializeField] protected float growthCompletetionTime;      //time where it finished growing
+        [SerializeField] protected float growthCompletionTime = 10.0f;      //time where it finished growing
 
         [SerializeField] protected bool isGrowing;
         
@@ -23,11 +30,12 @@ namespace PotatoGame
         protected virtual void Update()
         {
             Grow();
+            UpdateGrowthRadius();
         }
 
         protected virtual void Grow()
         {
-            if (growthTime < growthCompletetionTime)
+            if (growthTime < growthCompletionTime)
             {
                 growthTime += Time.deltaTime;
                 isGrowing = true;
@@ -36,6 +44,12 @@ namespace PotatoGame
             {
                 isGrowing = false;
             }
+        }
+
+        protected virtual void UpdateGrowthRadius()
+        {
+            if(isGrowing)
+                this.transform.localScale *= growthPace;
         }
 
         protected virtual void OnEnable()
@@ -48,7 +62,7 @@ namespace PotatoGame
         protected virtual void OnDrawGizmos()
         {
             Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(this.transform.position, growthRadius);
+            Gizmos.DrawWireSphere(this.transform.position, this.transform.localScale.x);
         }
     }
 
