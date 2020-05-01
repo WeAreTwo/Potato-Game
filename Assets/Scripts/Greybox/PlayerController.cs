@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 // I usually namespace to avoid conflict and make it modular
 namespace Potato
 {
-    public class playerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour
     {
         // public variables -------------------------
         public float m_movementSpeed = 10f; // Movement speed of the player

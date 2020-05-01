@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 
 namespace Potato
 {
-    public class topViewCameraController : MonoBehaviour
+    public class TopViewCameraController : MonoBehaviour
     {
         // public variables -------------------------
         [ProgressBar("m_zoomMin", "m_zoomMax", Height = 20)]
@@ -95,7 +95,12 @@ namespace Potato
         private void SetPosition(int side, Vector3 nextPosition)
         {
             // Tell the player from which side the camera is standing (1 to 4 : N, W, S, E)
-            m_player.GetComponent<playerController>().UpdateCamera(side);
+            /*
+             * im gonna use the singleton game manager for global referencing
+             * so we dont need to call GetComponent<>() all the time 
+             */
+            var playerController = GameManager.Instance.playerController;
+            playerController.UpdateCamera(side);
 
             // Move the camera to the next position it should be at
             offset = nextPosition;

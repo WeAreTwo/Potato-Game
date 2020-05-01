@@ -9,7 +9,9 @@ namespace Potato
     {
         // (Optional) Prevent non-singleton constructor use.
         protected void Singleton() { }
-        
+
+        public PlayerController playerController;
+        public TopViewCameraController cameraController;
 
     }
 
