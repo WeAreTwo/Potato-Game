@@ -10,6 +10,7 @@ namespace Potato
         // public variables -------------------------
         [ProgressBar("m_zoomMin", "m_zoomMax", Height = 20)]
         public float m_currentZoom;                     // Current player's zoom
+        public float m_zoomSpeed = 300f;                // Speed when zooming in/out
 
         [Space(10)] [Title("Target and Position")]
         public Transform m_target;                      // The target that should be the subject to follow
@@ -50,6 +51,7 @@ namespace Potato
         {
             // Always listen to player's inputs
             Zoom();
+            RotateCam();
         }
 
         void FixedUpdate()
@@ -72,7 +74,7 @@ namespace Potato
         // Zoom in and out ---------------------------------------------------------
         private void Zoom()
         {
-            float step = 250f * Time.deltaTime;
+            float step = m_zoomSpeed * Time.deltaTime;
 
             // Get the zoom directly from the mouse scroll input
             m_currentZoom += Input.GetAxis("Mouse ScrollWheel") * -step;
@@ -90,8 +92,24 @@ namespace Potato
             m_cam.fieldOfView = smoothZoom;
         }
 
+        
+        // Rotate the camera in a direction ----------------------------------------
+        private void RotateCam()
+        {
+            // Get the rotation axis
+            float rotationAxis = Input.GetAxis("Rotate");
+            float step = rotationAxis * 300f;
 
-        // Set the camera on a new position ------------------------------
+            Debug.Log(rotationAxis);
+            // Rotate around the target
+            transform.RotateAround(m_target.position, Vector3.up, step * Time.deltaTime);
+
+        }
+
+
+
+
+        // Set the camera on a new position ----------------------------------------
         private void SetPosition(int side, Vector3 nextPosition)
         {
             // Tell the player from which side the camera is standing (1 to 4 : N, W, S, E)
