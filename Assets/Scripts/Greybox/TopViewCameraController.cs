@@ -114,8 +114,6 @@ namespace Potato
         }
 
 
-
-
         // Set the camera on a new position ----------------------------------------
         private void SetPosition(int side, Vector3 nextPosition)
         {

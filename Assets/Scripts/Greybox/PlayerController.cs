@@ -24,6 +24,7 @@ namespace Potato
         // private variables ------------------------
         private Rigidbody m_rb;                         // Instance of the rigidbody
         private Vector3 m_direction = new Vector3(0, 0, 0); // Direction of the player's velocity 
+        private CharacterController m_controller;       // Character controller linked to this object
         private bool m_isGrounded;                      // Check if the object is grounded or not
 
 
@@ -34,6 +35,7 @@ namespace Potato
         {
             // Get the components
             m_rb = GetComponent<Rigidbody>();
+            //m_controller = GetComponent<CharacterController>();
 
             // Is grounded on start
             m_isGrounded = true;
@@ -42,14 +44,21 @@ namespace Potato
         // ------------------------------------------
         // Update is called once per frame
         // ------------------------------------------
-        void FixedUpdate()
+        private void Update()
         {
             // Make the player able to move
             CheckInput();
 
-            if (m_isGrounded)
+            if (m_isGrounded && m_direction != Vector3.zero)
                 PlayerSteps();
         }
+
+        void FixedUpdate()
+        {
+            // Make the player move with physics
+            m_rb.MovePosition(m_rb.position + m_direction * m_movementSpeed * Time.deltaTime);
+        }
+
 
         // ------------------------------------------
         // Methods
@@ -73,9 +82,6 @@ namespace Potato
 
             if (m_cameraIsEast)
                 m_direction = new Vector3(-verticalAxis, 0, horizontalAxis);
-
-            // Make the player move by changing its velocity
-            m_rb.velocity = m_direction * m_movementSpeed;
         }
 
 
@@ -121,7 +127,7 @@ namespace Potato
         private void PlayerSteps()
         {
             // Add a little jump
-            m_rb.AddForce(transform.up * m_stepForce);
+            m_rb.AddForce(Vector3.up * Mathf.Sqrt(m_stepForce * -0.6f * Physics.gravity.y), ForceMode.VelocityChange);
 
             // In air
             m_isGrounded = false;
