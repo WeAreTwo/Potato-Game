@@ -11,10 +11,11 @@ namespace Potato
         // public variables -------------------------
         public float m_movementSpeed = 10f;             // Movement speed of the player
 
-        [Title("Main Camera Position (Read Only)", "Changes the player's inputs based on the camera's position")]
-        [ReadOnly]
-        public bool m_cameraIsNorth;                    // Specify if the camera's position is North
+        [Title("Walking Steps")]
+        public float m_stepForce = 100f;                // Up force while moving (for steps)
 
+        [Title("Main Camera Position (Read Only)", "Changes the player's inputs based on the camera's position")]
+        [ReadOnly] public bool m_cameraIsNorth;         // Specify if the camera's position is North
         [ReadOnly] public bool m_cameraIsWest;          // Specify if the camera's position is West
         [ReadOnly] public bool m_cameraIsSouth;         // Specify if the camera's position is South
         [ReadOnly] public bool m_cameraIsEast;          // Specify if the camera's position is East
@@ -23,6 +24,7 @@ namespace Potato
         // private variables ------------------------
         private Rigidbody m_rb;                         // Instance of the rigidbody
         private Vector3 m_direction = new Vector3(0, 0, 0); // Direction of the player's velocity 
+        private bool m_isGrounded;                      // Check if the object is grounded or not
 
 
         // ------------------------------------------
@@ -32,15 +34,21 @@ namespace Potato
         {
             // Get the components
             m_rb = GetComponent<Rigidbody>();
+
+            // Is grounded on start
+            m_isGrounded = true;
         }
 
         // ------------------------------------------
         // Update is called once per frame
         // ------------------------------------------
-        void Update()
+        void FixedUpdate()
         {
             // Make the player able to move
             CheckInput();
+
+            if (m_isGrounded)
+                PlayerSteps();
         }
 
         // ------------------------------------------
@@ -106,6 +114,26 @@ namespace Potato
             // Make a warning if camIndex is out of range
             if (camIndex < 1 || camIndex > 4)
                 Debug.LogWarning("Impossible to determine the camera's position. Out of range.");
+        }
+
+
+        // Make the player jumpy ---------------------------------------------------
+        private void PlayerSteps()
+        {
+            // Add a little jump
+            m_rb.AddForce(transform.up * m_stepForce);
+
+            // In air
+            m_isGrounded = false;
+        }
+
+
+        // Detect when the player is mid air ---------------------------------------
+        private void OnCollisionEnter(Collision col)
+        {
+            // Check if colliding with the ground
+            if (col.gameObject.tag == "Ground")
+                m_isGrounded = true;
         }
     }
 }

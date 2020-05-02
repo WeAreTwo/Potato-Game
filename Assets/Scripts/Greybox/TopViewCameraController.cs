@@ -56,6 +56,17 @@ namespace Potato
 
         void FixedUpdate()
         {
+            // Look at the player
+            FollowTarget();
+        }
+
+
+        // ------------------------------------------
+        // Methods
+        // ------------------------------------------
+        // Follow a target (the player) --------------------------------------------
+        private void FollowTarget()
+        {
             // Instance of the desired position of the camera and the smooth(lerp) position
             Vector3 desiredPosition = m_target.position + offset;
             Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, m_smoothSpeed);
@@ -68,9 +79,6 @@ namespace Potato
         }
 
 
-        // ------------------------------------------
-        // Methods
-        // ------------------------------------------
         // Zoom in and out ---------------------------------------------------------
         private void Zoom()
         {
@@ -103,7 +111,6 @@ namespace Potato
             Debug.Log(rotationAxis);
             // Rotate around the target
             transform.RotateAround(m_target.position, Vector3.up, step * Time.deltaTime);
-
         }
 
 
