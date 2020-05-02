@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-namespace Potato
+namespace PotatoGame
 {
     public class TopViewCameraController : MonoBehaviour
     {

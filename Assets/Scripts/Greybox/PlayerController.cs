@@ -4,7 +4,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 
 // I usually namespace to avoid conflict and make it modular
-namespace Potato
+namespace PotatoGame
 {
     public class PlayerController : MonoBehaviour
     {
