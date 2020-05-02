@@ -64,8 +64,6 @@ namespace PotatoGame
             // Does the ray intersect any objects excluding the player layer
             if (Physics.Raycast(from, Vector3.down, out hit, Mathf.Infinity))
             {
-                Debug.DrawRay(transform.position, Vector3.down * hit.distance, Color.yellow);
-                Debug.Log("Did Hit");
                 return hit.point;
             }
 

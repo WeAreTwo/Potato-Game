@@ -929,7 +929,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1083.73
-  field of view: 20
+  field of view: 38
   orthographic: 0
   orthographic size: 7
   m_Depth: -1
@@ -954,8 +954,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
-  m_LocalRotation: {x: -0.44891438, y: 0.13367154, z: -0.06812105, w: -0.88089013}
-  m_LocalPosition: {x: 5.4652677, y: 25.364115, z: -17.593287}
+  m_LocalRotation: {x: 0.26377302, y: 0.41086465, z: -0.12543277, w: 0.8636439}
+  m_LocalPosition: {x: -43.936714, y: 39.53491, z: -39.62911}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1280,6 +1280,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2595752278288454031, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
         type: 3}
+    - target: {fileID: 2372614301526207880, guid: 44ef663f1f886c049804e4a6f996f13b,
+        type: 3}
+      propertyPath: sampleAmount
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 2372614301526207881, guid: 44ef663f1f886c049804e4a6f996f13b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1403,6 +1408,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: GrowingPotato
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454031, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: growingAxis.x
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a, type: 3}

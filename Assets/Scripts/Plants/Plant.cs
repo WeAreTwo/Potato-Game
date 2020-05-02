@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
@@ -15,6 +16,7 @@ namespace PotatoGame
     public abstract class Plant : MonoBehaviour
     {
         //GROWTH PARAMS
+        [SerializeField] protected Vector3 growingAxis = Vector3.up;
         [SerializeField] protected float growthRadius = 1.0f;  
         [SerializeField] protected float growthPace = 1.001f;                    
     
@@ -31,7 +33,11 @@ namespace PotatoGame
         public float GrowthRadius { get => growthRadius; }
 
         protected virtual void Awake(){}
-        protected virtual void Start(){}
+
+        protected virtual void Start()
+        {
+            SetGrowthAxis();
+        }
         
         protected virtual void Update()
         {
@@ -44,6 +50,7 @@ namespace PotatoGame
             if (growthTime < growthCompletionTime && !IsCollidingNeighbouringPlants())
             {
                 growthTime += Time.deltaTime;
+                GrowAlongAxis();
                 isGrowing = true;
             }
             else
@@ -59,6 +66,17 @@ namespace PotatoGame
                 this.transform.localScale *= growthPace;
                 growthRadius *= growthPace;
             }
+        }
+
+        protected virtual void SetGrowthAxis()
+        {
+            growingAxis.x = Random.Range(-0.50f, 0.50f);
+            growingAxis.z = Random.Range(-0.50f, 0.50f);
+        }
+
+        protected virtual void GrowAlongAxis()
+        {
+            this.transform.position += growingAxis * 0.001f;
         }
 
         protected virtual bool IsCollidingNeighbouringPlants()
@@ -91,9 +109,14 @@ namespace PotatoGame
 
         protected virtual void OnDrawGizmos()
         {
+            //GROWTH RADIUS
             if(isGrowing) Gizmos.color = Color.magenta;
             else Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(this.transform.position, growthRadius);
+            
+            //GROWTH AXIS 
+            Gizmos.color = Color.black;
+            Gizmos.DrawLine(this.transform.position, this.transform.position + growingAxis * 3.0f);
         }
     }
 
