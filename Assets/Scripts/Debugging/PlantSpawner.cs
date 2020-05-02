@@ -11,6 +11,7 @@ namespace PotatoGame
         //SPAWNER PARAMS
         [SerializeField] protected Vector3 areaSurface = new Vector3(1,1,1);
         [SerializeField] protected int sampleAmount = 20;
+        [SerializeField] protected float minimumDistance = 1.0f; //minimum distance between each of the spawned points 
         [SerializeField] protected GameObject spawnObject;
         [SerializeField] protected List<GameObject> spawnObjects = new List<GameObject>();
     
@@ -32,16 +33,16 @@ namespace PotatoGame
             {
                 for (int i = 0; i < sampleAmount; i++)
                 {
-                    Vector3 position = SampleRandomPosition();
-                    GameObject spawnedObj = Instantiate(spawnObject, position, Quaternion.identity ) as GameObject;
-                    spawnObjects.Add(spawnedObj);
+                    Vector3 samplePosition = SampleRandomPosition();
+                    Vector3 position = RaycastDown(samplePosition);
+
+                    if (CheckValidity(position, spawnObjects))
+                    {
+                        GameObject spawnedObj = Instantiate(spawnObject, position, Quaternion.identity ) as GameObject;
+                        spawnObjects.Add(spawnedObj);
+                    }
                 }
             }
-        }
-
-        protected void UpdatePosition()
-        {
-            
         }
 
         protected Vector3 SampleRandomPosition()
@@ -56,6 +57,34 @@ namespace PotatoGame
             //this.transform.position + areaSurface.z/2
             
             return new Vector3(X,Y,Z) + worldPos;
+        }
+
+        protected Vector3 RaycastDown(Vector3 from)
+        {
+            RaycastHit hit;
+            // Does the ray intersect any objects excluding the player layer
+            if (Physics.Raycast(from, Vector3.down, out hit, Mathf.Infinity))
+            {
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+                Debug.Log("Did Hit");
+                return hit.point;
+            }
+
+            return Vector3.zero;
+        }
+
+        protected bool CheckValidity(Vector3 currentPos, List<GameObject> otherObjects)
+        {
+            if (otherObjects != null)
+            {
+                foreach (var obj in otherObjects)
+                {
+                    Vector3 otherObjectPosition = obj.transform.position;
+                    if (Vector3.Distance(currentPos, otherObjectPosition) < minimumDistance)
+                        return false;
+                }
+            }
+            return true; //is valid
         }
 
         protected void OnDrawGizmos()
