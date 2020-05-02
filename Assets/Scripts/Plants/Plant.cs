@@ -81,9 +81,13 @@ namespace PotatoGame
         protected virtual void OnEnable()
         {
             growthStartTime = Time.time;
+            GameManager.Instance.plantsController.Plants.Add(this);
         }
-        
-        protected virtual void OnDisable(){}
+
+        protected virtual void OnDisable()
+        {
+            GameManager.Instance.plantsController.Plants.Remove(this);
+        }
 
         protected virtual void OnDrawGizmos()
         {

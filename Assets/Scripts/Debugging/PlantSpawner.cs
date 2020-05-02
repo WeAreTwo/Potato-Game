@@ -42,8 +42,6 @@ namespace PotatoGame
                     {
                         Plant spawnedObj = Instantiate(spawnObject, position, Quaternion.identity ) as Plant;
                         spawnObjects.Add(spawnedObj);
-                        
-                        if(manager != null) manager.plantsController.Plants.Add(spawnedObj);
                     }
                 }
             }
