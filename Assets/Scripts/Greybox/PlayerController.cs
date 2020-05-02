@@ -82,6 +82,9 @@ namespace PotatoGame
 
             if (m_cameraIsEast)
                 m_direction = new Vector3(-verticalAxis, 0, horizontalAxis);
+
+            // Look in the correct direction
+            transform.rotation = Quaternion.LookRotation(m_direction);
         }
 
 
