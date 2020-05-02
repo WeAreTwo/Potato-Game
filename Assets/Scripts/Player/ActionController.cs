@@ -43,10 +43,6 @@ public class ActionController : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        
-    }
 
     // ------------------------------------------
     // Methods
@@ -55,20 +51,23 @@ public class ActionController : MonoBehaviour
     private void CheckInputs()
     {
         // Check if the action button is triggered
-        if (Input.GetAxisRaw("Action") != 0 
-            && m_canInteract 
+        if (Input.GetAxisRaw("Action") != 0  
             && m_proximityObject != null)
         {
-            // Disable interaction 
-            m_canInteract = !m_canInteract;
+            if (m_canInteract)
+            {
+                // Disable interaction 
+                m_canInteract = !m_canInteract;
 
-            // Scan for the correct type of object
-            if (m_proximityObject.tag == "DynamicObject")
-                Hold();
+                // Scan for the correct type of object
+                if (m_proximityObject.tag == "DynamicObject")
+                    Hold();
+            }
 
+            // If player is holding an object, trow it
+            if (m_holding && !m_canInteract)
+                Trow();
         }
-
-
     }
 
 
@@ -114,5 +113,28 @@ public class ActionController : MonoBehaviour
 
         // Currently holding
         m_holding = true;
+    }
+
+
+    // Trowing a dynamic object ----------------------------------------------------
+    private void Trow()
+    {
+        // Reset object rigidbody's property
+        Rigidbody objectRB = m_proximityObject.GetComponent<Rigidbody>();
+        objectRB.useGravity = true;
+
+        BoxCollider objectCollider = m_proximityObject.GetComponent<BoxCollider>();
+        objectCollider.isTrigger = false;
+
+        // Get rid of the object
+        m_proximityObject.transform.parent = null;
+        m_proximityObject = null;
+
+        // Enable interaction
+        m_canInteract = true;
+        m_holding = false;
+
+        // Set the trigger back
+        m_boxCol.isTrigger = true;
     }
 }
