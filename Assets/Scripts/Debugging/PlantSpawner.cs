@@ -12,13 +12,15 @@ namespace PotatoGame
         [SerializeField] protected Vector3 areaSurface = new Vector3(1,1,1);
         [SerializeField] protected int sampleAmount = 20;
         [SerializeField] protected float minimumDistance = 1.0f; //minimum distance between each of the spawned points 
-        [SerializeField] protected GameObject spawnObject;
-        [SerializeField] protected List<GameObject> spawnObjects = new List<GameObject>();
-    
-        // Start is called before the first frame update
-        void Start()
-        {
+        [SerializeField] protected Plant spawnObject;
+        [SerializeField] protected List<Plant> spawnObjects = new List<Plant>();
 
+        protected GameManager manager;
+        
+        // Start is called before the first frame update
+        void Awake()
+        {
+            manager = GameManager.Instance;
         }
 
         // Update is called once per frame
@@ -38,8 +40,10 @@ namespace PotatoGame
 
                     if (CheckValidity(position, spawnObjects))
                     {
-                        GameObject spawnedObj = Instantiate(spawnObject, position, Quaternion.identity ) as GameObject;
+                        Plant spawnedObj = Instantiate(spawnObject, position, Quaternion.identity ) as Plant;
                         spawnObjects.Add(spawnedObj);
+                        
+                        if(manager != null) manager.plantsController.Plants.Add(spawnedObj);
                     }
                 }
             }
@@ -53,9 +57,6 @@ namespace PotatoGame
             var Y = this.transform.position.y;
             var Z = Random.value * areaSurface.z - areaSurface.z/2;
             
-            //this.transform.position + areaSurface.x/2
-            //this.transform.position + areaSurface.z/2
-            
             return new Vector3(X,Y,Z) + worldPos;
         }
 
@@ -65,7 +66,7 @@ namespace PotatoGame
             // Does the ray intersect any objects excluding the player layer
             if (Physics.Raycast(from, Vector3.down, out hit, Mathf.Infinity))
             {
-                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+                Debug.DrawRay(transform.position, Vector3.down * hit.distance, Color.yellow);
                 Debug.Log("Did Hit");
                 return hit.point;
             }
@@ -73,8 +74,11 @@ namespace PotatoGame
             return Vector3.zero;
         }
 
-        protected bool CheckValidity(Vector3 currentPos, List<GameObject> otherObjects)
+        protected bool CheckValidity(Vector3 currentPos, List<Plant> otherObjects)
         {
+            if (currentPos == Vector3.zero)
+                return false;
+            
             if (otherObjects != null)
             {
                 foreach (var obj in otherObjects)

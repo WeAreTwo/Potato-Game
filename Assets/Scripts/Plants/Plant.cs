@@ -27,6 +27,9 @@ namespace PotatoGame
         //NEIGHBOUGRING PLANTS
         [SerializeField] protected List<Plant> neighbouringPlants = new List<Plant>();
         
+        //PROPERTIES
+        public float GrowthRadius { get => growthRadius; }
+
         protected virtual void Awake(){}
         protected virtual void Start(){}
         
@@ -51,16 +54,22 @@ namespace PotatoGame
 
         protected virtual void UpdateGrowthRadius()
         {
-            if(isGrowing)
+            if (isGrowing)
+            {
                 this.transform.localScale *= growthPace;
+                growthRadius *= growthPace;
+            }
         }
 
         protected virtual bool IsCollidingNeighbouringPlants()
         {
-            if (neighbouringPlants != null)
+            var allPlants = GameManager.Instance.plantsController.Plants;
+            if (allPlants != null)
             {
-                foreach (var plant in neighbouringPlants)
+                foreach (var plant in allPlants)
                 {
+                    if (this == plant) continue; //ignore self by skipping it 
+                        
                     if(Vector3.Distance(this.transform.position, plant.transform.position) < this.growthRadius + plant.growthRadius)
                         return true;
                 }
@@ -78,8 +87,9 @@ namespace PotatoGame
 
         protected virtual void OnDrawGizmos()
         {
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(this.transform.position, this.transform.localScale.x);
+            if(isGrowing) Gizmos.color = Color.magenta;
+            else Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(this.transform.position, growthRadius);
         }
     }
 

@@ -1269,6 +1269,17 @@ PrefabInstance:
       propertyPath: areaSurface.z
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 2372614301526207880, guid: 44ef663f1f886c049804e4a6f996f13b,
+        type: 3}
+      propertyPath: minimumDistance
+      value: 2.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 2372614301526207880, guid: 44ef663f1f886c049804e4a6f996f13b,
+        type: 3}
+      propertyPath: spawnObject
+      value: 
+      objectReference: {fileID: 2595752278288454031, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
     - target: {fileID: 2372614301526207881, guid: 44ef663f1f886c049804e4a6f996f13b,
         type: 3}
       propertyPath: m_LocalPosition.x

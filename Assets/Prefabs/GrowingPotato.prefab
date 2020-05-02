@@ -106,10 +106,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cce46938a5e620c4c85f46d4c5224cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  growthRadius: 0
+  growthRadius: 1
   growthPace: 1.001
   growthTime: 0
   growthStartTime: 0
-  growthCompletionTime: 10
+  growthCompletionTime: 20
   isGrowing: 0
   neighbouringPlants: []

@@ -11,6 +11,12 @@ namespace PotatoGame
         //PLANTS LIST
         [SerializeField] protected List<Plant> plants = new List<Plant>();
 
+        public List<Plant> Plants
+        {
+            get => plants;
+            set => plants = value;
+        }
+
         protected void Awake()
         {
             plants.Clear();
@@ -20,6 +26,11 @@ namespace PotatoGame
                 plants.Add((Plant)p);
             }
         }
+        
+        /* TO DO:
+         * ADD EVENT SYSTEM ONPLANTADD()
+         * 
+         */
     }
 
 }
