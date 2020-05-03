@@ -8,7 +8,11 @@ namespace PotatoGame
     public class Potato : Plant
     {
         //potato params
-        
+        protected override void Update()
+        {
+            base.Update();
+            this.transform.LookAt(this.transform.position + growingAxis);
+        }
 
         protected override void Grow()
         {
