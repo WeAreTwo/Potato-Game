@@ -34,12 +34,13 @@
 
         float4 Frag (v2f i) : SV_Target
         {
-            //base texture 
+            //SCREEN PARAM
+            float2 screenPos = i.screenPosition.xy / i.screenPosition.w;
+            //BASE TEXTURE 
             float4 Color = tex2D(_MainTex, i.uv);
             
-            float2 screenPos = i.screenPosition.xy / i.screenPosition.w;
-
             return Color;        
+            //return float4(1,0,0,0);
         }
     ENDCG
     

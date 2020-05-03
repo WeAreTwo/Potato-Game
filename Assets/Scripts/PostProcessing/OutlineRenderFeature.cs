@@ -24,7 +24,7 @@ namespace PotatoGame
     
     public class OutlinePass : ScriptableRenderPass
     {
-        private static readonly string shaderPath = "PostEffect/Outline";
+        private static readonly string shaderPath = "URP/Outline";
         static readonly string k_RenderTag = "Render Outline Effects";
         static readonly int MainTexId = Shader.PropertyToID("_MainTex");
         static readonly int TempTargetId = Shader.PropertyToID("_TempTargetOutline");

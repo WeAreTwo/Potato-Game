@@ -748,6 +748,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 653260038}
+  - component: {fileID: 653260037}
   - component: {fileID: 653260036}
   m_Layer: 0
   m_Name: '[Post-process Volume]'
@@ -773,6 +774,23 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
+--- !u!114 &653260037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653260035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d32dc106e4464dbeff95344489e1ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volumeProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
+  isEnabled: 1
+  widthOutline: 512
+  heightOutline: 256
+  colorPrecision: 16
 --- !u!4 &653260038
 Transform:
   m_ObjectHideFlags: 0
