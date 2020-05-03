@@ -14,6 +14,7 @@ public class ActionController : MonoBehaviour
     // private variables ------------------------
     private BoxCollider m_boxCol;                   // Collider with the trigger
     private bool m_holding = false;                 // Is an object in hand?
+    private bool m_readyToTrow = false;             // If an object is ready to be dropped
 
 
     // ------------------------------------------
@@ -65,8 +66,17 @@ public class ActionController : MonoBehaviour
             }
 
             // If player is holding an object, trow it
-            if (m_holding && !m_canInteract)
+            if (m_holding && m_readyToTrow)
                 Trow();
+        }
+
+        // When the action input is not triggered
+        if (Input.GetAxisRaw("Action") == 0
+            && m_proximityObject != null)
+        {
+            // When holding an object, next ready a trow
+            if (m_holding)
+                m_readyToTrow = true;
         }
     }
 
@@ -133,6 +143,7 @@ public class ActionController : MonoBehaviour
         // Enable interaction
         m_canInteract = true;
         m_holding = false;
+        m_readyToTrow = false;
 
         // Set the trigger back
         m_boxCol.isTrigger = true;
