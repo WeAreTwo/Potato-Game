@@ -6,6 +6,9 @@
     {
         [MainColor] _BaseColor("BaseColor", Color) = (1,1,1,1)
         [MainTexture] _BaseMap("BaseMap", 2D) = "white" {}
+        [BlueNoiseMap] _BlueNoiseMap("BlueNoiseMap", 2D) = "white" {}
+        [BlueNoiseMapScale] _BlueNoiseMapScale("BlueNoiseMapScale", float) = 1
+        
         [LightStepThreshold] _LightStepThreshold("Light Step Threshold", float) = 0.5
     }
 
@@ -40,12 +43,15 @@
             };
 
             TEXTURE2D(_BaseMap);
-            SAMPLER(sampler_BaseMap);
+            SAMPLER(sampler_BaseMap);            
+            TEXTURE2D(_BlueNoiseMap);
+            SAMPLER(sampler_BlueNoiseMap);
             
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST;
             half4 _BaseColor;
             float _LightStepThreshold;
+            float _BlueNoiseMapScale;
             CBUFFER_END
 
             Varyings vert(Attributes IN)
@@ -70,16 +76,28 @@
 
             half4 frag(Varyings IN) : SV_Target
             {
+                float4 output;
                 //BASE TEXTURE
-                float4 baseTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv);
+                float baseTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).r;
+                
+                //BLUE NOISE MAP 
+                float blueNoiseTex = SAMPLE_TEXTURE2D(_BlueNoiseMap, sampler_BlueNoiseMap, IN.uv/ _BlueNoiseMapScale).r;
+                
+                //ABIENT COLOR (SHADOW COLOR)
+                //float4 ambientColor = float4(0.1,0.1,0.1,0.1);
+                float4 ambientColor = float4(0.1,0.1,0.1,0.1) + (_BaseColor * 0.05);
                 
                 Light mainLight = GetMainLight();
                 float3 lightDirection = mainLight.direction;
+                float4 lightColor = float4(mainLight.color, 1);
+                
                 float attenuation = dot( IN.worldNorm, lightDirection);
-                attenuation = step( _LightStepThreshold , attenuation);
+                //attenuation = smoothstep( blueNoiseTex, _LightStepThreshold , attenuation);
+                attenuation = step( blueNoiseTex - _LightStepThreshold , attenuation);
                 
-                
-                return baseTex * _BaseColor * attenuation;
+                output = lerp(ambientColor, baseTex * _BaseColor * lightColor, attenuation);
+                return output;
+                return baseTex * _BaseColor * attenuation * lightColor;
                 //return SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor * IN.atten;
             }
             ENDHLSL
