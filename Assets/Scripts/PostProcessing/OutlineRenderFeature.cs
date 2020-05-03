@@ -86,7 +86,9 @@ namespace PotatoGame
             var h = cameraData.camera.scaledPixelHeight;
             
             //setting parameters here 
-            cameraData.camera.depthTextureMode = cameraData.camera.depthTextureMode | DepthTextureMode.Depth;
+            // cameraData.camera.depthTextureMode = cameraData.camera.depthTextureMode | DepthTextureMode.Depth;
+            cameraData.camera.depthTextureMode = DepthTextureMode.Depth;
+            cameraData.requiresDepthTexture = true;
             this.outlineMaterial.SetFloat(Delta, this.outline.delta.value);
             
             int shaderPass = 0;

@@ -18,7 +18,7 @@
             HLSLPROGRAM
                 #pragma vertex Vert
                 #pragma fragment Frag
-                
+
                 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
                 
                 
@@ -27,7 +27,9 @@
                 TEXTURE2D(_CameraDepthTexture);
                 SAMPLER(sampler_CameraDepthTexture);
                 
+                CBUFFER_START(UnityPerMaterial)               
                 float _Delta;
+                CBUFFER_END
                 
                 struct Attributes
                 {
@@ -45,8 +47,8 @@
                 //ref: UnityURPRenderingExamples
                 float SampleDepth(float2 uv)
                 {
-        
-                    return SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, uv);
+                    return SAMPLE_TEXTURE2D_ARRAY(_CameraDepthTexture, sampler_CameraDepthTexture, uv, unity_StereoEyeIndex).r;
+                    //return SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, uv);
                 }
                 
                 float sobel (float2 uv) 
@@ -86,16 +88,24 @@
                 {
                     //SCREEN PARAM
                     float2 screenPos = i.screenPosition.xy / i.screenPosition.w;
+                    
+                    //DEPTH
+                    float sceneCameraSpaceDepth = LinearEyeDepth(tex2Dproj(sampler_CameraDepthTexture, i.screenPosition).r, _ZBufferParams);
+                                    
                     //BASE TEXTURE 
                     float4 Color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex , screenPos);
                     
-                    float s = pow(1 - saturate(sobel(screenPos)), 50);
-                    //return half4(s.xxx, 1);
+                    float s = pow(1 - saturate(sobel(i.uv)), 50);
+                    //s = step(0.1, s);
+                    //return float4(1,0,0,0);
+                    return sceneCameraSpaceDepth;
+                    return half4(s.xxx, 1);
                     
                     return Color * s;        
-                    //return float4(1,0,0,0);
                 }
             ENDHLSL
         }
+
     }
+    FallBack "Diffuse"
 }
