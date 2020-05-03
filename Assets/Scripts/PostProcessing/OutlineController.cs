@@ -11,9 +11,7 @@ namespace PotatoGame
         [SerializeField] protected bool isEnabled = true;
 
         protected Outline outline;
-        [SerializeField] protected float widthOutline = 512;
-        [SerializeField] protected float heightOutline = 256;
-        [SerializeField] protected float colorPrecision = 16;
+        [SerializeField] protected float delta = 5;
         
         protected void Update()
         {
@@ -29,7 +27,7 @@ namespace PotatoGame
             
             
             //ACCESSING PARAMS 
-            //this.outline.widthOutline.value = this.widthOutline;
+            this.outline.delta.value = this.delta;
             
         }
     }

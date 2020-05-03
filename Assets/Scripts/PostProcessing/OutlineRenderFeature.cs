@@ -30,10 +30,7 @@ namespace PotatoGame
         static readonly int TempTargetId = Shader.PropertyToID("_TempTargetOutline");
         
         //PROPERTIES
-        static readonly int PatternIndex = Shader.PropertyToID("_PatternIndex");
-        static readonly int DitherThreshold = Shader.PropertyToID("_DitherThreshold");
-        static readonly int DitherStrength = Shader.PropertyToID("_DitherStrength");
-        static readonly int DitherScale = Shader.PropertyToID("_DitherScale");
+        static readonly int Delta = Shader.PropertyToID("_Delta");
         
         Outline outline;
         Material outlineMaterial;
@@ -90,11 +87,8 @@ namespace PotatoGame
             
             //setting parameters here 
             cameraData.camera.depthTextureMode = cameraData.camera.depthTextureMode | DepthTextureMode.Depth;
-            this.outlineMaterial.SetInt(PatternIndex, this.outline.patternIndex.value);
-            this.outlineMaterial.SetFloat(DitherThreshold, this.outline.ditherThreshold.value);
-            this.outlineMaterial.SetFloat(DitherStrength, this.outline.ditherStrength.value);
-            this.outlineMaterial.SetFloat(DitherScale, this.outline.ditherScale.value);
-
+            this.outlineMaterial.SetFloat(Delta, this.outline.delta.value);
+            
             int shaderPass = 0;
             cmd.SetGlobalTexture(MainTexId, source);
             cmd.GetTemporaryRT(destination, w, h, 0, FilterMode.Point, RenderTextureFormat.Default);
