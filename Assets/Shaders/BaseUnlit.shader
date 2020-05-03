@@ -11,8 +11,9 @@
         [DetailMap] _DetailMap("DetailMap", 2D) = "white" {}
         [DetailAmount] _DetailAmount("DetailAmount", float) = 0.5
         [DetailScale] _DetailScale("DetailScale", float) = 0.5
-        
         [LightStepThreshold] _LightStepThreshold("Light Step Threshold", float) = 0.5
+        
+        [TestParam] _TestParam("TestParam", float) = 0.5
     }
 
     SubShader
@@ -59,7 +60,17 @@
             float _BlueNoiseMapScale;
             float _DetailAmount;
             float _DetailScale;
+            
+            float _TestParam;
             CBUFFER_END
+            
+            //BLENDING FUNCTIONS 
+            float4 screen(float4 colorOne, float4 colorTwo, float fac)
+            {
+                float facm = 1- fac;
+                return  1 - ((1 - colorOne) * (facm + fac * (1 - colorTwo)));
+            }
+            
 
             Varyings vert(Attributes IN)
             {
@@ -106,9 +117,14 @@
                 //attenuation = smoothstep( blueNoiseTex, _LightStepThreshold , attenuation);
                 attenuation = step( blueNoiseTex - _LightStepThreshold , attenuation);
                 
-                output = lerp(ambientColor, baseTex * _BaseColor * lightColor - (details * ambientColor), attenuation);
+                float4 base = baseTex * _BaseColor * lightColor;
+                float4 baseWithDetails = lerp(base, ambientColor, details);
+                output = lerp(ambientColor, baseWithDetails , attenuation);
+                
+                
                 return output;
-                return baseTex * _BaseColor * attenuation * lightColor;
+                
+                //return baseTex * _BaseColor * attenuation * lightColor;
                 //return SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor * IN.atten;
             }
             ENDHLSL
