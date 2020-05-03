@@ -136,6 +136,9 @@ public class ActionController : MonoBehaviour
         BoxCollider objectCollider = m_proximityObject.GetComponent<BoxCollider>();
         objectCollider.isTrigger = false;
 
+        // Apply a velocity to the object
+        objectRB.velocity = transform.forward * m_trowForce;
+
         // Get rid of the object
         m_proximityObject.transform.parent = null;
         m_proximityObject = null;
