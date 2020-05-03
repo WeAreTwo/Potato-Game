@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - DynamicObject
+  - Potato
   layers:
   - Default
   - TransparentFX

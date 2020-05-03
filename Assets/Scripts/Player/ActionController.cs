@@ -15,6 +15,7 @@ public class ActionController : MonoBehaviour
     private BoxCollider m_boxCol;                   // Collider with the trigger
     private bool m_holding = false;                 // Is an object in hand?
     private bool m_readyToTrow = false;             // If an object is ready to be dropped
+    private bool m_readyToPlant = false;            // If the holding object is a potato, ready to plant
 
 
     // ------------------------------------------
@@ -51,7 +52,7 @@ public class ActionController : MonoBehaviour
     // Check for inputs to trigger an action ---------------------------------------
     private void CheckInputs()
     {
-        // Check if the action button is triggered
+        // Check if the action button is triggered ----------
         if (Input.GetAxisRaw("Action") != 0  
             && m_proximityObject != null)
         {
@@ -63,14 +64,21 @@ public class ActionController : MonoBehaviour
                 // Scan for the correct type of object
                 if (m_proximityObject.tag == "DynamicObject")
                     Hold();
+
+                if (m_proximityObject.tag == "Potato")
+                {
+                    // Make sure the potato is not already planted
+                    if (!m_proximityObject.GetComponent<PlantingController>().m_planted)
+                        Hold();
+                }
             }
 
             // If player is holding an object, trow it
             if (m_holding && m_readyToTrow)
-                Trow();
+                Trow(false);
         }
 
-        // When the action input is not triggered
+        // When the action input is not triggered ----------
         if (Input.GetAxisRaw("Action") == 0
             && m_proximityObject != null)
         {
@@ -78,6 +86,14 @@ public class ActionController : MonoBehaviour
             if (m_holding)
                 m_readyToTrow = true;
         }
+
+        // If you can plant an object ----------------------
+        if (Input.GetAxisRaw("Plant") !=0 && m_readyToPlant)
+        {
+            // Plant a potato
+            Trow(true);
+        }
+         
     }
 
 
@@ -85,7 +101,8 @@ public class ActionController : MonoBehaviour
     private void OnTriggerEnter(Collider col)
     {
         // Check if the object can be grabbed
-        if (col.gameObject.tag == "DynamicObject")
+        if (col.gameObject.tag == "DynamicObject" ||
+            col.gameObject.tag == "Potato")
         { 
             m_proximityObject = col.gameObject;
         }
@@ -94,7 +111,8 @@ public class ActionController : MonoBehaviour
     private void OnTriggerExit(Collider col)
     {
         // Empty out the proximity object
-        if (col.gameObject.tag == "DynamicObject" && !m_holding)
+        if (col.gameObject.tag == "DynamicObject" && !m_holding ||
+            col.gameObject.tag == "Potato" && !m_holding)
         {
             m_proximityObject = null;
         }
@@ -111,8 +129,9 @@ public class ActionController : MonoBehaviour
         Rigidbody objectRB = m_proximityObject.GetComponent<Rigidbody>();
         objectRB.useGravity = false;
 
-        BoxCollider objectCollider = m_proximityObject.GetComponent<BoxCollider>();
-        objectCollider.isTrigger = true;
+        // Disable object's colliders
+        foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
+            objectCollider.isTrigger = true;
 
 
         // Set the same position as our player hands
@@ -123,21 +142,32 @@ public class ActionController : MonoBehaviour
 
         // Currently holding
         m_holding = true;
+
+        // Check if it's a potato (activate the plant action)
+        if (m_proximityObject.tag == "Potato")
+            m_readyToPlant = true;
     }
 
 
     // Trowing a dynamic object ----------------------------------------------------
-    private void Trow()
+    private void Trow(bool plant)
     {
         // Reset object rigidbody's property
         Rigidbody objectRB = m_proximityObject.GetComponent<Rigidbody>();
         objectRB.useGravity = true;
 
-        BoxCollider objectCollider = m_proximityObject.GetComponent<BoxCollider>();
-        objectCollider.isTrigger = false;
+        // Enable object's colliders
+        foreach(Collider objectCollider in m_proximityObject.GetComponents<Collider>())
+            objectCollider.isTrigger = false;
 
         // Apply a velocity to the object
         objectRB.velocity = transform.forward * m_trowForce;
+
+        // Check if the object will be planted
+        // Get the planting mechanic from the object activated
+        if (plant)
+            m_proximityObject.GetComponent<PlantingController>().m_planting = true;
+
 
         // Get rid of the object
         m_proximityObject.transform.parent = null;
@@ -147,8 +177,12 @@ public class ActionController : MonoBehaviour
         m_canInteract = true;
         m_holding = false;
         m_readyToTrow = false;
+        m_readyToPlant = false;
 
         // Set the trigger back
         m_boxCol.isTrigger = true;
     }
+
+
+    
 }
