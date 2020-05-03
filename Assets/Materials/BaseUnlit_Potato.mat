@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BaseUnlit
+  m_Name: BaseUnlit_Potato
   m_Shader: {fileID: 4800000, guid: 9ef11c0ddfb971847b5511ec92e21701, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -71,12 +71,12 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
-    - _BlueNoiseMapScale: 0.54
+    - _BlueNoiseMapScale: 4.03
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5
-    - _DetailAmount: 0.38
-    - _DetailScale: 1.73
+    - _DetailAmount: 0.37
+    - _DetailScale: 8.85
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
