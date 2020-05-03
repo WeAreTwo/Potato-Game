@@ -27,6 +27,7 @@ public class ActionController : MonoBehaviour
         
     }
 
+
     // ------------------------------------------
     // Update is called once per frame
     // ------------------------------------------
@@ -38,9 +39,8 @@ public class ActionController : MonoBehaviour
         // While holding
         if (m_holding)
         {
-            // Keep the object stick on its original point anf follow collisions
-            float step = 5f * Time.deltaTime;
-            m_proximityObject.transform.position = Vector3.MoveTowards(m_proximityObject.transform.position, transform.position, step);
+            // Keep the object stick on its original point and follow collisions
+            m_proximityObject.transform.position = transform.position;
         }
     }
 

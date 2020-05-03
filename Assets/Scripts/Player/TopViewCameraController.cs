@@ -108,7 +108,6 @@ namespace PotatoGame
             float rotationAxis = Input.GetAxis("Rotate");
             float step = rotationAxis * 300f;
 
-            Debug.Log(rotationAxis);
             // Rotate around the target
             transform.RotateAround(m_target.position, Vector3.up, step * Time.deltaTime);
         }
