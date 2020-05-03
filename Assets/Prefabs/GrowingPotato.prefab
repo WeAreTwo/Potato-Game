@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 2595752278288454027}
   - component: {fileID: 2595752278288454026}
   - component: {fileID: 2595752278288454029}
-  - component: {fileID: 2595752278288454028}
   - component: {fileID: 2595752278288454031}
+  - component: {fileID: 1686647422463308498}
   m_Layer: 0
   m_Name: GrowingPotato
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2595752278288454030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.2944489, y: 0.17, z: 3.699707}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -41,7 +41,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2595752278288454030}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -5495902117074765545, guid: 6bfd5450b0228e74494ece13a45212a5, type: 3}
 --- !u!23 &2595752278288454029
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b259f8679de89f04aa7fba7059be871c, type: 2}
+  - {fileID: 2100000, guid: f941eef174a4fa94ab4f388d38fe6a82, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -81,19 +81,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &2595752278288454028
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2595752278288454030}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2595752278288454031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,9 +95,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   growingAxis: {x: 0, y: 1, z: 0}
   growthRadius: 1
-  growthPace: 1.001
+  growthPace: 1.0005
   growthTime: 0
   growthStartTime: 0
-  growthCompletionTime: 10
+  growthCompletionTime: 6
   isGrowing: 0
   neighbouringPlants: []
+--- !u!64 &1686647422463308498
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2595752278288454030}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5495902117074765545, guid: 6bfd5450b0228e74494ece13a45212a5, type: 3}

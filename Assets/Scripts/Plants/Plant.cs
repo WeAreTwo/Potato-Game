@@ -104,7 +104,7 @@ namespace PotatoGame
 
         protected virtual void OnDisable()
         {
-            GameManager.Instance.plantsController.Plants.Remove(this);
+            //GameManager.Instance.plantsController.Plants.Remove(this);
         }
 
         protected virtual void OnDrawGizmos()
