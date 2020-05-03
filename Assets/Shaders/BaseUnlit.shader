@@ -8,6 +8,9 @@
         [MainTexture] _BaseMap("BaseMap", 2D) = "white" {}
         [BlueNoiseMap] _BlueNoiseMap("BlueNoiseMap", 2D) = "white" {}
         [BlueNoiseMapScale] _BlueNoiseMapScale("BlueNoiseMapScale", float) = 1
+        [DetailMap] _DetailMap("DetailMap", 2D) = "white" {}
+        [DetailAmount] _DetailAmount("DetailAmount", float) = 0.5
+        [DetailScale] _DetailScale("DetailScale", float) = 0.5
         
         [LightStepThreshold] _LightStepThreshold("Light Step Threshold", float) = 0.5
     }
@@ -43,7 +46,9 @@
             };
 
             TEXTURE2D(_BaseMap);
-            SAMPLER(sampler_BaseMap);            
+            SAMPLER(sampler_BaseMap);               
+            TEXTURE2D(_DetailMap);
+            SAMPLER(sampler_DetailMap);            
             TEXTURE2D(_BlueNoiseMap);
             SAMPLER(sampler_BlueNoiseMap);
             
@@ -52,6 +57,8 @@
             half4 _BaseColor;
             float _LightStepThreshold;
             float _BlueNoiseMapScale;
+            float _DetailAmount;
+            float _DetailScale;
             CBUFFER_END
 
             Varyings vert(Attributes IN)
@@ -78,7 +85,11 @@
             {
                 float4 output;
                 //BASE TEXTURE
-                float baseTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).r;
+                float baseTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).r;                
+                
+                //DETAIL TEXTURE
+                float detailTex = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap, IN.uv/_DetailScale).r;
+                float details = step(_DetailAmount, detailTex);
                 
                 //BLUE NOISE MAP 
                 float blueNoiseTex = SAMPLE_TEXTURE2D(_BlueNoiseMap, sampler_BlueNoiseMap, IN.uv/ _BlueNoiseMapScale).r;
@@ -95,7 +106,7 @@
                 //attenuation = smoothstep( blueNoiseTex, _LightStepThreshold , attenuation);
                 attenuation = step( blueNoiseTex - _LightStepThreshold , attenuation);
                 
-                output = lerp(ambientColor, baseTex * _BaseColor * lightColor, attenuation);
+                output = lerp(ambientColor, baseTex * _BaseColor * lightColor - (details * ambientColor), attenuation);
                 return output;
                 return baseTex * _BaseColor * attenuation * lightColor;
                 //return SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor * IN.atten;
