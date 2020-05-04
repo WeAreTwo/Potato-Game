@@ -2977,7 +2977,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1083.73
-  field of view: 30
+  field of view: 26.991467
   orthographic: 0
   orthographic size: 7
   m_Depth: -1
@@ -3032,7 +3032,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
-  m_RenderPostProcessing: 1
+  m_RenderPostProcessing: 0
   m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 1
