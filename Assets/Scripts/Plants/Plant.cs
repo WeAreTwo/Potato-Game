@@ -6,16 +6,38 @@ using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
+    
     [System.Serializable]
     public class GrowthParameters
     {
         
     }
+
+    [System.Serializable]
+    public enum PlantState
+    {
+        Uprooted,   //above ground
+        Planted,    //in the ground
+        Autonomous  //deus ex machina
+    }
     
     //BASE CLASS FOR ALL LIVING THINGS THAT GROW
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(MeshCollider))]
     public abstract class Plant : MonoBehaviour
     {
-        //GROWTH PARAMS
+        #region Members
+        //PLANT STATE
+        [SerializeField] protected PlantState plantState = PlantState.Uprooted;
+        [SerializeField] protected bool growing;
+        [SerializeField] protected bool planting;
+        [SerializeField] protected bool planted;
+        
+        //PLANTING PARAMS
+        [SerializeField] protected float plantingDepth;
+        [SerializeField] protected Vector2 plantingDepthRange = new Vector2(0.3f, 0.45f);
+        
+        //PLANTED/GROWTH PARAMS
         [SerializeField] protected Vector3 growingAxis = Vector3.up;
         [SerializeField] protected float growthRadius = 1.0f;  
         [SerializeField] protected float growthPace = 1.001f;                    
@@ -23,45 +45,151 @@ namespace PotatoGame
         [SerializeField] protected float growthTime = 0.0f;           //growth counter   
         [SerializeField] protected float growthStartTime;             //time from when it was planted and growing
         [SerializeField] protected float growthCompletionTime = 10.0f;      //time where it finished growing
-
-        [SerializeField] protected bool isGrowing;
+        
+        //AUTONOMOUS PARAMS
         
         //NEIGHBOUGRING PLANTS
         [SerializeField] protected List<Plant> neighbouringPlants = new List<Plant>();
         
+        //COMPONENTS 
+        protected Rigidbody rb;
+        
         //PROPERTIES
         public float GrowthRadius { get => growthRadius; }
+        #endregion
 
-        protected virtual void Awake(){}
+        #region Call Methods
+        protected virtual void Awake()
+        {
+            rb = this.GetComponent<Rigidbody>();
+        }
 
         protected virtual void Start()
         {
-            SetGrowthAxis();
+            switch (plantState)
+            {
+                case PlantState.Uprooted:
+                    //Do nothing
+                    break;
+                case PlantState.Planted:
+                    SetGrowthAxis();
+                    break;
+                case PlantState.Autonomous:
+                    //Do nothing
+                    break;
+                default:
+                    //Do nothing
+                    break;
+            }
         }
         
         protected virtual void Update()
         {
-            Grow();
-            UpdateGrowthRadius();
+            switch (plantState)
+            {
+                case PlantState.Uprooted:
+                    //Do nothing
+                    break;
+                case PlantState.Planted:
+                    Grow();
+                    UpdateGrowthRadius();
+                    break;
+                case PlantState.Autonomous:
+                    //Do nothing
+                    break;
+                default:
+                    //Do nothing
+                    break;
+            }
+        }
+        
+        protected virtual void OnEnable()
+        {
+            growthStartTime = Time.time; //Note: need to refactor this line 
+            if(GameManager.Instance.plantsController != null) GameManager.Instance.plantsController.Plants.Add(this);
         }
 
+        protected virtual void OnDisable()
+        {
+            ///if(GameManager.Instance.plantsController != null) GameManager.Instance.plantsController.Plants.Remove(this);
+        }
+        #endregion
+        
+        #region Collisions
+        protected virtual void OnCollisionEnter(Collision col)
+        {
+            switch (plantState)
+            {
+                case PlantState.Uprooted:
+                    CheckGroundAndPlant(col);
+                    break;
+                case PlantState.Planted:
+                    //Do nothing
+                    break;
+                case PlantState.Autonomous:
+                    //Do nothing
+                    break;
+                default:
+                    //Do nothing
+                    break;
+            }
+        }
+        
+        #endregion
+
+        #region Uprooted State
+
+        // Check the first collision with the ground -------------------------------
+        protected virtual void CheckGroundAndPlant(Collision col)
+        {
+            // PlantObject when in contact with the ground
+            if (col.gameObject.tag == "Ground" && planting)
+                PlantObject();
+        }
+        
+        protected virtual void PlantObject()
+        {
+            // Pick a random depth number
+            plantingDepth = Random.Range(plantingDepthRange.x, plantingDepthRange.y);
+
+            // Deactivate gravity and freeze all
+            rb.useGravity = false;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+
+            // Deactivate the colliders
+            foreach (Collider objectCollider in GetComponents<Collider>())
+                objectCollider.isTrigger = true;
+
+            // Get the potato in the ground
+            Vector3 currentPos = transform.position;
+            currentPos.y -= plantingDepth;
+            transform.position = currentPos;
+
+            // The potato is now planted!
+            planting = false;
+            planted = true;
+        }
+        
+        #endregion
+
+        #region Planted State
         protected virtual void Grow()
         {
             if (growthTime < growthCompletionTime && !IsCollidingNeighbouringPlants())
             {
                 growthTime += Time.deltaTime;
                 GrowAlongAxis();
-                isGrowing = true;
+                growing = true;
             }
             else
             {
-                isGrowing = false;
+                growing = false;
             }
         }
 
         protected virtual void UpdateGrowthRadius()
         {
-            if (isGrowing)
+            if (growing)
             {
                 this.transform.localScale *= growthPace;
                 growthRadius *= growthPace;
@@ -95,22 +223,13 @@ namespace PotatoGame
 
             return false;
         }
-
-        protected virtual void OnEnable()
-        {
-            growthStartTime = Time.time;
-            GameManager.Instance.plantsController.Plants.Add(this);
-        }
-
-        protected virtual void OnDisable()
-        {
-            //GameManager.Instance.plantsController.Plants.Remove(this);
-        }
-
+        #endregion
+        
+        #region Gizmos
         protected virtual void OnDrawGizmos()
         {
             //GROWTH RADIUS
-            if(isGrowing) Gizmos.color = Color.magenta;
+            if(growing) Gizmos.color = Color.magenta;
             else Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(this.transform.position, growthRadius);
             
@@ -118,6 +237,7 @@ namespace PotatoGame
             Gizmos.color = Color.black;
             Gizmos.DrawLine(this.transform.position, this.transform.position + growingAxis * 3.0f);
         }
+        #endregion
     }
 
 }
