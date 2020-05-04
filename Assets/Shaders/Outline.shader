@@ -3,6 +3,9 @@
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
+        _Delta("Delta", float) = 0.1
+        _DepthDistance("Depth Distance ", float) = 10
+        _OutlineThreshold("Outline Threshold", float) = 0.5
     }
     
     CGINCLUDE
@@ -29,6 +32,8 @@
                 
                 CBUFFER_START(UnityPerMaterial)               
                 float _Delta;
+                float _DepthDistance;
+                float _OutlineThreshold;
                 CBUFFER_END
                 
                 struct Attributes
@@ -47,13 +52,13 @@
                 //ref: UnityURPRenderingExamples
                 float SampleDepth(float2 uv)
                 {
-                    return SAMPLE_TEXTURE2D_ARRAY(_CameraDepthTexture, sampler_CameraDepthTexture, uv, unity_StereoEyeIndex).r;
-                    //return SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, uv);
+                    //return SAMPLE_TEXTURE2D_ARRAY(_CameraDepthTexture, sampler_CameraDepthTexture, uv, unity_StereoEyeIndex).r;
+                    return SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, uv).r * _DepthDistance;
                 }
                 
                 float sobel (float2 uv) 
                 {
-                    float2 delta = float2(_Delta, _Delta);
+                    float2 delta = float2(_Delta * 0.0005, _Delta * 0.0005);
                     
                     float hr = 0;
                     float vt = 0;
@@ -91,15 +96,18 @@
                     
                     //DEPTH
                     float sceneCameraSpaceDepth = LinearEyeDepth(tex2Dproj(sampler_CameraDepthTexture, i.screenPosition).r, _ZBufferParams);
+                    float rawDepth = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, screenPos).r;
                                     
                     //BASE TEXTURE 
                     float4 Color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex , screenPos);
                     
-                    float s = pow(1 - saturate(sobel(i.uv)), 50);
+                    float s = pow(1 - saturate(sobel(screenPos)), 50);
+                    s = step(_OutlineThreshold,s);
                     //s = step(0.1, s);
                     //return float4(1,0,0,0);
-                    return sceneCameraSpaceDepth;
-                    return half4(s.xxx, 1);
+                    //return rawDepth;
+                    //return sceneCameraSpaceDepth;
+                    //return half4(s.xxx, 1);
                     
                     return Color * s;        
                 }
