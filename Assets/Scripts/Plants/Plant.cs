@@ -16,9 +16,10 @@ namespace PotatoGame
     [System.Serializable]
     public enum PlantState
     {
-        Uprooted,   //above ground
-        Planted,    //in the ground
-        Autonomous  //deus ex machina
+        Uprooted,       //above ground
+        Planted,        //in the ground
+        Harvestable,    //can now be harvested 
+        Autonomous      //deus ex machina
     }
     
     //BASE CLASS FOR ALL LIVING THINGS THAT GROW
@@ -79,6 +80,9 @@ namespace PotatoGame
                     break;
                 case PlantState.Planted:
                     SetGrowthAxis();
+                    break;                
+                case PlantState.Harvestable:
+                    //Do nothing 
                     break;
                 case PlantState.Autonomous:
                     //Do nothing
@@ -99,6 +103,9 @@ namespace PotatoGame
                 case PlantState.Planted:
                     Grow();
                     UpdateGrowthRadius();
+                    break;                
+                case PlantState.Harvestable:
+                    //Do nothing
                     break;
                 case PlantState.Autonomous:
                     //Do nothing
@@ -130,6 +137,9 @@ namespace PotatoGame
                     CheckGroundAndPlant(col);
                     break;
                 case PlantState.Planted:
+                    //Do nothing
+                    break;                
+                case PlantState.Harvestable:
                     //Do nothing
                     break;
                 case PlantState.Autonomous:
@@ -235,7 +245,9 @@ namespace PotatoGame
         #endregion
         
         #region Gizmos
-        protected virtual void OnDrawGizmos()
+
+        protected virtual void UprootedGizmos() { }
+        protected virtual void PlantedGizmos()
         {
             //GROWTH RADIUS
             if(growing) Gizmos.color = Color.magenta;
@@ -245,6 +257,30 @@ namespace PotatoGame
             //GROWTH AXIS 
             Gizmos.color = Color.black;
             Gizmos.DrawLine(this.transform.position, this.transform.position + growingAxis * 3.0f);
+            
+        }
+        protected virtual void HarvestableGizmos() { }
+        protected virtual void AutonomousGizmos() { }
+        
+        protected virtual void OnDrawGizmos()
+        {
+            switch (PlantStatus)
+            {
+                case PlantState.Uprooted:
+                    UprootedGizmos();
+                    break;
+                case PlantState.Planted:
+                    PlantedGizmos();
+                    break;
+                case PlantState.Harvestable:
+                    HarvestableGizmos();
+                    break;
+                case PlantState.Autonomous:
+                    AutonomousGizmos();
+                    break;
+                default:
+                    break;
+            }
         }
         #endregion
     }
