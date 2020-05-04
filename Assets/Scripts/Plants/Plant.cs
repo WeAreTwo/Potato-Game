@@ -22,13 +22,13 @@ namespace PotatoGame
     }
     
     //BASE CLASS FOR ALL LIVING THINGS THAT GROW
-    [RequireComponent(typeof(Rigidbody))]
-    [RequireComponent(typeof(MeshCollider))]
+    [RequireComponent(typeof(Rigidbody))]        //automatically add rb
+    [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
     public abstract class Plant : MonoBehaviour
     {
         #region Members
         //PLANT STATE
-        [SerializeField] protected PlantState plantState = PlantState.Uprooted;
+        [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
         [SerializeField] protected bool growing;
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
@@ -40,11 +40,11 @@ namespace PotatoGame
         //PLANTED/GROWTH PARAMS
         [SerializeField] protected Vector3 growingAxis = Vector3.up;
         [SerializeField] protected float growthRadius = 1.0f;  
-        [SerializeField] protected float growthPace = 1.001f;                    
+        [SerializeField] protected float growthPace = 1.0005f;                    
     
         [SerializeField] protected float growthTime = 0.0f;           //growth counter   
         [SerializeField] protected float growthStartTime;             //time from when it was planted and growing
-        [SerializeField] protected float growthCompletionTime = 10.0f;      //time where it finished growing
+        [SerializeField] protected float growthCompletionTime = 6.0f;      //time where it finished growing
         
         //AUTONOMOUS PARAMS
         
@@ -54,7 +54,13 @@ namespace PotatoGame
         //COMPONENTS 
         protected Rigidbody rb;
         
-        //PROPERTIES
+        //PROPERTIES (this makes private properties accessible to other scripts like an API)
+        //NOTES: you can remove the set function to make it read only
+        public PlantState PlantStatus { get => plantStatus; set => plantStatus = value; }
+        public bool Growing { get => growing; }
+        public bool Planting { get => planting; set => planting = value; }
+        public bool Planted { get => planted; }
+
         public float GrowthRadius { get => growthRadius; }
         #endregion
 
@@ -66,7 +72,7 @@ namespace PotatoGame
 
         protected virtual void Start()
         {
-            switch (plantState)
+            switch (plantStatus)
             {
                 case PlantState.Uprooted:
                     //Do nothing
@@ -85,7 +91,7 @@ namespace PotatoGame
         
         protected virtual void Update()
         {
-            switch (plantState)
+            switch (plantStatus)
             {
                 case PlantState.Uprooted:
                     //Do nothing
@@ -118,7 +124,7 @@ namespace PotatoGame
         #region Collisions
         protected virtual void OnCollisionEnter(Collision col)
         {
-            switch (plantState)
+            switch (plantStatus)
             {
                 case PlantState.Uprooted:
                     CheckGroundAndPlant(col);
@@ -143,7 +149,7 @@ namespace PotatoGame
         protected virtual void CheckGroundAndPlant(Collision col)
         {
             // PlantObject when in contact with the ground
-            if (col.gameObject.tag == "Ground" && planting)
+            if (col.gameObject.tag == ProjectTags.Ground && planting)
                 PlantObject();
         }
         
@@ -168,6 +174,9 @@ namespace PotatoGame
             // The potato is now planted!
             planting = false;
             planted = true;
+            
+            //Change the state of potato
+            plantStatus = PlantState.Planted;
         }
         
         #endregion

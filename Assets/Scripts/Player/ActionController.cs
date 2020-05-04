@@ -69,7 +69,13 @@ public class ActionController : MonoBehaviour
                 if (m_proximityObject.tag == ProjectTags.Potato)
                 {
                     // Make sure the potato is not already planted
-                    if (!m_proximityObject.GetComponent<PlantingController>().m_planted)
+                    if (m_proximityObject.GetComponent<PlantingController>() != null &&
+                        !m_proximityObject.GetComponent<PlantingController>().m_planted)
+                        Hold();                    
+                    
+                    //Codrin Code for his potatoes
+                    if (m_proximityObject.GetComponent<Plant>() != null &&
+                        !m_proximityObject.GetComponent<Plant>().Planted)
                         Hold();
                 }
             }
@@ -166,8 +172,15 @@ public class ActionController : MonoBehaviour
 
         // Check if the object will be planted
         // Get the planting mechanic from the object activated
-        if (plant)
-            m_proximityObject.GetComponent<PlantingController>().m_planting = true;
+        if (m_proximityObject.GetComponent<PlantingController>() != null && plant)
+            m_proximityObject.GetComponent<PlantingController>().m_planting = true;        
+        
+        
+        //Codrin Code for his potatoes
+        if (m_proximityObject.GetComponent<Plant>() != null && plant)
+            m_proximityObject.GetComponent<Plant>().Planting = true;
+
+        
 
 
         // Get rid of the object

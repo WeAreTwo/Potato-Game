@@ -8,24 +8,32 @@ namespace PotatoGame
     public class Potato : Plant
     {
         //potato params
+        protected override void Awake()
+        {
+            base.Awake();
+            this.gameObject.tag = ProjectTags.Potato;
+        }
 
         protected override void Start()
         {
             base.Start();
-            this.transform.LookAt(this.transform.position + growingAxis);
+            // this.transform.LookAt(this.transform.position + growingAxis);
             
         }
 
         protected override void Update()
         {
             base.Update();
-            this.transform.LookAt(this.transform.position + growingAxis);
+            switch (plantStatus)
+            {
+                case PlantState.Planted:
+                    this.transform.LookAt(this.transform.position + growingAxis);
+                    break;
+                default:
+                    break;
+            }
         }
 
-        protected override void Grow()
-        {
-            base.Grow();
-        }
     }
 
 }
