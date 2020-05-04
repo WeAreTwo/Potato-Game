@@ -143,7 +143,7 @@ namespace PotatoGame
         private void OnCollisionEnter(Collision col)
         {
             // Check if colliding with the ground
-            if (col.gameObject.tag == "Ground")
+            if (col.gameObject.tag == ProjectTags.Ground)
                 m_isGrounded = true;
         }
     }

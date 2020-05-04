@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using PotatoGame;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -62,10 +63,10 @@ public class ActionController : MonoBehaviour
                 m_canInteract = !m_canInteract;
 
                 // Scan for the correct type of object
-                if (m_proximityObject.tag == "DynamicObject")
+                if (m_proximityObject.tag == ProjectTags.DynamicObject)
                     Hold();
 
-                if (m_proximityObject.tag == "Potato")
+                if (m_proximityObject.tag == ProjectTags.Potato)
                 {
                     // Make sure the potato is not already planted
                     if (!m_proximityObject.GetComponent<PlantingController>().m_planted)
@@ -101,8 +102,8 @@ public class ActionController : MonoBehaviour
     private void OnTriggerEnter(Collider col)
     {
         // Check if the object can be grabbed
-        if (col.gameObject.tag == "DynamicObject" ||
-            col.gameObject.tag == "Potato")
+        if (col.gameObject.tag == ProjectTags.DynamicObject ||
+            col.gameObject.tag == ProjectTags.Potato)
         { 
             m_proximityObject = col.gameObject;
         }
@@ -111,8 +112,8 @@ public class ActionController : MonoBehaviour
     private void OnTriggerExit(Collider col)
     {
         // Empty out the proximity object
-        if (col.gameObject.tag == "DynamicObject" && !m_holding ||
-            col.gameObject.tag == "Potato" && !m_holding)
+        if (col.gameObject.tag == ProjectTags.DynamicObject && !m_holding ||
+            col.gameObject.tag == ProjectTags.Potato && !m_holding)
         {
             m_proximityObject = null;
         }
@@ -144,7 +145,7 @@ public class ActionController : MonoBehaviour
         m_holding = true;
 
         // Check if it's a potato (activate the plant action)
-        if (m_proximityObject.tag == "Potato")
+        if (m_proximityObject.tag == ProjectTags.Potato)
             m_readyToPlant = true;
     }
 
