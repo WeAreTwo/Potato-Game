@@ -9,11 +9,15 @@ namespace PotatoGame
     //Helpful as the project gets bigger 
     public static class ProjectTags 
     {
+        //OBJECT TAGS
         public const string Player = "Player";
         public const string Camera = "MainCamera";
         public const string DynamicObject = "DynamicObject";
         public const string Ground = "Ground";
         public const string Potato = "Potato";
+        
+        //SHADER PATH
+        public const string BaseUnlit = "URP/BaseUnlit";
     }
 
 }

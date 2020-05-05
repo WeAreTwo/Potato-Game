@@ -19,6 +19,8 @@ namespace PotatoGame
         //MEMBERS
         [SerializeField] protected PotatoCharacteristics characteristics;
 
+        protected Material potatoMat;
+
         public PotatoCharacteristics Characteristics
         {
             get => characteristics;
@@ -29,7 +31,8 @@ namespace PotatoGame
         protected override void Awake()
         {
             base.Awake();
-            this.gameObject.tag = ProjectTags.Potato;
+            CreateMaterial();
+            SetPotatoCharacteristics();
         }
 
         protected override void Start()
@@ -50,6 +53,22 @@ namespace PotatoGame
                 default:
                     break;
             }
+        }
+
+        protected virtual void CreateMaterial()
+        {
+            potatoMat = new Material(Shader.Find(ProjectTags.BaseUnlit));
+        }
+
+        protected virtual void SetPotatoCharacteristics()
+        {
+            //SET THE TAG
+            this.gameObject.tag = ProjectTags.Potato;
+            
+            
+            this.transform.localScale *= characteristics.size;
+            // this.transform.localScale = characteristics.size;
+            // this.transform.localScale = characteristics.size;
         }
 
     }
