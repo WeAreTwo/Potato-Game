@@ -696,7 +696,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ea4c28919f17c3444a4cc27864bcb76a, type: 2}
+  - {fileID: 2100000, guid: 28fb690944c35c546868c6f38b759ad0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -996,7 +996,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh18214
+  m_Name: pb_Mesh16882
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1345,7 +1345,7 @@ PrefabInstance:
         type: 3}
       propertyPath: spawnObject
       value: 
-      objectReference: {fileID: 2595752278288454031, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+      objectReference: {fileID: 3676814569702355311, guid: 658354659a72c794da6c44edfb21383f,
         type: 3}
     - target: {fileID: 2372614301526207880, guid: 44ef663f1f886c049804e4a6f996f13b,
         type: 3}

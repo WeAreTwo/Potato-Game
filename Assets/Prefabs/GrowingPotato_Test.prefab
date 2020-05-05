@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runMode: 0
-  plantStatus: 0
+  plantStatus: 1
   growing: 0
   planting: 0
   planted: 0
@@ -139,8 +139,3 @@ MonoBehaviour:
   growthStartTime: 0
   growthCompletionTime: 20
   neighbouringPlants: []
-  characteristics:
-    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-    size: 1
-    growthTime: 10
-    longevity: 20

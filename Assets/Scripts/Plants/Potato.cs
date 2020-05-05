@@ -4,9 +4,27 @@ using UnityEngine;
 
 namespace PotatoGame
 {
+    [System.Serializable]
+    public class PotatoCharacteristics
+    {
+        public Color color = Color.yellow;
+        public float size = 1.0f;
+        public float growthTime = 10.0f;
+        public float longevity = 20.0f; 
+        
+    }
 
     public class Potato : Plant
     {
+        //MEMBERS
+        [SerializeField] protected PotatoCharacteristics characteristics;
+
+        public PotatoCharacteristics Characteristics
+        {
+            get => characteristics;
+            set => characteristics = value;
+        }
+
         //potato params
         protected override void Awake()
         {
@@ -17,7 +35,7 @@ namespace PotatoGame
         protected override void Start()
         {
             base.Start();
-            // this.transform.LookAt(this.transform.position + growingAxis);
+            this.transform.LookAt(this.transform.position + growingAxis);
             
         }
 
@@ -27,7 +45,7 @@ namespace PotatoGame
             switch (plantStatus)
             {
                 case PlantState.Planted:
-                    this.transform.LookAt(this.transform.position + growingAxis);
+                    // this.transform.LookAt(this.transform.position + growingAxis);
                     break;
                 default:
                     break;
