@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78433854bd6218a438b797ec0651e8e5, type: 3}
-  m_Name: PotatoCharacteristic_Purple
+  m_Name: PotatoCharacteristic_White
   m_EditorClassIdentifier: 
   characteristics:
-    color: {r: 0.72434366, g: 0.47450984, b: 1, a: 1}
-    size: 1
+    color: {r: 0.9497033, g: 0.92096835, b: 0.9811321, a: 1}
+    size: 3
     growthTime: 10
     longevity: 20

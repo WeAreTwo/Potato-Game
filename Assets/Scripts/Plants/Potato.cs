@@ -32,6 +32,7 @@ namespace PotatoGame
         protected override void Awake()
         {
             base.Awake();
+            SetPotatoOrientation();
         }
 
         protected override void Start()
@@ -45,20 +46,18 @@ namespace PotatoGame
         protected override void Update()
         {
             base.Update();
-            switch (plantStatus)
-            {
-                case PlantState.Planted:
-                    // this.transform.LookAt(this.transform.position + growingAxis);
-                    break;
-                default:
-                    break;
-            }
         }
 
         protected virtual void CreateMaterial()
         {
             potatoMat = new Material(Shader.Find(ProjectTags.BaseUnlit));
             this.gameObject.GetComponent<Renderer>().material = potatoMat;
+        }
+
+        protected virtual void SetPotatoOrientation()
+        {
+            //SET LOOK DIRECTION
+            this.transform.LookAt(this.transform.position + growingAxis);
         }
 
         protected virtual void SetPotatoVariety()
@@ -69,8 +68,6 @@ namespace PotatoGame
 
         protected virtual void SetPotatoCharacteristics()
         {
-            //SET LOOK DIRECTION
-            this.transform.LookAt(this.transform.position + growingAxis);
             //SET THE TAG
             this.gameObject.tag = ProjectTags.Potato;
             
@@ -78,6 +75,10 @@ namespace PotatoGame
             this.transform.localScale *= characteristics.size;
             growthCompletionTime = characteristics.growthTime;
             potatoMat.SetColor("_BaseColor", characteristics.color);
+            potatoMat.SetFloat("_LightStepThreshold", 0.15f);
+            potatoMat.SetFloat("_BlueNoiseMapScale", 4.0f);
+            potatoMat.SetFloat("_DetailAmount", 0.35f);
+            potatoMat.SetFloat("_DetailScale", 8.50f);
         }
 
     }

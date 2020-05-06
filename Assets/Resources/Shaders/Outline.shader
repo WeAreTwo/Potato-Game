@@ -30,6 +30,9 @@
                 TEXTURE2D(_CameraDepthTexture);
                 SAMPLER(sampler_CameraDepthTexture);
                 
+                TEXTURE2D(_CameraDepthNormalsTexture);
+                SAMPLER(sampler_CameraDepthNormalsTexture);
+                
                 CBUFFER_START(UnityPerMaterial)               
                 float _Delta;
                 float _DepthDistance;
@@ -76,8 +79,19 @@
                     vt += SampleDepth(uv + float2(-1.0,  1.0) * delta) * -1.0;
                     vt += SampleDepth(uv + float2( 0.0,  1.0) * delta) * -2.0;
                     vt += SampleDepth(uv + float2( 1.0,  1.0) * delta) * -1.0;
-                    
                     return sqrt(hr * hr + vt * vt);
+                }
+                
+                //https://alexanderameye.github.io/outlineshader for decoding normals 
+                float3 DecodeNormal(float4 enc)
+                {
+                    float kScale = 1.7777;
+                    float3 nn = enc.xyz*float3(2*kScale,2*kScale,0) + float3(-kScale,-kScale,1);
+                    float g = 2.0 / dot(nn.xyz,nn.xyz);
+                    float3 n;
+                    n.xy = g*nn.xy;
+                    n.z = g-1;
+                    return n;
                 }
            
                 Varyings Vert(Attributes v)
@@ -97,12 +111,14 @@
                     //DEPTH
                     float sceneCameraSpaceDepth = LinearEyeDepth(tex2Dproj(sampler_CameraDepthTexture, i.screenPosition).r, _ZBufferParams);
                     float rawDepth = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, screenPos).r;
+                    float4 rawDepthNormal = SAMPLE_TEXTURE2D(_CameraDepthNormalsTexture, sampler_CameraDepthNormalsTexture, screenPos);
+                    float3 decodedNormals = DecodeNormal(rawDepthNormal).rgb;
                                     
                     //BASE TEXTURE 
                     float4 Color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex , screenPos);
                     
                     float s = pow(1 - saturate(sobel(screenPos)), 50);
-                    s = step(_OutlineThreshold,s);
+                    s = step(1/_OutlineThreshold,s);
                     //s = step(0.1, s);
                     //return float4(1,0,0,0);
                     //return rawDepth;
