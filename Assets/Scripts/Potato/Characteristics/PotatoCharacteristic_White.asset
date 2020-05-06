@@ -15,5 +15,5 @@ MonoBehaviour:
   characteristics:
     color: {r: 0.9497033, g: 0.92096835, b: 0.9811321, a: 1}
     size: 0.9
-    growthTime: 10
+    growthTime: 3.43
     longevity: 20
