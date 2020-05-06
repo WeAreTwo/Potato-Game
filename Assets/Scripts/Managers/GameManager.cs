@@ -13,6 +13,8 @@ namespace PotatoGame
         public PlayerController playerController;
         public TopViewCameraController cameraController;
         public PlantsController plantsController;
+        public ShaderController shaderController;
+        public VarietyPool varietyPool;
     }
 
 }

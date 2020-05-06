@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78433854bd6218a438b797ec0651e8e5, type: 3}
-  m_Name: PotatoCharacteristic_Regular
+  m_Name: PotatoCharacteristic_Rotten
   m_EditorClassIdentifier: 
   characteristics:
-    color: {r: 1, g: 0.77254903, b: 0.4745098, a: 1}
-    size: 1
-    growthTime: 6.45
+    color: {r: 0.62595314, g: 0.7075472, b: 0.31706125, a: 1}
+    size: 0.81
+    growthTime: 6.64
     longevity: 20

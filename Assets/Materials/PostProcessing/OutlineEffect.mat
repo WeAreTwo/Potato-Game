@@ -66,8 +66,8 @@ Material:
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5
-    - _Delta: 1.8
-    - _DepthDistance: 595.5
+    - _Delta: 3.74
+    - _DepthDistance: 48.4
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
@@ -75,7 +75,7 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OutlineThreshold: 0.758
+    - _OutlineThreshold: 1.05
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
