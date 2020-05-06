@@ -4,9 +4,9 @@
     {
         [MainColor] _BaseColor("BaseColor", Color) = (1,1,1,1)
         [MainTexture] _BaseMap("BaseMap", 2D) = "white" {}
-        [BlueNoiseMap] _BlueNoiseMap("BlueNoiseMap", 2D) = "white" {}
+        //[BlueNoiseMap] _BlueNoiseMap("BlueNoiseMap", 2D) = "white" {}
         [BlueNoiseMapScale] _BlueNoiseMapScale("BlueNoiseMapScale", float) = 1
-        [DetailMap] _DetailMap("DetailMap", 2D) = "white" {}
+        //[DetailMap] _DetailMap("DetailMap", 2D) = "white" {}
         [DetailAmount] _DetailAmount("DetailAmount", float) = 0.5
         [DetailScale] _DetailScale("DetailScale", float) = 0.5
         [LightStepThreshold] _LightStepThreshold("Light Step Threshold", float) = 0.5

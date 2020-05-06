@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
@@ -31,15 +32,14 @@ namespace PotatoGame
         protected override void Awake()
         {
             base.Awake();
-            CreateMaterial();
-            SetPotatoCharacteristics();
         }
 
         protected override void Start()
         {
             base.Start();
-            this.transform.LookAt(this.transform.position + growingAxis);
-            
+            CreateMaterial();
+            SetPotatoVariety();
+            SetPotatoCharacteristics();
         }
 
         protected override void Update()
@@ -58,17 +58,26 @@ namespace PotatoGame
         protected virtual void CreateMaterial()
         {
             potatoMat = new Material(Shader.Find(ProjectTags.BaseUnlit));
+            this.gameObject.GetComponent<Renderer>().material = potatoMat;
+        }
+
+        protected virtual void SetPotatoVariety()
+        {
+            var potatoVariety = GameManager.Instance.varietyPool.PotatoVariety;
+            characteristics = potatoVariety[Random.Range(0, potatoVariety.Count)].characteristics;
         }
 
         protected virtual void SetPotatoCharacteristics()
         {
+            //SET LOOK DIRECTION
+            this.transform.LookAt(this.transform.position + growingAxis);
             //SET THE TAG
             this.gameObject.tag = ProjectTags.Potato;
             
-            
+            //SET CHARACTERISTICS
             this.transform.localScale *= characteristics.size;
-            // this.transform.localScale = characteristics.size;
-            // this.transform.localScale = characteristics.size;
+            growthCompletionTime = characteristics.growthTime;
+            potatoMat.SetColor("_BaseColor", characteristics.color);
         }
 
     }
