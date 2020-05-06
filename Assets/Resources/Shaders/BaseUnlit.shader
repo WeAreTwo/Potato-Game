@@ -31,7 +31,7 @@
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-
+            
             struct Attributes
             {
                 float4 positionOS   : POSITION;

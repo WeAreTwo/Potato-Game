@@ -14,11 +14,17 @@ namespace PotatoGame
     }
 
     [System.Serializable]
+    public enum RunMode
+    {
+        Runtime,
+        Debugging
+    }
+
+    [System.Serializable]
     public enum PlantState
     {
         Uprooted,       //above ground
         Planted,        //in the ground
-        Harvestable,    //can now be harvested 
         Autonomous      //deus ex machina
     }
     
@@ -29,10 +35,12 @@ namespace PotatoGame
     {
         #region Members
         //PLANT STATE
+        [SerializeField] protected RunMode runMode = RunMode.Runtime;
         [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
         [SerializeField] protected bool growing;
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
+        [SerializeField] protected bool harvestable;
         
         //PLANTING PARAMS
         [SerializeField] protected float plantingDepth;
@@ -80,9 +88,6 @@ namespace PotatoGame
                     break;
                 case PlantState.Planted:
                     SetGrowthAxis();
-                    break;                
-                case PlantState.Harvestable:
-                    //Do nothing 
                     break;
                 case PlantState.Autonomous:
                     //Do nothing
@@ -101,11 +106,9 @@ namespace PotatoGame
                     //Do nothing
                     break;
                 case PlantState.Planted:
+                    PlantedSettings();
                     Grow();
                     UpdateGrowthRadius();
-                    break;                
-                case PlantState.Harvestable:
-                    //Do nothing
                     break;
                 case PlantState.Autonomous:
                     //Do nothing
@@ -137,9 +140,6 @@ namespace PotatoGame
                     CheckGroundAndPlant(col);
                     break;
                 case PlantState.Planted:
-                    //Do nothing
-                    break;                
-                case PlantState.Harvestable:
                     //Do nothing
                     break;
                 case PlantState.Autonomous:
@@ -187,18 +187,27 @@ namespace PotatoGame
             
             //Change the state of potato
             plantStatus = PlantState.Planted;
+            
         }
         
         #endregion
 
         #region Planted State
+
+        protected virtual void PlantedSettings()
+        {
+            // Deactivate gravity and freeze all
+            if(rb.useGravity == true) rb.useGravity = false;
+            if(rb.constraints != RigidbodyConstraints.FreezeAll) rb.constraints = RigidbodyConstraints.FreezeAll;
+        }
+        
         protected virtual void Grow()
         {
             if (growthTime < growthCompletionTime && !IsCollidingNeighbouringPlants())
             {
                 growthTime += Time.deltaTime;
-                GrowAlongAxis();
                 growing = true;
+                // GrowAlongAxis();
             }
             else
             {
@@ -259,7 +268,6 @@ namespace PotatoGame
             Gizmos.DrawLine(this.transform.position, this.transform.position + growingAxis * 3.0f);
             
         }
-        protected virtual void HarvestableGizmos() { }
         protected virtual void AutonomousGizmos() { }
         
         protected virtual void OnDrawGizmos()
@@ -271,9 +279,6 @@ namespace PotatoGame
                     break;
                 case PlantState.Planted:
                     PlantedGizmos();
-                    break;
-                case PlantState.Harvestable:
-                    HarvestableGizmos();
                     break;
                 case PlantState.Autonomous:
                     AutonomousGizmos();
