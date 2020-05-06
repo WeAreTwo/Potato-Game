@@ -18,8 +18,12 @@ namespace PotatoGame
     public class Potato : Plant
     {
         //MEMBERS
+        [Header("CHARACTERISTICS")]
         [SerializeField] protected PotatoCharacteristics characteristics;
 
+        [Header("CHARACTERISTICS")] 
+        [SerializeField] protected bool poppedOut;
+        
         protected Material potatoMat;
 
         public PotatoCharacteristics Characteristics
@@ -46,7 +50,31 @@ namespace PotatoGame
         protected override void Update()
         {
             base.Update();
+            PopOutOfTheGround();
         }
+        
+        #region Autonomy
+
+        protected virtual void PopOutOfTheGround()
+        {
+            if (harvestable && !poppedOut)
+            {
+                // pop out of the ground 
+                this.transform.position += new Vector3(0, growthRadius, 0);
+                this.transform.rotation = Random.rotation;
+                
+                // Activate gravity and defreeze all
+                rb.useGravity = true;
+                rb.constraints = RigidbodyConstraints.None;
+
+                poppedOut = true;
+                plantStatus = PlantState.Uprooted;
+            }
+        }
+        
+        #endregion
+        
+        #region Material/Characteristics
 
         protected virtual void CreateMaterial()
         {
@@ -74,13 +102,18 @@ namespace PotatoGame
             
             //SET CHARACTERISTICS
             this.transform.localScale *= characteristics.size;
-            growthCompletionTime = characteristics.growthTime;
+            float growthDeviance = Random.Range(characteristics.growthTime - 3.5f, characteristics.growthTime + 3.5f);
+            growthCompletionTime = characteristics.growthTime + growthDeviance;
+            
+            
             potatoMat.SetColor("_BaseColor", characteristics.color);
             potatoMat.SetFloat("_LightStepThreshold", 0.15f);
             potatoMat.SetFloat("_BlueNoiseMapScale", 4.0f);
             potatoMat.SetFloat("_DetailAmount", 0.35f);
             potatoMat.SetFloat("_DetailScale", 8.50f);
         }
+        
+        #endregion
 
     }
 

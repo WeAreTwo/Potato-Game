@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characteristics:
     color: {r: 0.9497033, g: 0.92096835, b: 0.9811321, a: 1}
-    size: 3
+    size: 0.9
     growthTime: 10
     longevity: 20

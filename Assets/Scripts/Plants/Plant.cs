@@ -35,7 +35,7 @@ namespace PotatoGame
     {
         #region Members
         //PLANT STATE
-        [SerializeField] protected RunMode runMode = RunMode.Runtime;
+        [Header("STATES")]
         [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
         [SerializeField] protected bool growing;
         [SerializeField] protected bool planting;
@@ -43,10 +43,12 @@ namespace PotatoGame
         [SerializeField] protected bool harvestable;
         
         //PLANTING PARAMS
+        [Header("PLANTING")]
         [SerializeField] protected float plantingDepth;
         [SerializeField] protected Vector2 plantingDepthRange = new Vector2(0.3f, 0.45f);
         
         //PLANTED/GROWTH PARAMS
+        [Header("GROWTH")]
         [SerializeField] protected Vector3 growingAxis = Vector3.up;
         [SerializeField] protected float growthRadius = 1.0f;  
         [SerializeField] protected float growthPace = 1.0005f;                    
@@ -212,6 +214,7 @@ namespace PotatoGame
             else
             {
                 growing = false;
+                harvestable = true;
             }
         }
 

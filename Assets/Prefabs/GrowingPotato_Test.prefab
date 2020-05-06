@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7178054810660379476}
   - component: {fileID: 3676814569702355311}
   m_Layer: 0
-  m_Name: GrowingPotato
+  m_Name: GrowingPotato_Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,7 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cce46938a5e620c4c85f46d4c5224cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runMode: 0
   plantStatus: 1
   growing: 0
   planting: 0
@@ -133,9 +132,15 @@ MonoBehaviour:
   plantingDepth: 0
   plantingDepthRange: {x: 0.3, y: 0.45}
   growingAxis: {x: 0, y: 1, z: 0}
-  growthRadius: 1
+  growthRadius: 0.47
   growthPace: 1.0005
   growthTime: 0
   growthStartTime: 0
   growthCompletionTime: 20
   neighbouringPlants: []
+  characteristics:
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    size: 1
+    growthTime: 10
+    longevity: 20
+  poppedOut: 0
