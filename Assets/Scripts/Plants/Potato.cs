@@ -62,6 +62,7 @@ namespace PotatoGame
 
         protected virtual void SetPotatoVariety()
         {
+            if (GameManager.Instance.varietyPool == null) return;
             var potatoVariety = GameManager.Instance.varietyPool.PotatoVariety;
             characteristics = potatoVariety[Random.Range(0, potatoVariety.Count)].characteristics;
         }
