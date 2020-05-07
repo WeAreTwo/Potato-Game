@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cce46938a5e620c4c85f46d4c5224cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 100
   plantStatus: 1
   growing: 1
   planting: 0
@@ -144,3 +145,11 @@ MonoBehaviour:
     growthTime: 10
     longevity: 20
   poppedOut: 0
+  victim: {fileID: 0}
+  seekPosition: {x: 0, y: 0, z: 0}
+  seekRange: 3.5
+  idleTimer: 0
+  idleTime: 5
+  stateMachine: 0
+  moving: 0
+  eating: 0

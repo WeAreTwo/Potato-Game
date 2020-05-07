@@ -15,14 +15,34 @@ namespace PotatoGame
         
     }
 
+    [System.Serializable]
+    public enum StateMachine
+    {
+        Moving,
+        Eating,
+        Idling
+    }
+
     public class Potato : Plant
     {
         //MEMBERS
         [Header("CHARACTERISTICS")]
         [SerializeField] protected PotatoCharacteristics characteristics;
 
-        [Header("CHARACTERISTICS")] 
+        [Header("AUTONOMOUS AGENT")] 
         [SerializeField] protected bool poppedOut;
+        [SerializeField] protected Potato victim;
+        [SerializeField] protected Vector3 seekPosition;
+        [SerializeField] protected float seekRange = 5.0f;
+        [SerializeField] protected float seekForce = 5.0f;
+        [SerializeField] protected float idleTimer = 0.0f;
+        [SerializeField] protected float idleTime = 5.0f;
+
+        [Header("STATE MACHINE")] 
+        [SerializeField] protected StateMachine stateMachine;
+        [SerializeField] protected bool moving;
+        [SerializeField] protected bool eating;
+        
         
         protected Material potatoMat;
 
@@ -50,10 +70,22 @@ namespace PotatoGame
         protected override void Update()
         {
             base.Update();
-            PopOutOfTheGround();
+            switch (plantStatus)
+            {
+                case PlantState.Uprooted:
+                    break;
+                case PlantState.Planted:
+                    PopOutOfTheGround();
+                    break;
+                case PlantState.Autonomous:
+                    AutonomousBehaviourTree();
+                    break;
+                default:
+                    break;
+            }
         }
         
-        #region Autonomy
+        #region Autonomy/State Machine
 
         protected virtual void PopOutOfTheGround()
         {
@@ -68,7 +100,94 @@ namespace PotatoGame
                 rb.constraints = RigidbodyConstraints.None;
 
                 poppedOut = true;
-                plantStatus = PlantState.Uprooted;
+                
+                PickRandomPosition();
+                plantStatus = PlantState.Autonomous;
+            }
+        }
+
+        //BEHAVIOUR TREE
+        protected virtual void AutonomousBehaviourTree()
+        {
+            switch (stateMachine)
+            {
+                case StateMachine.Idling:
+                    Idle();
+                    break;
+                case StateMachine.Moving:
+                    MoveToPosition();
+                    break;
+                case StateMachine.Eating:
+                    EatPotato();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        protected virtual bool CheckLineOfSight(Vector3 target)
+        {
+            //check to see if the victim is in the line of sight 
+            RaycastHit hit;
+            if (Physics.Raycast(this.transform.position,target, out hit, seekRange))
+            {
+                return true;
+            }
+            return false;
+        }
+        
+        protected virtual void PickRandomPosition()
+        {
+            float randX = Random.Range(-1.0f, 1.0f);
+            float randY = Random.Range(-1.0f, 1.0f);
+            Vector3 randomPos = new Vector3(randX,0,randY);
+            Vector3 currentPosXZ = new Vector3(this.transform.position.x,0,this.transform.position.z);
+            seekPosition = currentPosXZ + (randomPos * seekRange);
+        }
+
+        //ACTIONS 
+        protected virtual void Idle()
+        {
+            idleTimer += Time.deltaTime;
+            //condition for completion
+            if (idleTimer >= idleTime)
+            {
+                idleTimer = 0;
+                MakeDecision();
+            }
+        }
+        
+        protected virtual void MoveToPosition()
+        {
+            seekPosition.y = this.transform.position.y;
+            Vector3 force = (seekPosition - this.transform.position).normalized;
+            rb.AddForce(force * seekForce);
+            
+            //condition for completion 
+            if(Vector3.Distance(this.transform.position, seekPosition) < 1.5f * growthRadius)
+                MakeDecision(); // make new decision 
+        }
+
+        protected virtual void EatPotato()
+        {
+            //condition for completion
+        }
+
+        //DECISION MAKING 
+        protected virtual void MakeDecision()
+        {
+            //Check is there are other potatoes nearby
+            //if not pick a random position 
+
+            float roll = Random.value;   //roll
+            if (roll < 0.45f)
+            {
+                PickRandomPosition(); //move to new position
+                stateMachine = StateMachine.Moving;
+            }
+            else
+            {
+                stateMachine = StateMachine.Idling; //idle in the same spot
             }
         }
         
@@ -115,6 +234,48 @@ namespace PotatoGame
         
         #endregion
 
+        #region Gizmos
+
+        protected override void OnDrawGizmos()
+        {
+            base.OnDrawGizmos();
+            switch (PlantStatus)
+            {
+                case PlantState.Autonomous:
+                    //draw the seek range 
+                    Gizmos.color = Color.black;
+                    Gizmos.DrawWireSphere(this.transform.position, seekRange);
+                    //draw the target 
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawWireSphere(seekPosition, 0.2f);
+                    //draw a line to target
+                    Gizmos.color = Color.black;
+                    Gizmos.DrawLine(this.transform.position, seekPosition);
+
+                    switch (stateMachine)
+                    {
+                        case StateMachine.Idling:
+                            Gizmos.color = Color.green;
+                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
+                            break;
+                        case StateMachine.Moving:
+                            Gizmos.color = Color.magenta;
+                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
+                            break;
+                        case StateMachine.Eating:
+                            Gizmos.color = Color.red;
+                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        #endregion
     }
 
 }

@@ -34,6 +34,10 @@ namespace PotatoGame
     public abstract class Plant : MonoBehaviour
     {
         #region Members
+
+        [Header("COMMON")] 
+        [SerializeField] protected float health = 100.0f;
+        
         //PLANT STATE
         [Header("STATES")]
         [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
