@@ -37,7 +37,7 @@ namespace PotatoGame
         //PLANT STATE
         [Header("STATES")]
         [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
-        [SerializeField] protected bool growing;
+        [SerializeField] protected bool growing = true;
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
         [SerializeField] protected bool harvestable;
@@ -142,7 +142,7 @@ namespace PotatoGame
                     CheckGroundAndPlant(col);
                     break;
                 case PlantState.Planted:
-                    //Do nothing
+                    OnPlantCollision(col);
                     break;
                 case PlantState.Autonomous:
                     //Do nothing
@@ -205,13 +205,13 @@ namespace PotatoGame
         
         protected virtual void Grow()
         {
-            if (growthTime < growthCompletionTime && !IsCollidingNeighbouringPlants())
+            if (growthTime <= growthCompletionTime && growing)
             {
                 growthTime += Time.deltaTime;
-                growing = true;
                 // GrowAlongAxis();
             }
-            else
+            
+            if(growthTime >= growthCompletionTime)
             {
                 growing = false;
                 harvestable = true;
@@ -236,6 +236,15 @@ namespace PotatoGame
         protected virtual void GrowAlongAxis()
         {
             this.transform.position += growingAxis * 0.001f;
+        }
+
+        protected virtual void OnPlantCollision(Collision col)
+        {
+            var plantComponent = col.gameObject.GetComponent<Plant>();
+            if (plantComponent != null && plantComponent.plantStatus == PlantState.Planted)
+            {
+                growing = false;
+            }
         }
 
         protected virtual bool IsCollidingNeighbouringPlants()

@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plantStatus: 1
-  growing: 0
+  growing: 1
   planting: 0
   planted: 0
   harvestable: 0

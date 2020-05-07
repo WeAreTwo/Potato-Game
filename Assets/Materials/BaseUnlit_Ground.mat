@@ -75,14 +75,14 @@ Material:
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5
-    - _DetailAmount: 0.41
-    - _DetailScale: 61.37
+    - _DetailAmount: 0.4
+    - _DetailScale: 1.2
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _LightStepThreshold: 0.14
+    - _LightStepThreshold: 0.56
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _QueueOffset: 0
