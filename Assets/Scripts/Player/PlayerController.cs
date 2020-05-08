@@ -86,7 +86,7 @@ namespace PotatoGame
             // Look in the correct direction 
             // (make sure it stays in same direction when no inputs)
             if (m_direction != Vector3.zero)
-                transform.rotation = Quaternion.LookRotation(m_direction);
+                transform.rotation = Quaternion.LookRotation(-m_direction);
         }
 
 

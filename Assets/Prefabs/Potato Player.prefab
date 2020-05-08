@@ -1,5 +1,66 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2123002389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2123002390}
+  - component: {fileID: 2123002391}
+  - component: {fileID: 2123002392}
+  m_Layer: 0
+  m_Name: PickUp
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2123002390
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123002389}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1.23}
+  m_LocalScale: {x: 0.9084303, y: 0.9084303, z: 0.9084303}
+  m_Children: []
+  m_Father: {fileID: 1755990683839470810}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2123002391
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123002389}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.38, y: 1, z: 1.27}
+  m_Center: {x: 0, y: -0.3, z: -0.19}
+--- !u!114 &2123002392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123002389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 224a80179db8b9841b4560a5b0600657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_canInteract: 1
+  m_proximityObject: {fileID: 0}
+  m_actionIcon: {fileID: 0}
+  m_trowForce: 2.5
 --- !u!1 &1158055575509489198
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,9 +388,10 @@ GameObject:
   - component: {fileID: 1755990683839470810}
   - component: {fileID: 3808701341817743987}
   - component: {fileID: 4068932465020025664}
+  - component: {fileID: 8296172669299159627}
   m_Layer: 0
   m_Name: Potato Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -352,6 +414,7 @@ Transform:
   - {fileID: 5408315216617879108}
   - {fileID: 7252395144714973337}
   - {fileID: 5815236391272614484}
+  - {fileID: 2123002390}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -384,6 +447,24 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.7401701, y: 1.9139357, z: 0.7765454}
   m_Center: {x: -0.01039356, y: 0.07241737, z: -0.4027381}
+--- !u!114 &8296172669299159627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3316287468226178761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db68b509a52f47344971f88cbea23fef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_movementSpeed: 7
+  m_stepForce: 1
+  m_cameraIsNorth: 0
+  m_cameraIsWest: 0
+  m_cameraIsSouth: 0
+  m_cameraIsEast: 0
 --- !u!1 &6029014475258914678
 GameObject:
   m_ObjectHideFlags: 0
