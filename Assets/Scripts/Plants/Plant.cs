@@ -77,6 +77,13 @@ namespace PotatoGame
         public bool Planted { get => planted; }
 
         public float GrowthRadius { get => growthRadius; }
+
+        public float Health
+        {
+            get => health;
+            set => health = value;
+        }
+
         #endregion
 
         #region Call Methods
@@ -106,6 +113,7 @@ namespace PotatoGame
         
         protected virtual void Update()
         {
+            Die();
             switch (plantStatus)
             {
                 case PlantState.Uprooted:
@@ -133,7 +141,7 @@ namespace PotatoGame
 
         protected virtual void OnDisable()
         {
-            ///if(GameManager.Instance.plantsController != null) GameManager.Instance.plantsController.Plants.Remove(this);
+            if(GameManager.Instance.plantsController != null) GameManager.Instance.plantsController.Plants.Remove(this);
         }
         #endregion
         
@@ -157,6 +165,18 @@ namespace PotatoGame
             }
         }
         
+        #endregion
+
+        #region Common
+
+        protected virtual void Die()
+        {
+            if (health <= 0)
+            {
+                Destroy(this.gameObject);
+            }
+        }
+
         #endregion
 
         #region Uprooted State

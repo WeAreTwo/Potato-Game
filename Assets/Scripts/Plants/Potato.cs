@@ -28,13 +28,14 @@ namespace PotatoGame
         //MEMBERS
         [Header("POTATO PARTS")] 
         [SerializeField] protected GameObject potatoEyes;
+        [SerializeField] protected GameObject eatingEffect;
         
         [Header("CHARACTERISTICS")]
         [SerializeField] protected PotatoCharacteristics characteristics;
 
         [Header("AUTONOMOUS AGENT")] 
         [SerializeField] protected bool poppedOut;
-        [SerializeField] protected Potato victim;
+        [SerializeField] protected Plant victim;
         [SerializeField] protected Vector3 seekPosition;
         [SerializeField] protected float seekRange = 5.0f;
         [SerializeField] protected float seekForce = 5.0f;
@@ -45,7 +46,9 @@ namespace PotatoGame
         [SerializeField] protected StateMachine stateMachine;
         [SerializeField] protected bool moving;
         [SerializeField] protected bool eating;
-        
+
+        protected float eatTimer = 0.0f;
+        protected float eatTime = 3.0f;
         
         protected Material potatoMat;
 
@@ -165,7 +168,7 @@ namespace PotatoGame
         {
             seekPosition.y = this.transform.position.y;
             Vector3 force = (seekPosition - this.transform.position).normalized;
-            rb.AddForce(force * seekForce);
+            rb.AddForce(force * seekForce);            
             
             //condition for completion 
             if(Vector3.Distance(this.transform.position, seekPosition) < 1.5f * growthRadius)
@@ -175,16 +178,55 @@ namespace PotatoGame
         protected virtual void EatPotato()
         {
             //condition for completion
+            if (victim == null)
+            {
+                eatingEffect.SetActive(false);
+                MakeDecision();
+            }
+            else
+            {
+                Vector3 targetPosition = victim.transform.position;
+                if (Vector3.Distance(this.transform.position, targetPosition) < 2.5f * growthRadius)
+                {
+                    eatTimer++;
+                    if (eatTimer >= eatTime)
+                    {
+                        eatTimer = 0.0f;
+                        victim.Health -= 25.0f;
+                    }
+                }
+                else
+                {
+                    Vector3 force = (targetPosition - this.transform.position).normalized;
+                    rb.AddForce(force * seekForce);
+                }
+                
+            }
         }
 
         //DECISION MAKING 
         protected virtual void MakeDecision()
         {
             //Check is there are other potatoes nearby
-            //if not pick a random position 
+            var allPlants = GameManager.Instance.plantsController.Plants;
+            if (allPlants != null)
+            {
+                foreach (var plant in allPlants)
+                {
+                    if (this == plant) continue; //ignore self by skipping it 
+
+                    if (Vector3.Distance(this.transform.position, plant.transform.position) < this.growthRadius + plant.GrowthRadius)
+                        victim = plant;
+                }
+            }
 
             float roll = Random.value;   //roll
-            if (roll < 0.45f)
+            if (victim != null)
+            {
+                eatingEffect.SetActive(true);
+                stateMachine = StateMachine.Eating;
+            }
+            else if (roll < 0.45f)
             {
                 PickRandomPosition(); //move to new position
                 stateMachine = StateMachine.Moving;
