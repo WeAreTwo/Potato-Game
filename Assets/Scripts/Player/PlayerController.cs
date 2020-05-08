@@ -11,9 +11,6 @@ namespace PotatoGame
         // public variables -------------------------
         public float m_movementSpeed = 10f;             // Movement speed of the player
 
-        [Title("Walking Steps")]
-        public float m_stepForce = 100f;                // Up force while moving (for steps)
-
         [Title("Main Camera Position (Read Only)", "Changes the player's inputs based on the camera's position")]
         [ReadOnly] public bool m_cameraIsNorth;         // Specify if the camera's position is North
         [ReadOnly] public bool m_cameraIsWest;          // Specify if the camera's position is West
@@ -48,9 +45,6 @@ namespace PotatoGame
         {
             // Make the player able to move
             CheckInput();
-
-            if (m_isGrounded && m_direction != Vector3.zero)
-                PlayerSteps();
         }
 
         void FixedUpdate()
@@ -128,15 +122,6 @@ namespace PotatoGame
         }
 
 
-        // Make the player jumpy ---------------------------------------------------
-        private void PlayerSteps()
-        {
-            // Add a little jump
-            m_rb.AddForce(Vector3.up * Mathf.Sqrt(m_stepForce * -0.6f * Physics.gravity.y), ForceMode.VelocityChange);
-
-            // In air
-            m_isGrounded = false;
-        }
 
 
         // Detect when the player is mid air ---------------------------------------
