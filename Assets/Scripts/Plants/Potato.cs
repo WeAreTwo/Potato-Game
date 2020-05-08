@@ -26,6 +26,9 @@ namespace PotatoGame
     public class Potato : Plant
     {
         //MEMBERS
+        [Header("POTATO PARTS")] 
+        [SerializeField] protected GameObject potatoEyes;
+        
         [Header("CHARACTERISTICS")]
         [SerializeField] protected PotatoCharacteristics characteristics;
 
@@ -103,6 +106,7 @@ namespace PotatoGame
                 
                 PickRandomPosition();
                 plantStatus = PlantState.Autonomous;
+                potatoEyes.SetActive(true);
             }
         }
 
