@@ -119,7 +119,7 @@
                 
                 float3 sampleNeighbours(float2 uv)
                 {
-                    float2 samples[9];
+                    float2 samples[9];  
                     float3 colorSamples[9];
                     float3 normalSamples[9];
                     
