@@ -45,6 +45,9 @@ namespace PotatoGame
         [SerializeField] protected StateMachine stateMachine;
         [SerializeField] protected bool moving;
         [SerializeField] protected bool eating;
+        
+        //PRIVATE MEMBERS
+        protected int killCount = 0; //how many potatoes it ate
 
         //TIMERS
         protected float idleTimer = 0.0f;
@@ -102,7 +105,7 @@ namespace PotatoGame
             if (harvestable && !poppedOut)
             {
                 // pop out of the ground 
-                this.transform.position += new Vector3(0, growthRadius, 0);
+                this.transform.position += new Vector3(0, growthParams.growthRadius, 0);
                 this.transform.rotation = Random.rotation;
                 
                 // Activate gravity and defreeze all
@@ -179,7 +182,7 @@ namespace PotatoGame
             
             }
             //condition for completion 
-            if (Vector3.Distance(this.transform.position, seekPosition) < 1.5f * growthRadius || moveTimer >= moveTime)
+            if (Vector3.Distance(this.transform.position, seekPosition) < 1.5f * growthParams.growthRadius || moveTimer >= moveTime)
             {
                 moveTimer = 0;  // reset the timer 
                 MakeDecision(); // make new decision 
@@ -197,13 +200,21 @@ namespace PotatoGame
             else
             {
                 Vector3 targetPosition = victim.transform.position;
-                if (Vector3.Distance(this.transform.position, targetPosition) < 2.5f * growthRadius)
+                if (Vector3.Distance(this.transform.position, targetPosition) < 2.5f * growthParams.growthRadius)
                 {
                     eatTimer += Time.deltaTime;
                     if (eatTimer >= eatTime)
                     {
                         eatTimer = 0.0f;
-                        victim.Health -= 25.0f;
+                        if (victim.Health - 25.0f <= 0)
+                        {
+                            killCount++;
+                            victim.Health -= 25.0f;
+                        }
+                        else
+                        {
+                            victim.Health -= 25.0f;
+                        }
                     }
                 }
                 else
@@ -226,7 +237,7 @@ namespace PotatoGame
                 {
                     if (this == plant) continue; //ignore self by skipping it 
 
-                    if (Vector3.Distance(this.transform.position, plant.transform.position) < this.growthRadius + plant.GrowthRadius)
+                    if (Vector3.Distance(this.transform.position, plant.transform.position) < this.growthParams.growthRadius + plant.GrowthRadius)
                         victim = plant;
                 }
             }
@@ -261,7 +272,7 @@ namespace PotatoGame
         protected virtual void SetPotatoOrientation()
         {
             //SET LOOK DIRECTION
-            this.transform.LookAt(this.transform.position + growingAxis);
+            this.transform.LookAt(this.transform.position + growthParams.growingAxis);
         }
 
         protected virtual void SetPotatoVariety()
@@ -279,7 +290,7 @@ namespace PotatoGame
             //SET CHARACTERISTICS
             this.transform.localScale *= characteristics.size;
             float growthDeviance = Random.Range(characteristics.growthTime - 3.5f, characteristics.growthTime + 3.5f);
-            growthCompletionTime = characteristics.growthTime + growthDeviance;
+            growthParams.growthCompletionTime = characteristics.growthTime + growthDeviance;
             
             
             potatoMat.SetColor("_BaseColor", characteristics.color);
@@ -304,7 +315,7 @@ namespace PotatoGame
                     {
                         case StateMachine.Idling:
                             Gizmos.color = Color.green;
-                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
+                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthParams.growthRadius);
                             break;
                         case StateMachine.Moving:
                             //draw the seek range 
@@ -318,11 +329,11 @@ namespace PotatoGame
                             Gizmos.DrawLine(this.transform.position, seekPosition);                           
                             
                             Gizmos.color = Color.magenta;
-                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
+                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthParams.growthRadius);
                             break;
                         case StateMachine.Eating:
                             Gizmos.color = Color.red;
-                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
+                            Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthParams.growthRadius);
 
                             if (victim != null)
                             {

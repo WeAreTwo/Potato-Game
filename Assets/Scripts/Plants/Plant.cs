@@ -8,8 +8,21 @@ namespace PotatoGame
 {
     
     [System.Serializable]
-    public class GrowthParameters
+    public class GrowthParams
     {
+        //PLANTED/GROWTH PARAMS
+        [Header("GROWTH")]
+        public Vector3 growingAxis = Vector3.up;
+        public float growthRadius = 1.0f;  
+        public float growthPace = 1.0005f;                    
+    
+        public float growthTime = 0.0f;           //growth counter   
+        public float growthStartTime;             //time from when it was planted and growing
+        public float growthCompletionTime = 6.0f;      //time where it finished growing
+        
+        //PRIVATE MEMBERS 
+        public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
+        
         
     }
 
@@ -51,20 +64,11 @@ namespace PotatoGame
         [SerializeField] protected float plantingDepth;
         [SerializeField] protected Vector2 plantingDepthRange = new Vector2(0.3f, 0.45f);
         
-        //PLANTED/GROWTH PARAMS
-        [Header("GROWTH")]
-        [SerializeField] protected Vector3 growingAxis = Vector3.up;
-        [SerializeField] protected float growthRadius = 1.0f;  
-        [SerializeField] protected float growthPace = 1.0005f;                    
-    
-        [SerializeField] protected float growthTime = 0.0f;           //growth counter   
-        [SerializeField] protected float growthStartTime;             //time from when it was planted and growing
-        [SerializeField] protected float growthCompletionTime = 6.0f;      //time where it finished growing
-        
-        //AUTONOMOUS PARAMS
+        //GROWTH PARAMS
+        [SerializeField] protected GrowthParams growthParams;
         
         //NEIGHBOUGRING PLANTS
-        [SerializeField] protected List<Plant> neighbouringPlants = new List<Plant>();
+        protected List<Plant> neighbouringPlants = new List<Plant>();
         
         //COMPONENTS 
         protected Rigidbody rb;
@@ -76,13 +80,9 @@ namespace PotatoGame
         public bool Planting { get => planting; set => planting = value; }
         public bool Planted { get => planted; }
 
-        public float GrowthRadius { get => growthRadius; }
+        public float GrowthRadius { get => growthParams.growthRadius; }
 
-        public float Health
-        {
-            get => health;
-            set => health = value;
-        }
+        public float Health { get => health; set => health = value; }
 
         #endregion
 
@@ -135,7 +135,6 @@ namespace PotatoGame
         
         protected virtual void OnEnable()
         {
-            growthStartTime = Time.time; //Note: need to refactor this line 
             if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Add(this);
         }
 
@@ -229,13 +228,13 @@ namespace PotatoGame
         
         protected virtual void Grow()
         {
-            if (growthTime <= growthCompletionTime && growing)
+            if (growthParams.growthTime <= growthParams.growthCompletionTime && growing)
             {
-                growthTime += Time.deltaTime;
+                growthParams.growthTime += Time.deltaTime;
                 // GrowAlongAxis();
             }
             
-            if(growthTime >= growthCompletionTime)
+            if(growthParams.growthTime >= growthParams.growthCompletionTime)
             {
                 growing = false;
                 harvestable = true;
@@ -246,20 +245,20 @@ namespace PotatoGame
         {
             if (growing)
             {
-                this.transform.localScale *= growthPace;
-                growthRadius *= growthPace;
+                this.transform.localScale *= growthParams.growthPace;
+                growthParams.growthRadius *= growthParams.growthPace;
             }
         }
 
         protected virtual void SetGrowthAxis()
         {
-            growingAxis.x = Random.Range(-0.50f, 0.50f);
-            growingAxis.z = Random.Range(-0.50f, 0.50f);
+            growthParams.growingAxis.x = Random.Range(-0.50f, 0.50f);
+            growthParams.growingAxis.z = Random.Range(-0.50f, 0.50f);
         }
 
         protected virtual void GrowAlongAxis()
         {
-            this.transform.position += growingAxis * 0.001f;
+            this.transform.position += growthParams.growingAxis * 0.001f;
         }
 
         protected virtual void OnPlantCollision(Collision col)
@@ -280,7 +279,7 @@ namespace PotatoGame
                 {
                     if (this == plant) continue; //ignore self by skipping it 
                         
-                    if(Vector3.Distance(this.transform.position, plant.transform.position) < this.growthRadius + plant.growthRadius)
+                    if(Vector3.Distance(this.transform.position, plant.transform.position) < this.growthParams.growthRadius + plant.growthParams.growthRadius)
                         return true;
                 }
             }
@@ -297,11 +296,11 @@ namespace PotatoGame
             //GROWTH RADIUS
             if(growing) Gizmos.color = Color.magenta;
             else Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(this.transform.position, growthRadius);
+            Gizmos.DrawWireSphere(this.transform.position, growthParams.growthRadius);
             
             //GROWTH AXIS 
             Gizmos.color = Color.black;
-            Gizmos.DrawLine(this.transform.position, this.transform.position + growingAxis * 3.0f);
+            Gizmos.DrawLine(this.transform.position, this.transform.position + growthParams.growingAxis * 3.0f);
             
         }
         protected virtual void AutonomousGizmos() { }
