@@ -10,19 +10,21 @@ namespace PotatoGame
     {
         // public variables -------------------------
         public float m_movementSpeed = 10f;             // Movement speed of the player
+        public float m_floorOffset;
 
-        [Title("Main Camera Position (Read Only)", "Changes the player's inputs based on the camera's position")]
-        [ReadOnly] public bool m_cameraIsNorth;         // Specify if the camera's position is North
-        [ReadOnly] public bool m_cameraIsWest;          // Specify if the camera's position is West
-        [ReadOnly] public bool m_cameraIsSouth;         // Specify if the camera's position is South
-        [ReadOnly] public bool m_cameraIsEast;          // Specify if the camera's position is East
+
 
 
         // private variables ------------------------
         private Rigidbody m_rb;                         // Instance of the rigidbody
-        private Vector3 m_direction = new Vector3(0, 0, 0); // Direction of the player's velocity 
-        private CharacterController m_controller;       // Character controller linked to this object
-        private bool m_isGrounded;                      // Check if the object is grounded or not
+        private Camera m_cam;                           // Instance of the main camera in the scene   
+        private Vector3 m_moveDirection;                // Where the player is going
+
+        private Vector3 m_gravityForce;                 // Gravity that is applied with raycasters
+        private Vector3 m_raycastFloorPos;
+        private Vector3 m_combinedRaycast;
+        private Vector3 m_floorMovement;            
+
 
 
         // ------------------------------------------
@@ -32,10 +34,8 @@ namespace PotatoGame
         {
             // Get the components
             m_rb = GetComponent<Rigidbody>();
-            //m_controller = GetComponent<CharacterController>();
+            m_cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 
-            // Is grounded on start
-            m_isGrounded = true;
         }
 
         // ------------------------------------------
@@ -49,8 +49,18 @@ namespace PotatoGame
 
         void FixedUpdate()
         {
+            // If not on ground, increase gravity force
+            if (FloorRaycasts(0, 0, 0.6f) == Vector3.zero)
+                m_gravityForce += Vector3.up * Physics.gravity.y * Time.fixedDeltaTime;
+
             // Make the player move with physics
-            m_rb.MovePosition(m_rb.position + m_direction * m_movementSpeed * Time.deltaTime);
+            m_rb.velocity = (m_moveDirection * m_movementSpeed) + m_gravityForce;
+
+            // Find Y pos with raycasts
+            m_floorMovement = new Vector3(m_rb.position.x, FindFloor().y + )
+
+
+
         }
 
 
@@ -64,72 +74,63 @@ namespace PotatoGame
             float horizontalAxis = Input.GetAxis("Horizontal");
             float verticalAxis = Input.GetAxis("Vertical");
 
-            // Input setup depending on the camera's position (point of view)
-            if (m_cameraIsNorth)
-                m_direction = new Vector3(-horizontalAxis, 0, -verticalAxis);
+            // Always be true with the camera position
+            Vector3 correctedHorizontal = horizontalAxis * Camera.main.transform.forward;
+            Vector3 correctedVertical = verticalAxis * Camera.main.transform.right;
+            Vector3 combinedInput = correctedHorizontal + correctedVertical;
 
-            if (m_cameraIsWest)
-                m_direction = new Vector3(verticalAxis, 0, -horizontalAxis);
-
-            if (m_cameraIsSouth)
-                m_direction = new Vector3(horizontalAxis, 0, verticalAxis);
-
-            if (m_cameraIsEast)
-                m_direction = new Vector3(-verticalAxis, 0, horizontalAxis);
+            // Normalize the correction (for constant diagonal movement)
+            m_moveDirection = new Vector3(combinedInput.normalized.x, 0, combinedInput.normalized.z);
 
             // Look in the correct direction 
             // (make sure it stays in same direction when no inputs)
-            if (m_direction != Vector3.zero)
-                transform.rotation = Quaternion.LookRotation(-m_direction);
+            if (m_moveDirection != Vector3.zero)
+                transform.rotation = Quaternion.LookRotation(-m_moveDirection);
         }
 
 
-        // Update camera's position ------------------------------------------------
-        public void UpdateCamera(int camIndex)
+        private Vector3 FindFloor()
         {
-            // If the camera is North (1), is West (2), is South (3)
-            switch (camIndex)
-            {
-                case 1:
-                    m_cameraIsNorth = true;
-                    m_cameraIsWest = false;
-                    m_cameraIsSouth = false;
-                    m_cameraIsEast = false;
-                    break;
-                case 2:
-                    m_cameraIsNorth = false;
-                    m_cameraIsWest = true;
-                    m_cameraIsSouth = false;
-                    m_cameraIsEast = false;
-                    break;
-                case 3:
-                    m_cameraIsNorth = false;
-                    m_cameraIsWest = false;
-                    m_cameraIsSouth = true;
-                    m_cameraIsEast = false;
-                    break;
-                case 4:
-                    m_cameraIsNorth = false;
-                    m_cameraIsWest = false;
-                    m_cameraIsSouth = false;
-                    m_cameraIsEast = true;
-                    break;
-            }
+            // Width of raycasts under the character
+            float raycastWidth = 0.25f;
+            int floorAverage = 1;
 
-            // Make a warning if camIndex is out of range
-            if (camIndex < 1 || camIndex > 4)
-                Debug.LogWarning("Impossible to determine the camera's position. Out of range.");
+            m_combinedRaycast = FloorRaycasts(0, 0, 1.6f);
+            floorAverage += (getFloorAverage(raycastWidth, 0) + getFloorAverage(-raycastWidth, 0) + getFloorAverage(0, raycastWidth) + getFloorAverage(0, -raycastWidth));
+
+            return m_combinedRaycast / floorAverage;
         }
 
 
+        private int getFloorAverage(float offsetX, float offsetZ)
+        {
+            if (FloorRaycasts(offsetX, offsetZ, 1.6ff) != Vector3.zero)
+            {
+                m_combinedRaycast += FloorRaycasts(offsetX, offsetZ, 1.6f);
+                return 1;
+            }
+            else
+                return 0;
+        }
 
 
         // Detect when the player is mid air ---------------------------------------
-        private void OnCollisionEnter(Collision col)
+        private Vector3 FloorRaycasts(float offsetX, float offsetZ, float raycastLenght)
         {
-            // Check if colliding with the ground
-            if (col.gameObject.tag == ProjectTags.Ground)
-                m_isGrounded = true;
+            RaycastHit hit;
+
+            m_raycastFloorPos = transform.TransformPoint(0 + offsetX, 0 + 0.5f, 0 + offsetZ);
+
+            // Print the ray lines in the editor
+            Debug.DrawRay(m_raycastFloorPos, Vector3.down, Color.magenta);
+
+            //
+            if (Physics.Raycast(m_raycastFloorPos, -Vector3.up, out hit, raycastLenght))
+                return hit.point;
+            else
+                return Vector3.zero;
         }
+        
+        
     }
 }

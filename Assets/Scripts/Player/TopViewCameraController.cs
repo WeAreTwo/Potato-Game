@@ -118,7 +118,6 @@ namespace PotatoGame
         {
             // Tell the player from which side the camera is standing (1 to 4 : N, W, S, E)
             var playerController = GameManager.Instance.playerController;
-            playerController.UpdateCamera(side);
 
             // Move the camera to the next position it should be at
             offset = nextPosition;
