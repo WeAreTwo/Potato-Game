@@ -43,11 +43,9 @@ namespace PotatoGame
         
         [Header("STATE MACHINE")] 
         [SerializeField] protected StateMachine stateMachine;
-        [SerializeField] protected bool moving;
-        [SerializeField] protected bool eating;
-        
+        [SerializeField] protected int killCount = 0; //how many potatoes it ate
+
         //PRIVATE MEMBERS
-        protected int killCount = 0; //how many potatoes it ate
 
         //TIMERS
         protected float idleTimer = 0.0f;
@@ -102,7 +100,7 @@ namespace PotatoGame
 
         protected virtual void PopOutOfTheGround()
         {
-            if (harvestable && !poppedOut)
+            if (harvestPeriodCompleted && !poppedOut)
             {
                 // pop out of the ground 
                 this.transform.position += new Vector3(0, growthParams.growthRadius, 0);

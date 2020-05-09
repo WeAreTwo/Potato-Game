@@ -21,16 +21,18 @@ namespace PotatoGame
         public float growthCompletionTime = 6.0f;      //time where it finished growing
         
         //PRIVATE MEMBERS 
+        public float harvestTime = 0.0f; 
         public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
         
         
     }
 
     [System.Serializable]
-    public enum RunMode
+    public enum PlantPhase
     {
-        Runtime,
-        Debugging
+        Seed,
+        Grown, 
+        Sentient
     }
 
     [System.Serializable]
@@ -54,10 +56,17 @@ namespace PotatoGame
         //PLANT STATE
         [Header("STATES")]
         [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
-        [SerializeField] protected bool growing = true;
+        
+        [SerializeField] protected bool halfling;
+        
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
+
+        [SerializeField] protected bool growing = true;
+        [SerializeField] protected bool growthCompleted;
+        
         [SerializeField] protected bool harvestable;
+        [SerializeField] protected bool harvestPeriodCompleted;
         
         //PLANTING PARAMS
         [Header("PLANTING")]
@@ -228,16 +237,28 @@ namespace PotatoGame
         
         protected virtual void Grow()
         {
-            if (growthParams.growthTime <= growthParams.growthCompletionTime && growing)
+            //growth period 
+            if (growthParams.growthTime <= growthParams.growthCompletionTime && !growthCompleted)
             {
                 growthParams.growthTime += Time.deltaTime;
-                // GrowAlongAxis();
+                growing = true;
             }
-            
-            if(growthParams.growthTime >= growthParams.growthCompletionTime)
+            else if(growthParams.growthTime >= growthParams.growthCompletionTime)
             {
+                growthCompleted = true;
                 growing = false;
+            }
+
+            //harvest period
+            if (growthParams.harvestTime <= growthParams.harvestPeriod && growthCompleted && !harvestPeriodCompleted)
+            {
+                growthParams.harvestTime += Time.deltaTime;
                 harvestable = true;
+            }
+            else if(growthParams.harvestTime >= growthParams.harvestPeriod)
+            {
+                harvestPeriodCompleted = true;
+                harvestable = false;
             }
         }
 
@@ -301,6 +322,13 @@ namespace PotatoGame
             //GROWTH AXIS 
             Gizmos.color = Color.black;
             Gizmos.DrawLine(this.transform.position, this.transform.position + growthParams.growingAxis * 3.0f);
+            
+            //HARVESTABLES
+            if (harvestable)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawSphere(this.transform.position + Vector3.up * growthParams.growthRadius, 0.2f);
+            }
             
         }
         protected virtual void AutonomousGizmos() { }
