@@ -136,12 +136,12 @@ namespace PotatoGame
         protected virtual void OnEnable()
         {
             growthStartTime = Time.time; //Note: need to refactor this line 
-            if(GameManager.Instance.plantsController != null) GameManager.Instance.plantsController.Plants.Add(this);
+            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Add(this);
         }
 
         protected virtual void OnDisable()
         {
-            if(GameManager.Instance.plantsController != null) GameManager.Instance.plantsController.Plants.Remove(this);
+            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Remove(this);
         }
         #endregion
         

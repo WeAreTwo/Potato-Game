@@ -39,14 +39,18 @@ namespace PotatoGame
         [SerializeField] protected Vector3 seekPosition;
         [SerializeField] protected float seekRange = 5.0f;
         [SerializeField] protected float seekForce = 5.0f;
-        [SerializeField] protected float idleTimer = 0.0f;
-        [SerializeField] protected float idleTime = 5.0f;
-
+        
+        
         [Header("STATE MACHINE")] 
         [SerializeField] protected StateMachine stateMachine;
         [SerializeField] protected bool moving;
         [SerializeField] protected bool eating;
 
+        //TIMERS
+        protected float idleTimer = 0.0f;
+        protected float idleTime = 5.0f;
+        protected float moveTimer = 0.0f;
+        protected float moveTime = 5.0f;
         protected float eatTimer = 0.0f;
         protected float eatTime = 3.0f;
         
@@ -166,13 +170,20 @@ namespace PotatoGame
         
         protected virtual void MoveToPosition()
         {
-            seekPosition.y = this.transform.position.y;
-            Vector3 force = (seekPosition - this.transform.position).normalized;
-            rb.AddForce(force * seekForce);            
+            if (moveTimer <= moveTime)
+            {
+                moveTimer += Time.deltaTime;
+                seekPosition.y = this.transform.position.y;
+                Vector3 force = (seekPosition - this.transform.position).normalized;
+                rb.AddForce(force * seekForce);            
             
+            }
             //condition for completion 
-            if(Vector3.Distance(this.transform.position, seekPosition) < 1.5f * growthRadius)
+            if (Vector3.Distance(this.transform.position, seekPosition) < 1.5f * growthRadius || moveTimer >= moveTime)
+            {
+                moveTimer = 0;  // reset the timer 
                 MakeDecision(); // make new decision 
+            }
         }
 
         protected virtual void EatPotato()
@@ -188,7 +199,7 @@ namespace PotatoGame
                 Vector3 targetPosition = victim.transform.position;
                 if (Vector3.Distance(this.transform.position, targetPosition) < 2.5f * growthRadius)
                 {
-                    eatTimer++;
+                    eatTimer += Time.deltaTime;
                     if (eatTimer >= eatTime)
                     {
                         eatTimer = 0.0f;
@@ -288,15 +299,6 @@ namespace PotatoGame
             switch (PlantStatus)
             {
                 case PlantState.Autonomous:
-                    //draw the seek range 
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawWireSphere(this.transform.position, seekRange);
-                    //draw the target 
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawWireSphere(seekPosition, 0.2f);
-                    //draw a line to target
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawLine(this.transform.position, seekPosition);
 
                     switch (stateMachine)
                     {
@@ -305,12 +307,29 @@ namespace PotatoGame
                             Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
                             break;
                         case StateMachine.Moving:
+                            //draw the seek range 
+                            Gizmos.color = Color.black;
+                            Gizmos.DrawWireSphere(this.transform.position, seekRange);
+                            //draw the target 
+                            Gizmos.color = Color.red;
+                            Gizmos.DrawWireSphere(seekPosition, 0.2f);
+                            //draw a line to target
+                            Gizmos.color = Color.black;
+                            Gizmos.DrawLine(this.transform.position, seekPosition);                           
+                            
                             Gizmos.color = Color.magenta;
                             Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
                             break;
                         case StateMachine.Eating:
                             Gizmos.color = Color.red;
                             Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthRadius);
+
+                            if (victim != null)
+                            {
+                                //draw a line to target
+                                Gizmos.color = Color.black;
+                                Gizmos.DrawLine(this.transform.position, victim.transform.position);
+                            }
                             break;
                         default:
                             break;
