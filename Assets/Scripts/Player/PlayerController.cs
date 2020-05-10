@@ -49,17 +49,8 @@ namespace PotatoGame
 
         void FixedUpdate()
         {
-            // If not on ground, increase gravity force
-            if (FloorRaycasts(0, 0, 0.6f) == Vector3.zero)
-                m_gravityForce += Vector3.up * Physics.gravity.y * Time.fixedDeltaTime;
-
             // Make the player move with physics
             m_rb.velocity = (m_moveDirection * m_movementSpeed) + m_gravityForce;
-
-            // Find Y pos with raycasts
-            m_floorMovement = new Vector3(m_rb.position.x, FindFloor().y + )
-
-
 
         }
 
@@ -70,6 +61,8 @@ namespace PotatoGame
         // Check user's input ------------------------------------------------------
         private void CheckInput()
         {
+            m_moveDirection = Vector3.zero;
+
             // Hold the value of the player's axis
             float horizontalAxis = Input.GetAxis("Horizontal");
             float verticalAxis = Input.GetAxis("Vertical");
@@ -89,47 +82,7 @@ namespace PotatoGame
         }
 
 
-        private Vector3 FindFloor()
-        {
-            // Width of raycasts under the character
-            float raycastWidth = 0.25f;
-            int floorAverage = 1;
-
-            m_combinedRaycast = FloorRaycasts(0, 0, 1.6f);
-            floorAverage += (getFloorAverage(raycastWidth, 0) + getFloorAverage(-raycastWidth, 0) + getFloorAverage(0, raycastWidth) + getFloorAverage(0, -raycastWidth));
-
-            return m_combinedRaycast / floorAverage;
-        }
-
-
-        private int getFloorAverage(float offsetX, float offsetZ)
-        {
-            if (FloorRaycasts(offsetX, offsetZ, 1.6ff) != Vector3.zero)
-            {
-                m_combinedRaycast += FloorRaycasts(offsetX, offsetZ, 1.6f);
-                return 1;
-            }
-            else
-                return 0;
-        }
-
-
-        // Detect when the player is mid air ---------------------------------------
-        private Vector3 FloorRaycasts(float offsetX, float offsetZ, float raycastLenght)
-        {
-            RaycastHit hit;
-
-            m_raycastFloorPos = transform.TransformPoint(0 + offsetX, 0 + 0.5f, 0 + offsetZ);
-
-            // Print the ray lines in the editor
-            Debug.DrawRay(m_raycastFloorPos, Vector3.down, Color.magenta);
-
-            //
-            if (Physics.Raycast(m_raycastFloorPos, -Vector3.up, out hit, raycastLenght))
-                return hit.point;
-            else
-                return Vector3.zero;
-        }
+        
         
         
     }
