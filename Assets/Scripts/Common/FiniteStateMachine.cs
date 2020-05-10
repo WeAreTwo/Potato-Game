@@ -48,6 +48,10 @@ namespace PotatoGame
         public virtual void OnCollisionExit(Collision col) {}
 
         #endregion
+
+        #region Gizmos
+        public virtual void DrawGizmos(){}
+        #endregion
     }
     
     
