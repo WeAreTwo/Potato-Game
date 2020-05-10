@@ -8,6 +8,7 @@ namespace PotatoGame
     [System.Serializable]
     public class State
     {
+        protected MonoBehaviour component;
         protected bool hasExecutedEnter = false;
         protected bool hasExecutedExit = false;
 
@@ -31,10 +32,7 @@ namespace PotatoGame
         }
 
         //Everyframe while ur in this state
-        public virtual void OnStateUpdate()
-        {
-            
-        }
+        public virtual void OnStateUpdate() {}
         
         //When you exit this state
         public virtual void OnStateExit()
@@ -60,9 +58,9 @@ namespace PotatoGame
 	
         public State Current { get { return current; } }
 	
-        public void Add(string id, State state)		{ stateDict.Add(id, state); }
-        public void Remove(string id) 					{ stateDict.Remove(id); }
-        public void Clear() 							{ stateDict.Clear(); }
+        public void Add(string id, State state)	{ stateDict.Add(id, state); }
+        public void Remove(string id) { stateDict.Remove(id); }
+        public void Clear() { stateDict.Clear(); }
 
         public void Change(string id, params object[] args)
         {

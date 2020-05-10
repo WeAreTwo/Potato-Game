@@ -43,24 +43,111 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public class Seed : State
+    public class SeedState : State
     {
+        //MEMBERS
+        protected GrowthParams growthParams;
+        protected bool growing;
+        protected bool growthCompleted;
 
-        public void Grow(GameObject obj)
+        //CONSTRUCTOR
+        public SeedState(GrowthParams growthParams)
         {
-            Debug.Log(obj.transform + "is growing");
+            this.growthParams = growthParams;
         }
+        
+        //CALL METHODS 
+        public override void OnStateUpdate()
+        {
+            base.OnStateUpdate();
+            Grow();
+        }
+
+        protected void Grow()
+        {
+            //growth period 
+            if (growthParams.growthTime <= growthParams.growthCompletionTime && !growthCompleted)
+            {
+                growthParams.growthTime += Time.deltaTime;
+                growing = true;
+            }
+            else if(growthParams.growthTime >= growthParams.growthCompletionTime)
+            {
+                growthCompleted = true;
+                growing = false;
+            }
+        }
+        
+        protected void UpdateGrowthRadius()
+        {
+            if (growing)
+            {
+                this.component.transform.localScale *= growthParams.growthPace;
+                growthParams.growthRadius *= growthParams.growthPace;
+            }
+        }
+
+        protected void SetGrowthAxis()
+        {
+            growthParams.growingAxis.x = Random.Range(-0.50f, 0.50f);
+            growthParams.growingAxis.z = Random.Range(-0.50f, 0.50f);
+        }
+
+        protected void GrowAlongAxis()
+        {
+            this.component.transform.position += growthParams.growingAxis * 0.001f;
+        }
+
     }   
     
     [System.Serializable]
-    public class Grown : State
+    public class GrownState : State
     {
+        
+        //MEMBERS
+        protected GrowthParams growthParams;
+        protected bool harvestable;
+        protected bool harvestPeriodCompleted;
+   
+        //CONSTRUCTOR
+        public GrownState(GrowthParams growthParams)
+        {
+            this.growthParams = growthParams;
+        }
+        
+        //CALL METHODS 
+        public override void OnStateUpdate()
+        {
+            base.OnStateUpdate();
+            Harvest();
+        }
+
+        protected void Harvest()
+        {
+            //harvest period
+            if (growthParams.harvestTime <= growthParams.harvestPeriod && !harvestPeriodCompleted)
+            {
+                growthParams.harvestTime += Time.deltaTime;
+                harvestable = true;
+            }
+            else if(growthParams.harvestTime >= growthParams.harvestPeriod)
+            {
+                harvestPeriodCompleted = true;
+                harvestable = false;
+            }
+        }
         
     }    
     
     [System.Serializable]
-    public class Autonomous : State
+    public class AutonomousState : State
     {
+   
+        //CONSTRUCTOR
+        public AutonomousState()
+        {
+            
+        }
         
     }
 
@@ -147,7 +234,6 @@ namespace PotatoGame
         
         protected virtual void Update()
         {
-            seed.Grow(this.gameObject);
             Die();
             switch (plantStatus)
             {
