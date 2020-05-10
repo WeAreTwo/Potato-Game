@@ -16,7 +16,7 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public enum StateMachine
+    public enum PotatoStates
     {
         Moving,
         Eating,
@@ -42,7 +42,7 @@ namespace PotatoGame
         
         
         [Header("STATE MACHINE")] 
-        [SerializeField] protected StateMachine stateMachine;
+        [SerializeField] protected PotatoStates stateMachine;
         [SerializeField] protected int killCount = 0; //how many potatoes it ate
 
         //PRIVATE MEMBERS
@@ -57,11 +57,7 @@ namespace PotatoGame
         
         protected Material potatoMat;
 
-        public PotatoCharacteristics Characteristics
-        {
-            get => characteristics;
-            set => characteristics = value;
-        }
+        public PotatoCharacteristics Characteristics { get => characteristics; set => characteristics = value; }
 
         //potato params
         protected override void Awake()
@@ -89,7 +85,7 @@ namespace PotatoGame
                     PopOutOfTheGround();
                     break;
                 case PlantState.Autonomous:
-                    AutonomousBehaviourTree();
+                    FiniteStateMachine();
                     break;
                 default:
                     break;
@@ -119,17 +115,17 @@ namespace PotatoGame
         }
 
         //BEHAVIOUR TREE
-        protected virtual void AutonomousBehaviourTree()
+        protected virtual void FiniteStateMachine()
         {
             switch (stateMachine)
             {
-                case StateMachine.Idling:
+                case PotatoStates.Idling:
                     Idle();
                     break;
-                case StateMachine.Moving:
+                case PotatoStates.Moving:
                     MoveToPosition();
                     break;
-                case StateMachine.Eating:
+                case PotatoStates.Eating:
                     EatPotato();
                     break;
                 default:
@@ -244,16 +240,16 @@ namespace PotatoGame
             if (victim != null)
             {
                 eatingEffect.SetActive(true);
-                stateMachine = StateMachine.Eating;
+                stateMachine = PotatoStates.Eating;
             }
             else if (roll < 0.45f)
             {
                 PickRandomPosition(); //move to new position
-                stateMachine = StateMachine.Moving;
+                stateMachine = PotatoStates.Moving;
             }
             else
             {
-                stateMachine = StateMachine.Idling; //idle in the same spot
+                stateMachine = PotatoStates.Idling; //idle in the same spot
             }
         }
         
@@ -311,11 +307,11 @@ namespace PotatoGame
 
                     switch (stateMachine)
                     {
-                        case StateMachine.Idling:
+                        case PotatoStates.Idling:
                             Gizmos.color = Color.green;
                             Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthParams.growthRadius);
                             break;
-                        case StateMachine.Moving:
+                        case PotatoStates.Moving:
                             //draw the seek range 
                             Gizmos.color = Color.black;
                             Gizmos.DrawWireSphere(this.transform.position, seekRange);
@@ -329,7 +325,7 @@ namespace PotatoGame
                             Gizmos.color = Color.magenta;
                             Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthParams.growthRadius);
                             break;
-                        case StateMachine.Eating:
+                        case PotatoStates.Eating:
                             Gizmos.color = Color.red;
                             Gizmos.DrawWireCube(this.transform.position, Vector3.one * growthParams.growthRadius);
 

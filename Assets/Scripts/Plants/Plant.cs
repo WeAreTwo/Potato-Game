@@ -6,6 +6,21 @@ using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
+    [System.Serializable]
+    public enum PlantPhase
+    {
+        Seed,
+        Grown, 
+        Sentient
+    }
+
+    [System.Serializable]
+    public enum PlantState
+    {
+        Uprooted,       //above ground
+        Planted,        //in the ground
+        Autonomous      //deus ex machina
+    }
     
     [System.Serializable]
     public class GrowthParams
@@ -28,20 +43,27 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public enum PlantPhase
+    public class Seed : State
     {
-        Seed,
-        Grown, 
-        Sentient
+
+        public void Grow(GameObject obj)
+        {
+            Debug.Log(obj.transform + "is growing");
+        }
+    }   
+    
+    [System.Serializable]
+    public class Grown : State
+    {
+        
+    }    
+    
+    [System.Serializable]
+    public class Autonomous : State
+    {
+        
     }
 
-    [System.Serializable]
-    public enum PlantState
-    {
-        Uprooted,       //above ground
-        Planted,        //in the ground
-        Autonomous      //deus ex machina
-    }
     
     //BASE CLASS FOR ALL LIVING THINGS THAT GROW
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
@@ -55,7 +77,10 @@ namespace PotatoGame
         
         //PLANT STATE
         [Header("STATES")]
+        [SerializeField] protected PlantPhase plantPhase = PlantPhase.Seed;
         [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
+
+        protected Seed seed;
         
         [SerializeField] protected bool halfling;
         
@@ -122,6 +147,7 @@ namespace PotatoGame
         
         protected virtual void Update()
         {
+            seed.Grow(this.gameObject);
             Die();
             switch (plantStatus)
             {
