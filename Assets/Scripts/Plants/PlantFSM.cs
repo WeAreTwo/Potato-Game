@@ -7,9 +7,13 @@ namespace PotatoGame
 {
     public abstract class PlantFSM : MonoBehaviour
     {
+        [Header("HEALTH")] [SerializeField] protected float health = 100.0f;
+        
         [SerializeField] protected GrowthParams growthParams;
         [SerializeField] protected StateMachine states;
-        
+
+        public StateMachine States => states;
+
         // Start is called before the first frame update
         protected virtual void Start()
         {
@@ -45,6 +49,14 @@ namespace PotatoGame
         protected virtual void OnDrawGizmos()
         {
             states.DrawGizmos();
+        }
+        
+        protected virtual void Die()
+        {
+            if (health <= 0)
+            {
+                Destroy(this.gameObject);
+            }
         }
     }
 }

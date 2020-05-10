@@ -9,6 +9,7 @@ namespace PotatoGame
     public class SeedState : State
     {
         //MEMBERS
+        protected const string name = "Seed";
         protected GrowthParams growthParams;
         protected Rigidbody rb;
         [SerializeField] protected bool growing;
@@ -33,7 +34,22 @@ namespace PotatoGame
             Grow();
             UpdateGrowthRadius();
         }
-        
+
+        public override void OnCollisionEnter(Collision col)
+        {
+            Debug.Log("Colliding");
+            var plantComponent = col.gameObject.GetComponent<PlantFSM>();
+            //if its also in the same state (this is what get type does)
+            // if (plantComponent != null && plantComponent.States.Current.Name == name)
+            // {
+            //     growthCompleted = true;
+            // }
+            if (plantComponent != null)
+            {
+                growthCompleted = true;
+            }
+        }
+
         protected virtual void PlantedSettings()
         {
             // Deactivate gravity and freeze all
@@ -58,7 +74,7 @@ namespace PotatoGame
         
         protected void UpdateGrowthRadius()
         {
-            if (growing)
+            if (growing && !growthCompleted)
             {
                 this.component.transform.localScale *= growthParams.growthPace;
                 growthParams.growthRadius *= growthParams.growthPace;
@@ -80,7 +96,7 @@ namespace PotatoGame
         public override void DrawGizmos()
         {
             //GROWTH RADIUS
-            if(growing) Gizmos.color = Color.magenta;
+            if(!growthCompleted) Gizmos.color = Color.magenta;
             else Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(this.component.transform.position, growthParams.growthRadius);
             

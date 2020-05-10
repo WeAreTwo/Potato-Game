@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,11 +9,12 @@ namespace PotatoGame
     [System.Serializable]
     public class State
     {
-        [SerializeField] protected string name;
+        protected const string name = "State";
         [SerializeField] protected MonoBehaviour component;
         protected bool hasExecutedStart = false;
         protected bool hasExecutedExit = false;
 
+        public String Name => name;
         public MonoBehaviour Component
         {
             get => component;
