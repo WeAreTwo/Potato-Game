@@ -11,9 +11,9 @@ namespace PotatoGame
         [SerializeField] protected StateMachine states;
         
         // Start is called before the first frame update
-        void Start()
+        protected virtual void Start()
         {
-            states = new StateMachine();
+            states = new StateMachine(this);
             states.Add("Seed", new SeedState(growthParams));
             states.Add("Grown", new GrownState(growthParams));
             states.Add("Autonomous", new AutonomousState());
@@ -22,24 +22,29 @@ namespace PotatoGame
         }
 
         // Update is called once per frame
-        void Update()
+        protected virtual void Update()
         {
             states.Update();
         }
 
-        protected void OnCollisionEnter(Collision col)
+        protected virtual void OnCollisionEnter(Collision col)
         {
             states.OnCollisionEnter(col);
         }
 
-        protected void OnCollisionStay(Collision col)
+        protected virtual void OnCollisionStay(Collision col)
         {
             states.OnCollisionStay(col);
         }
 
-        protected void OnCollisionExit(Collision col)
+        protected virtual void OnCollisionExit(Collision col)
         {
             states.OnCollisionExit(col);
+        }
+
+        protected virtual void OnDrawGizmos()
+        {
+            states.DrawGizmos();
         }
     }
 }

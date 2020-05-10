@@ -24,6 +24,7 @@ namespace PotatoGame
         public override void OnStateStart()
         {
             base.OnStateStart();
+            rb = component.GetComponent<Rigidbody>();
         }
 
         public override void OnStateUpdate()

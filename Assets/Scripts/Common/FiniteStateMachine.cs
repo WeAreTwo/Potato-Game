@@ -9,9 +9,15 @@ namespace PotatoGame
     public class State
     {
         [SerializeField] protected string name;
-        protected MonoBehaviour component;
+        [SerializeField] protected MonoBehaviour component;
         protected bool hasExecutedStart = false;
         protected bool hasExecutedExit = false;
+
+        public MonoBehaviour Component
+        {
+            get => component;
+            set => component = value;
+        }
 
         public void HandleInput(){}
         
@@ -61,15 +67,26 @@ namespace PotatoGame
         protected MonoBehaviour component;
         [SerializeField] protected Dictionary<string, State> stateDict = new Dictionary<string, State>();
         [SerializeField] protected State currentState = new State();
-	
+        
         public State Current { get { return currentState; } }
-	
         public void Add(string id, State state)	{ stateDict.Add(id, state); }
         public void Remove(string id) { stateDict.Remove(id); }
         public void Clear() { stateDict.Clear(); }
 
+        public StateMachine(MonoBehaviour component)
+        {
+            this.component = component;
+        }
+        
         public void Initialize(string id)
         {
+            //assign the monobehaviour from parent to each ind. states
+            foreach (KeyValuePair<string,State> state in stateDict)
+            {
+                state.Value.Component = this.component;
+            }
+            
+            //assign current state
             State initState = stateDict[id];
             currentState = initState;
             initState.EnterState();
@@ -97,8 +114,7 @@ namespace PotatoGame
         {
             currentState.OnStateUpdate();
         }
-	
-        
+
         public void OnCollisionEnter(Collision col) 
         {
             currentState.OnCollisionEnter(col);
@@ -110,6 +126,11 @@ namespace PotatoGame
         public void OnCollisionExit(Collision col) 
         {
             currentState.OnCollisionExit(col);
+        }
+
+        public void DrawGizmos()
+        {
+            currentState.DrawGizmos();
         }
     }
 
