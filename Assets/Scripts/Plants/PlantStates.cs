@@ -10,8 +10,9 @@ namespace PotatoGame
     {
         //MEMBERS
         protected GrowthParams growthParams;
-        protected bool growing;
-        protected bool growthCompleted;
+        protected Rigidbody rb;
+        [SerializeField] protected bool growing;
+        [SerializeField] protected bool growthCompleted;
 
         //CONSTRUCTOR
         public SeedState(GrowthParams growthParams)
@@ -20,10 +21,23 @@ namespace PotatoGame
         }
         
         //CALL METHODS 
+        public override void OnStateStart()
+        {
+            base.OnStateStart();
+        }
+
         public override void OnStateUpdate()
         {
-            base.OnStateUpdate();
+            PlantedSettings();
             Grow();
+            UpdateGrowthRadius();
+        }
+        
+        protected virtual void PlantedSettings()
+        {
+            // Deactivate gravity and freeze all
+            if(rb.useGravity == true) rb.useGravity = false;
+            if(rb.constraints != RigidbodyConstraints.FreezeAll) rb.constraints = RigidbodyConstraints.FreezeAll;
         }
 
         protected void Grow()
@@ -83,8 +97,8 @@ namespace PotatoGame
         
         //MEMBERS
         protected GrowthParams growthParams;
-        protected bool harvestable;
-        protected bool harvestPeriodCompleted;
+        [SerializeField] protected bool harvestable;
+        [SerializeField] protected bool harvestPeriodCompleted;
    
         //CONSTRUCTOR
         public GrownState(GrowthParams growthParams)

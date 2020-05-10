@@ -8,15 +8,16 @@ namespace PotatoGame
     [System.Serializable]
     public class State
     {
+        [SerializeField] protected string name;
         protected MonoBehaviour component;
-        protected bool hasExecutedEnter = false;
+        protected bool hasExecutedStart = false;
         protected bool hasExecutedExit = false;
 
         public void HandleInput(){}
         
         public void EnterState()
         {
-            OnStateEnter();   
+            OnStateStart();   
         }
 
         public void ExitState()
@@ -26,9 +27,9 @@ namespace PotatoGame
 
         #region Call Methods
         //When you first switch into this state
-        public virtual void OnStateEnter()
+        public virtual void OnStateStart()
         {
-            hasExecutedEnter = true;
+            hasExecutedStart = true;
         }
 
         //Everyframe while ur in this state
@@ -54,52 +55,61 @@ namespace PotatoGame
         #endregion
     }
     
-    
+    [System.Serializable]
     public class StateMachine
     {
-        protected Dictionary<string, State> stateDict = new Dictionary<string, State>();
-        protected State current = new State();
+        protected MonoBehaviour component;
+        [SerializeField] protected Dictionary<string, State> stateDict = new Dictionary<string, State>();
+        [SerializeField] protected State currentState = new State();
 	
-        public State Current { get { return current; } }
+        public State Current { get { return currentState; } }
 	
         public void Add(string id, State state)	{ stateDict.Add(id, state); }
         public void Remove(string id) { stateDict.Remove(id); }
         public void Clear() { stateDict.Clear(); }
 
-        public void Change(string id, params object[] args)
+        public void Initialize(string id)
         {
-            current.ExitState();
-            State next = stateDict[id];
-            next.EnterState();
-            current = next;
+            State initState = stateDict[id];
+            currentState = initState;
+            initState.EnterState();
         }
 
+        public void Change(string id, params object[] args)
+        {
+            currentState.ExitState();
+            State next = stateDict[id];
+            next.EnterState();
+            currentState = next;
+        }
+
+        public void HandleInput()
+        {
+            currentState.HandleInput();
+        }
+        
         public void Start()
         {
-            current.OnStateEnter();
+            currentState.OnStateStart();
         }
 	
         public void Update()
         {
-            current.OnStateUpdate();
+            currentState.OnStateUpdate();
         }
 	
-        public void HandleInput()
-        {
-            current.HandleInput();
-        }
         
         public void OnCollisionEnter(Collision col) 
         {
-            current.OnCollisionEnter(col);
+            currentState.OnCollisionEnter(col);
         }        
         public void OnCollisionStay(Collision col) 
         {
-            current.OnCollisionStay(col);
+            currentState.OnCollisionStay(col);
         }        
         public void OnCollisionExit(Collision col) 
         {
-            current.OnCollisionExit(col);
+            currentState.OnCollisionExit(col);
         }
     }
 
