@@ -37,7 +37,6 @@ namespace PotatoGame
 
         public override void OnCollisionEnter(Collision col)
         {
-            Debug.Log("Colliding");
             var plantComponent = col.gameObject.GetComponent<PlantFSM>();
             //if its also in the same state (this is what get type does)
             // if (plantComponent != null && plantComponent.States.Current.Name == name)
@@ -161,14 +160,21 @@ namespace PotatoGame
     [System.Serializable]
     public class AutonomousState : State
     {
+        
+        //MEMBERS
+        protected GrowthParams growthParams;
    
         //CONSTRUCTOR
-        public AutonomousState()
+        public AutonomousState(GrowthParams growthParams)
         {
-            
+            this.growthParams = growthParams;
         }
-        
-        
+
+        public override void OnStateUpdate()
+        {
+            base.OnStateUpdate();
+        }
+
         //GIZMOS
         public override void DrawGizmos()
         {
