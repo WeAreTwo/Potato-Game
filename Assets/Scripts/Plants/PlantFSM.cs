@@ -20,7 +20,6 @@ namespace PotatoGame
             states = new StateMachine(this);
             states.Add("Seed", new SeedState(growthParams));
             states.Add("Grown", new GrownState(growthParams));
-            states.Add("Autonomous", new AutonomousState());
             
             states.Initialize("Seed");
         }
