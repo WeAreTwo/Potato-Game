@@ -8,16 +8,31 @@ namespace PotatoGame
 {
     
     [System.Serializable]
-    public class GrowthParameters
+    public class GrowthParams
     {
+        //PLANTED/GROWTH PARAMS
+        [Header("GROWTH")]
+        public Vector3 growingAxis = Vector3.up;
+        public float growthRadius = 1.0f;  
+        public float growthPace = 1.0005f;                    
+    
+        public float growthTime = 0.0f;           //growth counter   
+        public float growthStartTime;             //time from when it was planted and growing
+        public float growthCompletionTime = 6.0f;      //time where it finished growing
+        
+        //PRIVATE MEMBERS 
+        public float harvestTime = 0.0f; 
+        public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
+        
         
     }
 
     [System.Serializable]
-    public enum RunMode
+    public enum PlantPhase
     {
-        Runtime,
-        Debugging
+        Seed,
+        Grown, 
+        Sentient
     }
 
     [System.Serializable]
@@ -41,30 +56,28 @@ namespace PotatoGame
         //PLANT STATE
         [Header("STATES")]
         [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
-        [SerializeField] protected bool growing = true;
+        
+        [SerializeField] protected bool halfling;
+        
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
+
+        [SerializeField] protected bool growing = true;
+        [SerializeField] protected bool growthCompleted;
+        
         [SerializeField] protected bool harvestable;
+        [SerializeField] protected bool harvestPeriodCompleted;
         
         //PLANTING PARAMS
         [Header("PLANTING")]
         [SerializeField] protected float plantingDepth;
         [SerializeField] protected Vector2 plantingDepthRange = new Vector2(0.3f, 0.45f);
         
-        //PLANTED/GROWTH PARAMS
-        [Header("GROWTH")]
-        [SerializeField] protected Vector3 growingAxis = Vector3.up;
-        [SerializeField] protected float growthRadius = 1.0f;  
-        [SerializeField] protected float growthPace = 1.0005f;                    
-    
-        [SerializeField] protected float growthTime = 0.0f;           //growth counter   
-        [SerializeField] protected float growthStartTime;             //time from when it was planted and growing
-        [SerializeField] protected float growthCompletionTime = 6.0f;      //time where it finished growing
-        
-        //AUTONOMOUS PARAMS
+        //GROWTH PARAMS
+        [SerializeField] protected GrowthParams growthParams;
         
         //NEIGHBOUGRING PLANTS
-        [SerializeField] protected List<Plant> neighbouringPlants = new List<Plant>();
+        protected List<Plant> neighbouringPlants = new List<Plant>();
         
         //COMPONENTS 
         protected Rigidbody rb;
@@ -76,7 +89,10 @@ namespace PotatoGame
         public bool Planting { get => planting; set => planting = value; }
         public bool Planted { get => planted; }
 
-        public float GrowthRadius { get => growthRadius; }
+        public float GrowthRadius { get => growthParams.growthRadius; }
+
+        public float Health { get => health; set => health = value; }
+
         #endregion
 
         #region Call Methods
@@ -106,6 +122,7 @@ namespace PotatoGame
         
         protected virtual void Update()
         {
+            Die();
             switch (plantStatus)
             {
                 case PlantState.Uprooted:
@@ -127,13 +144,12 @@ namespace PotatoGame
         
         protected virtual void OnEnable()
         {
-            growthStartTime = Time.time; //Note: need to refactor this line 
-            if(GameManager.Instance.plantsController != null) GameManager.Instance.plantsController.Plants.Add(this);
+            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Add(this);
         }
 
         protected virtual void OnDisable()
         {
-            ///if(GameManager.Instance.plantsController != null) GameManager.Instance.plantsController.Plants.Remove(this);
+            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Remove(this);
         }
         #endregion
         
@@ -157,6 +173,18 @@ namespace PotatoGame
             }
         }
         
+        #endregion
+
+        #region Common
+
+        protected virtual void Die()
+        {
+            if (health <= 0)
+            {
+                Destroy(this.gameObject);
+            }
+        }
+
         #endregion
 
         #region Uprooted State
@@ -209,16 +237,28 @@ namespace PotatoGame
         
         protected virtual void Grow()
         {
-            if (growthTime <= growthCompletionTime && growing)
+            //growth period 
+            if (growthParams.growthTime <= growthParams.growthCompletionTime && !growthCompleted)
             {
-                growthTime += Time.deltaTime;
-                // GrowAlongAxis();
+                growthParams.growthTime += Time.deltaTime;
+                growing = true;
             }
-            
-            if(growthTime >= growthCompletionTime)
+            else if(growthParams.growthTime >= growthParams.growthCompletionTime)
             {
+                growthCompleted = true;
                 growing = false;
+            }
+
+            //harvest period
+            if (growthParams.harvestTime <= growthParams.harvestPeriod && growthCompleted && !harvestPeriodCompleted)
+            {
+                growthParams.harvestTime += Time.deltaTime;
                 harvestable = true;
+            }
+            else if(growthParams.harvestTime >= growthParams.harvestPeriod)
+            {
+                harvestPeriodCompleted = true;
+                harvestable = false;
             }
         }
 
@@ -226,20 +266,20 @@ namespace PotatoGame
         {
             if (growing)
             {
-                this.transform.localScale *= growthPace;
-                growthRadius *= growthPace;
+                this.transform.localScale *= growthParams.growthPace;
+                growthParams.growthRadius *= growthParams.growthPace;
             }
         }
 
         protected virtual void SetGrowthAxis()
         {
-            growingAxis.x = Random.Range(-0.50f, 0.50f);
-            growingAxis.z = Random.Range(-0.50f, 0.50f);
+            growthParams.growingAxis.x = Random.Range(-0.50f, 0.50f);
+            growthParams.growingAxis.z = Random.Range(-0.50f, 0.50f);
         }
 
         protected virtual void GrowAlongAxis()
         {
-            this.transform.position += growingAxis * 0.001f;
+            this.transform.position += growthParams.growingAxis * 0.001f;
         }
 
         protected virtual void OnPlantCollision(Collision col)
@@ -260,7 +300,7 @@ namespace PotatoGame
                 {
                     if (this == plant) continue; //ignore self by skipping it 
                         
-                    if(Vector3.Distance(this.transform.position, plant.transform.position) < this.growthRadius + plant.growthRadius)
+                    if(Vector3.Distance(this.transform.position, plant.transform.position) < this.growthParams.growthRadius + plant.growthParams.growthRadius)
                         return true;
                 }
             }
@@ -277,11 +317,18 @@ namespace PotatoGame
             //GROWTH RADIUS
             if(growing) Gizmos.color = Color.magenta;
             else Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(this.transform.position, growthRadius);
+            Gizmos.DrawWireSphere(this.transform.position, growthParams.growthRadius);
             
             //GROWTH AXIS 
             Gizmos.color = Color.black;
-            Gizmos.DrawLine(this.transform.position, this.transform.position + growingAxis * 3.0f);
+            Gizmos.DrawLine(this.transform.position, this.transform.position + growthParams.growingAxis * 3.0f);
+            
+            //HARVESTABLES
+            if (harvestable)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawSphere(this.transform.position + Vector3.up * growthParams.growthRadius, 0.2f);
+            }
             
         }
         protected virtual void AutonomousGizmos() { }
