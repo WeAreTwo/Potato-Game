@@ -166,10 +166,6 @@ namespace PotatoGame
         [Header("STATES")]
         [SerializeField] protected PlantPhase plantPhase = PlantPhase.Seed;
         [SerializeField] protected PlantState plantStatus = PlantState.Uprooted;
-
-        protected Seed seed;
-        
-        [SerializeField] protected bool halfling;
         
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
