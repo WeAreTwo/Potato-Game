@@ -9,21 +9,24 @@ namespace PotatoGame
     public class PlayerController : MonoBehaviour
     {
         // public variables -------------------------
+        [Title("Controls")]
         public float m_movementSpeed = 10f;             // Movement speed of the player
-        public float m_floorOffset;
+        public float m_rotationSpeed = 5f;              // Movement speed for rotation
+        [Title("Physics")]
+        public float m_groundOffset = 0.2f;             // Where does the ground stands in relation to the player
+        public float m_gravityForce = -9.81f;           // Gravity that is applied with raycasters 
+        public LayerMask m_ground;                      // Ground layer (physics)
 
 
 
 
         // private variables ------------------------
-        private Rigidbody m_rb;                         // Instance of the rigidbody
-        private Camera m_cam;                           // Instance of the main camera in the scene   
-        private Vector3 m_moveDirection;                // Where the player is going
+        private CharacterController m_controller;       // Instance of the character controller
+        private Transform m_groundCheck;                // Instance of the ground check position
+        private Vector3 m_velocity;                     // Velocity to apply to the player
+        private bool m_isGrounded;                      // Check if the controller is in contact with the ground
+        private Quaternion m_lookRotation;              // Rotation that need to be look at
 
-        private Vector3 m_gravityForce;                 // Gravity that is applied with raycasters
-        private Vector3 m_raycastFloorPos;
-        private Vector3 m_combinedRaycast;
-        private Vector3 m_floorMovement;            
 
 
 
@@ -33,9 +36,8 @@ namespace PotatoGame
         void Start()
         {
             // Get the components
-            m_rb = GetComponent<Rigidbody>();
-            m_cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-
+            m_controller = GetComponent<CharacterController>();
+            m_groundCheck = transform.GetChild(0).transform;
         }
 
         // ------------------------------------------
@@ -47,13 +49,6 @@ namespace PotatoGame
             CheckInput();
         }
 
-        void FixedUpdate()
-        {
-            // Make the player move with physics
-            m_rb.velocity = (m_moveDirection * m_movementSpeed) + m_gravityForce;
-
-        }
-
 
         // ------------------------------------------
         // Methods
@@ -61,29 +56,33 @@ namespace PotatoGame
         // Check user's input ------------------------------------------------------
         private void CheckInput()
         {
-            m_moveDirection = Vector3.zero;
+            // Check if the player is grounded
+            m_isGrounded = Physics.CheckSphere(m_groundCheck.position, m_groundOffset, m_ground, QueryTriggerInteraction.Ignore);
 
-            // Hold the value of the player's axis
+            if (m_isGrounded && m_velocity.y < 0)
+                m_velocity.y = 0f;
+
+            // Step between each movement
+            float step = m_movementSpeed * Time.deltaTime;
+            
+            // Take player's inputs
             float horizontalAxis = Input.GetAxis("Horizontal");
             float verticalAxis = Input.GetAxis("Vertical");
 
-            // Always be true with the camera position
-            Vector3 correctedHorizontal = horizontalAxis * Camera.main.transform.forward;
-            Vector3 correctedVertical = verticalAxis * Camera.main.transform.right;
-            Vector3 combinedInput = correctedHorizontal + correctedVertical;
+            // Catch the inputs in a vector3
+            Vector3 move = new Vector3(horizontalAxis, 0, verticalAxis);
 
-            // Normalize the correction (for constant diagonal movement)
-            m_moveDirection = new Vector3(combinedInput.normalized.x, 0, combinedInput.normalized.z);
+            // When we record input, move the controller
+            if (move != Vector3.zero)
+            {
+                m_controller.Move(new Vector3(horizontalAxis, 0, verticalAxis) * step);
+                m_lookRotation = Quaternion.LookRotation(move);
+                transform.rotation = Quaternion.Lerp(transform.rotation, m_lookRotation, m_rotationSpeed * Time.deltaTime);
+            }
 
-            // Look in the correct direction 
-            // (make sure it stays in same direction when no inputs)
-            if (m_moveDirection != Vector3.zero)
-                transform.rotation = Quaternion.LookRotation(-m_moveDirection);
+            // Add gravity
+            m_velocity.y += m_gravityForce * Time.deltaTime;
+            m_controller.Move(m_velocity * Time.deltaTime);
         }
-
-
-        
-        
-        
     }
 }

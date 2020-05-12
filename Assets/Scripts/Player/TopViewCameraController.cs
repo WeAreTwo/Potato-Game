@@ -54,7 +54,7 @@ namespace PotatoGame
             RotateCam();
         }
 
-        void FixedUpdate()
+        void LateUpdate()
         {
             // Look at the player
             FollowTarget();
