@@ -194,14 +194,7 @@ namespace PotatoGame
         [SerializeField] protected Vector3 seekPosition;
         [SerializeField] protected float seekRange = 5.0f;
         [SerializeField] protected float seekForce = 5.0f;
-
-        //TIMERS
-        protected float idleTimer = 0.0f;
-        protected float idleTime = 5.0f;
-        protected float moveTimer = 0.0f;
-        protected float moveTime = 5.0f;
-        protected float eatTimer = 0.0f;
-        protected float eatTime = 3.0f;
+        
 
         protected Rigidbody rb;
 
@@ -257,55 +250,15 @@ namespace PotatoGame
             Vector3 currentPosXZ = new Vector3(component.transform.position.x, 0, component.transform.position.z);
             seekPosition = currentPosXZ + (randomPos * seekRange);
         }
-
-        //GIZMOS
-        public override void DrawGizmos()
-        {
-            if(potatoFSM == null)
-                return;
-            
-            switch (potatoFSM.Current.Name)
-            {
-                case "Idling":
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawWireCube(component.transform.position, Vector3.one * growthParams.growthRadius);
-                    break;
-                case "Moving":
-                    //draw the seek range 
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawWireSphere(component.transform.position, seekRange);
-                    //draw the target 
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawWireSphere(seekPosition, 0.2f);
-                    //draw a line to target
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawLine(component.transform.position, seekPosition);
-
-                    Gizmos.color = Color.magenta;
-                    Gizmos.DrawWireCube(component.transform.position, Vector3.one * growthParams.growthRadius);
-                    break;
-                case "Eating":
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawWireCube(component.transform.position, Vector3.one * growthParams.growthRadius);
-
-                    if (victim != null)
-                    {
-                        //draw a line to target
-                        Gizmos.color = Color.black;
-                        Gizmos.DrawLine(component.transform.position, victim.transform.position);
-                    }
-
-                    break;
-                default:
-                    break;
-            }
-        }
+        
     }
 
     [System.Serializable]
     public class Idle : State
     {
-        
+        protected GrowthParams growthParams;
+        protected float idleTimer = 0.0f;
+        protected float idleTime = 5.0f;
 
         //When you first switch into this state
         public override void OnStateStart()
@@ -317,24 +270,49 @@ namespace PotatoGame
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
+            Wait();
         }
         
         //When you exit this state
         public override void OnStateExit()
         {
             base.OnStateExit();
+        }
+        
+        //ACTIONS 
+        protected virtual void Wait()
+        {
+            idleTimer += Time.deltaTime;
+            //condition for completion
+            if (idleTimer >= idleTime)
+            {
+                idleTimer = 0;
+            }
+        }
+
+        public override void DrawGizmos()
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one * growthParams.growthRadius);
         }
     }
     
     [System.Serializable]
     public class Move : State
     {
-        
+        protected GrowthParams growthParams;
+        protected float moveTimer = 0.0f;
+        protected float moveTime = 5.0f;
+        protected Vector3 seekPosition; 
+        protected float seekRange = 5.0f;
+        protected float seekForce = 5.0f;
+        protected Rigidbody rb;
 
         //When you first switch into this state
         public override void OnStateStart()
         {
             base.OnStateStart();
+            rb = component.GetComponent<Rigidbody>();
         }
 
         //Everyframe while ur in this state
@@ -347,13 +325,56 @@ namespace PotatoGame
         public override void OnStateExit()
         {
             base.OnStateExit();
+        }
+        
+        protected virtual void MoveToPosition()
+        {
+            if (moveTimer <= moveTime)
+            {
+                moveTimer += Time.deltaTime;
+                seekPosition.y = component.transform.position.y;
+                Vector3 force = (seekPosition - component.transform.position).normalized;
+                rb.AddForce(force * seekForce);            
+            
+            }
+            //condition for completion 
+            if (Vector3.Distance(component.transform.position, seekPosition) < 1.5f * growthParams.growthRadius || moveTimer >= moveTime)
+            {
+                moveTimer = 0;  // reset the timer 
+                // MakeDecision(); // make new decision 
+            }
+        }
+
+        public override void DrawGizmos()
+        {
+            base.DrawGizmos();
+            //draw the seek range 
+            Gizmos.color = Color.black;
+            Gizmos.DrawWireSphere(component.transform.position, seekRange);
+            //draw the target 
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(seekPosition, 0.2f);
+            //draw a line to target
+            Gizmos.color = Color.black;
+            Gizmos.DrawLine(component.transform.position, seekPosition);
+
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one * growthParams.growthRadius);
         }
     }
     
     [System.Serializable]
     public class Eat : State
     {
+        protected GrowthParams growthParams;
+        protected Rigidbody rb;
+        protected float eatTimer = 0.0f;
+        protected float eatTime = 3.0f;
         
+        [Header("AUTONOMOUS AGENT")] 
+        [SerializeField] protected Plant victim;
+        [SerializeField] protected float seekForce = 5.0f;
+
 
         //When you first switch into this state
         public override void OnStateStart()
@@ -371,6 +392,59 @@ namespace PotatoGame
         public override void OnStateExit()
         {
             base.OnStateExit();
+        }
+        
+        protected virtual void EatPotato()
+        {
+            //condition for completion
+            if (victim == null)
+            {
+                // eatingEffect.SetActive(false);
+                // MakeDecision();
+            }
+            else
+            {
+                Vector3 targetPosition = victim.transform.position;
+                if (Vector3.Distance(component.transform.position, targetPosition) < 2.5f * growthParams.growthRadius)
+                {
+                    eatTimer += Time.deltaTime;
+                    if (eatTimer >= eatTime)
+                    {
+                        eatTimer = 0.0f;
+                        if (victim.Health - 25.0f <= 0)
+                        {
+                            // killCount++;
+                            victim.Health -= 25.0f;
+                        }
+                        else
+                        {
+                            victim.Health -= 25.0f;
+                        }
+                    }
+                }
+                else
+                {
+                    Vector3 force = (targetPosition - component.transform.position).normalized;
+                    rb.AddForce(force * seekForce);
+                }
+                
+            }
+        }
+
+        public override void DrawGizmos()
+        {
+            base.DrawGizmos();
+            
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one * growthParams.growthRadius);
+
+            if (victim != null)
+            {
+                //draw a line to target
+                Gizmos.color = Color.black;
+                Gizmos.DrawLine(component.transform.position, victim.transform.position);
+            }
+
         }
     }
     
