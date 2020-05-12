@@ -11,10 +11,19 @@ namespace PotatoGame
     {
         protected const string name = "State";
         [SerializeField] protected MonoBehaviour component;
+
+        protected bool hasFinished = false;
         protected bool hasExecutedStart = false;
         protected bool hasExecutedExit = false;
 
+        protected string nextState;
+        
         public String Name => name;
+        public bool HasFinished => hasFinished;
+        public bool HasExecutedStart => hasExecutedStart;
+        public bool HasExecutedExit => hasExecutedExit;
+        public string NextState => nextState;
+
         public MonoBehaviour Component
         {
             get => component;
@@ -41,7 +50,12 @@ namespace PotatoGame
         }
 
         //Everyframe while ur in this state
-        public virtual void OnStateUpdate() {}
+        public virtual void OnStateUpdate()
+        {
+            if (hasFinished)
+                if(!hasExecutedExit)
+                    OnStateExit();
+        }
         
         //When you exit this state
         public virtual void OnStateExit()
@@ -94,7 +108,15 @@ namespace PotatoGame
             initState.EnterState();
         }
 
-        public void Change(string id, params object[] args)
+        public void CheckCompletion()
+        {
+            if (currentState.HasFinished && currentState.HasExecutedExit)
+            {
+                ChangeState(currentState.NextState);
+            }
+        }
+
+        public void ChangeState(string id)
         {
             currentState.ExitState();
             State next = stateDict[id];
@@ -115,6 +137,7 @@ namespace PotatoGame
         public void Update()
         {
             currentState.OnStateUpdate();
+            CheckCompletion();
         }
 
         public void OnCollisionEnter(Collision col) 

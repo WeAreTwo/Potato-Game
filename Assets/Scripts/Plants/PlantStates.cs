@@ -6,6 +6,14 @@ namespace PotatoGame
 {
 
     [System.Serializable]
+    public enum PlantStates
+    {
+        Seed,
+        Grown, 
+        Autonomous
+    }
+
+    [System.Serializable]
     public class SeedState : State
     {
         //MEMBERS
@@ -30,9 +38,16 @@ namespace PotatoGame
 
         public override void OnStateUpdate()
         {
+            base.OnStateUpdate();
             PlantedSettings();
             Grow();
             UpdateGrowthRadius();
+        }
+
+        public override void OnStateExit()
+        {
+            base.OnStateExit();
+            nextState = PlantStates.Grown.ToString();
         }
 
         public override void OnCollisionEnter(Collision col)
@@ -67,6 +82,7 @@ namespace PotatoGame
             else if(growthParams.growthTime >= growthParams.growthCompletionTime)
             {
                 growthCompleted = true;
+                hasFinished = true;
                 growing = false;
             }
         }

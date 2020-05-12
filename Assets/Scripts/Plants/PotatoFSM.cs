@@ -9,12 +9,12 @@ namespace PotatoGame
     {
         protected override void Start()
         {
-            states = new StateMachine(this);
-            states.Add("Seed", new SeedState(growthParams));
-            states.Add("Grown", new GrownState(growthParams));
-            states.Add("Autonomous", new AutonomousState(growthParams));
+            fsm = new StateMachine(this);
+            fsm.Add("Seed", new SeedState(growthParams));
+            fsm.Add("Grown", new GrownState(growthParams));
+            fsm.Add("Autonomous", new AutonomousState(growthParams));
             
-            states.Initialize("Seed");
+            fsm.Initialize("Seed");
         }
 
         // Update is called once per frame

@@ -10,44 +10,44 @@ namespace PotatoGame
         [Header("HEALTH")] [SerializeField] protected float health = 100.0f;
         
         [SerializeField] protected GrowthParams growthParams;
-        [SerializeField] protected StateMachine states;
+        [SerializeField] protected StateMachine fsm;
 
-        public StateMachine States => states;
+        public StateMachine FSM => fsm;
 
         // Start is called before the first frame update
         protected virtual void Start()
         {
-            states = new StateMachine(this);
-            states.Add("Seed", new SeedState(growthParams));
-            states.Add("Grown", new GrownState(growthParams));
+            fsm = new StateMachine(this);
+            fsm.Add("Seed", new SeedState(growthParams));
+            fsm.Add("Grown", new GrownState(growthParams));
             
-            states.Initialize("Seed");
+            fsm.Initialize("Seed");
         }
 
         // Update is called once per frame
         protected virtual void Update()
         {
-            states.Update();
+            fsm.Update();
         }
 
         protected virtual void OnCollisionEnter(Collision col)
         {
-            states.OnCollisionEnter(col);
+            fsm.OnCollisionEnter(col);
         }
 
         protected virtual void OnCollisionStay(Collision col)
         {
-            states.OnCollisionStay(col);
+            fsm.OnCollisionStay(col);
         }
 
         protected virtual void OnCollisionExit(Collision col)
         {
-            states.OnCollisionExit(col);
+            fsm.OnCollisionExit(col);
         }
 
         protected virtual void OnDrawGizmos()
         {
-            states.DrawGizmos();
+            fsm.DrawGizmos();
         }
         
         protected virtual void Die()
