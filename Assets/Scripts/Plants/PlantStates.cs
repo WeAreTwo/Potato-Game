@@ -47,7 +47,6 @@ namespace PotatoGame
         public override void OnStateExit()
         {
             base.OnStateExit();
-            nextState = PlantStates.Grown.ToString();
         }
 
         public override void OnCollisionEnter(Collision col)
@@ -82,8 +81,8 @@ namespace PotatoGame
             else if(growthParams.growthTime >= growthParams.growthCompletionTime)
             {
                 growthCompleted = true;
-                hasFinished = true;
                 growing = false;
+                TriggerExit(PlantStates.Grown);
             }
         }
         
@@ -157,6 +156,7 @@ namespace PotatoGame
             {
                 harvestPeriodCompleted = true;
                 harvestable = false;
+                TriggerExit(PlantState.Autonomous);
             }
         }
         

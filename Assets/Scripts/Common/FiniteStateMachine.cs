@@ -9,15 +9,22 @@ namespace PotatoGame
     [System.Serializable]
     public class State
     {
+        protected MonoBehaviour component;
+        protected Dictionary<string, State> allStates;
+        
         protected const string name = "State";
-        [SerializeField] protected MonoBehaviour component;
-
         protected bool hasFinished = false;
         protected bool hasExecutedStart = false;
         protected bool hasExecutedExit = false;
 
         protected string nextState;
-        
+
+        public Dictionary<string, State> AllStates
+        {
+            get => allStates;
+            set => allStates = value;
+        }
+
         public String Name => name;
         public bool HasFinished => hasFinished;
         public bool HasExecutedStart => hasExecutedStart;
@@ -40,6 +47,15 @@ namespace PotatoGame
         public void ExitState()
         {
             OnStateExit();
+        }
+
+        public virtual void TriggerExit(Enum T)
+        {
+            if (allStates.ContainsKey(T.ToString()))
+            {
+                nextState = T.ToString();
+                hasFinished = true;
+            }
         }
 
         #region Call Methods
@@ -83,7 +99,8 @@ namespace PotatoGame
         protected MonoBehaviour component;
         [SerializeField] protected Dictionary<string, State> stateDict = new Dictionary<string, State>();
         [SerializeField] protected State currentState = new State();
-        
+
+        public Dictionary<string, State> StateDict => stateDict;
         public State Current { get { return currentState; } }
         public void Add(string id, State state)	{ stateDict.Add(id, state); }
         public void Remove(string id) { stateDict.Remove(id); }
@@ -100,6 +117,7 @@ namespace PotatoGame
             foreach (KeyValuePair<string,State> state in stateDict)
             {
                 state.Value.Component = this.component;
+                state.Value.AllStates = stateDict;
             }
             
             //assign current state
@@ -112,7 +130,8 @@ namespace PotatoGame
         {
             if (currentState.HasFinished && currentState.HasExecutedExit)
             {
-                ChangeState(currentState.NextState);
+                if(currentState.NextState != null)
+                    ChangeState(currentState.NextState);
             }
         }
 
