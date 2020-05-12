@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PotatoGame
 {
@@ -37,7 +38,7 @@ namespace PotatoGame
             set => component = value;
         }
 
-        public void HandleInput(){}
+        public virtual void HandleInput(){}
         
         public void EnterState()
         {
@@ -49,7 +50,7 @@ namespace PotatoGame
             OnStateExit();
         }
 
-        public virtual void TriggerExit(Enum T)
+        public void TriggerExit(Enum T)
         {
             if (allStates.ContainsKey(T.ToString()))
             {
@@ -94,7 +95,7 @@ namespace PotatoGame
     }
     
     [System.Serializable]
-    public class StateMachine
+    public class StateMachine<T> where T : Enum
     {
         protected MonoBehaviour component;
         [SerializeField] protected Dictionary<string, State> stateDict = new Dictionary<string, State>();
@@ -109,6 +110,7 @@ namespace PotatoGame
         public StateMachine(MonoBehaviour component)
         {
             this.component = component;
+            
         }
         
         public void Initialize(string id)
@@ -174,7 +176,8 @@ namespace PotatoGame
 
         public void DrawGizmos()
         {
-            currentState.DrawGizmos();
+            if(currentState != null)
+                currentState.DrawGizmos();
         }
     }
 

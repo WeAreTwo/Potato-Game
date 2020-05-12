@@ -10,14 +10,14 @@ namespace PotatoGame
         [Header("HEALTH")] [SerializeField] protected float health = 100.0f;
         
         [SerializeField] protected GrowthParams growthParams;
-        [SerializeField] protected StateMachine fsm;
+        [SerializeField] protected StateMachine<PlantStates> fsm;
 
-        public StateMachine FSM => fsm;
+        public StateMachine<PlantStates> FSM => fsm;
 
         // Start is called before the first frame update
         protected virtual void Start()
         {
-            fsm = new StateMachine(this);
+            fsm = new StateMachine<PlantStates>(this);
             fsm.Add("Seed", new SeedState(growthParams));
             fsm.Add("Grown", new GrownState(growthParams));
             
