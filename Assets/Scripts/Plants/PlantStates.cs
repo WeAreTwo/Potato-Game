@@ -205,6 +205,7 @@ namespace PotatoGame
             }
             else
             {
+                transitionTime = 0;
                 TriggerExit(PlantStates.Idle);
             }
         }
@@ -220,7 +221,7 @@ namespace PotatoGame
             component.Rb.constraints = RigidbodyConstraints.None;
     
             PickRandomPosition();
-            // potatoEyes.SetActive(true);
+            // component.potatoEyes.SetActive(true);
         }
     
         protected virtual bool CheckLineOfSight(Vector3 target)
@@ -309,18 +310,29 @@ namespace PotatoGame
         public override void OnStateStart()
         {
             base.OnStateStart();
+            PickRandomPosition();
         }
     
         //Everyframe while ur in this state
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
+            MoveToPosition();
         }
         
         //When you exit this state
         public override void OnStateExit()
         {
             base.OnStateExit();
+        }
+        
+        protected virtual void PickRandomPosition()
+        {
+            float randX = Random.Range(-1.0f, 1.0f);
+            float randY = Random.Range(-1.0f, 1.0f);
+            Vector3 randomPos = new Vector3(randX,0,randY);
+            Vector3 currentPosXZ = new Vector3(component.transform.position.x,0,component.transform.position.z);
+            seekPosition = currentPosXZ + (randomPos * seekRange);
         }
         
         protected virtual void MoveToPosition()
@@ -399,7 +411,7 @@ namespace PotatoGame
             //condition for completion
             if (victim == null)
             {
-                // eatingEffect.SetActive(false);
+                component.eatingEffect.SetActive(false);
                 // MakeDecision();
             }
             else

@@ -19,8 +19,8 @@ namespace PotatoGame
     public class PotatoFSM : PlantFSM
     {
         [Header("POTATO PARTS")] 
-        [SerializeField] protected GameObject potatoEyes;
-        [SerializeField] protected GameObject eatingEffect;
+        public GameObject potatoEyes;
+        public GameObject eatingEffect;
         
         protected override void Start()
         {
