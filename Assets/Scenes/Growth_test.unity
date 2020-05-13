@@ -1018,6 +1018,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &691422250 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2595752278288454030, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1153483774}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &691422251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 691422250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d790077a6fafc74fa3b49cc87ec34d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+  growthParams:
+    growingAxis: {x: 0, y: 1, z: 0}
+    growthRadius: 1
+    growthPace: 1.0005
+    growthTime: 0
+    growthStartTime: 0
+    growthCompletionTime: 6
+    harvestTime: 0
+    harvestPeriod: 15
+  fsm: {}
+  potatoEyes: {fileID: 0}
+  eatingEffect: {fileID: 0}
 --- !u!1 &705285275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,6 +1120,112 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -462981019419857548, guid: decefa32d44825549b8e84a89013a17e, type: 3}
+--- !u!1 &996945075 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2595752278288454030, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1444845931}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &996945076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996945075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d790077a6fafc74fa3b49cc87ec34d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+  growthParams:
+    growingAxis: {x: 0, y: 1, z: 0}
+    growthRadius: 1
+    growthPace: 1.0005
+    growthTime: 0
+    growthStartTime: 0
+    growthCompletionTime: 1.52
+    harvestTime: 0
+    harvestPeriod: 15
+  fsm: {}
+  potatoEyes: {fileID: 0}
+  eatingEffect: {fileID: 0}
+--- !u!1001 &1153483774
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454030, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_Name
+      value: GrowingPotato (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454030, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 3676814569702355311, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a, type: 3}
 --- !u!1 &1221371751
 GameObject:
   m_ObjectHideFlags: 0
@@ -1183,6 +1320,81 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 13.2, z: 42.38}
   m_Center: {x: 0, y: 6.79, z: 0}
+--- !u!1001 &1444845931
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454027, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454030, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_Name
+      value: GrowingPotato (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2595752278288454030, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 3676814569702355311, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 8c85a3a7a8cfeae41bc37eaef51ff74a, type: 3}
 --- !u!114 &1643017478 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 925961915555528458, guid: 60eadde50831ce547a6979a6cbf06e8e,
@@ -1751,12 +1963,12 @@ PrefabInstance:
     - target: {fileID: 2372614301526207880, guid: 44ef663f1f886c049804e4a6f996f13b,
         type: 3}
       propertyPath: areaSurface.x
-      value: 50
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2372614301526207880, guid: 44ef663f1f886c049804e4a6f996f13b,
         type: 3}
       propertyPath: areaSurface.z
-      value: 50
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2372614301526207880, guid: 44ef663f1f886c049804e4a6f996f13b,
         type: 3}
