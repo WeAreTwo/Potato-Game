@@ -4,15 +4,6 @@ using UnityEngine;
 
 namespace PotatoGame
 {
-
-    [System.Serializable]
-    public enum PlantStates
-    {
-        Seed,
-        Grown,
-        Autonomous
-    }
-
     [System.Serializable]
     public class SeedState<T> : State where T : PlantFSM
     {
@@ -178,17 +169,16 @@ namespace PotatoGame
     public class AutonomousState<T> : State where T : PotatoFSM
     {
         protected T component;
-        //MEMBERS
-        protected StateMachine potatoFSM;
         
-        [Header("AUTONOMOUS AGENT")] 
-        [SerializeField] protected bool poppedOut;
-    
+        [Header("AUTONOMOUS AGENT")]
         [SerializeField] protected Plant victim;
         [SerializeField] protected Vector3 seekPosition;
         [SerializeField] protected float seekRange = 5.0f;
         [SerializeField] protected float seekForce = 5.0f;
 
+        protected float transitionTime = 0;
+        protected float transitionTimer = 5.0f;
+        
         //CONSTRUCTOR
         public AutonomousState(T component)
         {
@@ -204,6 +194,19 @@ namespace PotatoGame
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
+            Transition();
+        }
+
+        protected virtual void Transition()
+        {
+            if (transitionTime < transitionTimer)
+            {
+                transitionTime += Time.deltaTime;
+            }
+            else
+            {
+                TriggerExit(PlantStates.Idle);
+            }
         }
     
         protected virtual void PopOutOfTheGround()
@@ -255,26 +258,14 @@ namespace PotatoGame
         {
             this.component = component;
         }
-    
-        //When you first switch into this state
-        public override void OnStateStart()
-        {
-            base.OnStateStart();
-        }
-    
+        
         //Everyframe while ur in this state
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
             Wait();
         }
-        
-        //When you exit this state
-        public override void OnStateExit()
-        {
-            base.OnStateExit();
-        }
-        
+
         //ACTIONS 
         protected virtual void Wait()
         {
@@ -283,6 +274,10 @@ namespace PotatoGame
             if (idleTimer >= idleTime)
             {
                 idleTimer = 0;
+            }
+            else
+            {
+                TriggerExit(PlantStates.Move);
             }
         }
     

@@ -4,6 +4,17 @@ using UnityEngine;
 
 namespace PotatoGame
 {
+    
+    [System.Serializable]
+    public enum PlantStates
+    {
+        Seed,
+        Grown,
+        Autonomous,
+        Idle,
+        Move,
+        Eat
+    }
    
     public class PotatoFSM : PlantFSM
     {

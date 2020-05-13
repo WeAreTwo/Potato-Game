@@ -1047,6 +1047,8 @@ MonoBehaviour:
     harvestTime: 0
     harvestPeriod: 15
   fsm: {}
+  potatoEyes: {fileID: 0}
+  eatingEffect: {fileID: 0}
 --- !u!1 &705285275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1143,10 +1145,12 @@ MonoBehaviour:
     growthPace: 1.0005
     growthTime: 0
     growthStartTime: 0
-    growthCompletionTime: 6
+    growthCompletionTime: 1.52
     harvestTime: 0
     harvestPeriod: 15
   fsm: {}
+  potatoEyes: {fileID: 0}
+  eatingEffect: {fileID: 0}
 --- !u!1001 &1153483774
 PrefabInstance:
   m_ObjectHideFlags: 0
