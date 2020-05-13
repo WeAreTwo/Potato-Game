@@ -5,22 +5,39 @@ using UnityEngine;
 
 namespace PotatoGame
 {
+    [RequireComponent(typeof(Rigidbody))]        //automatically add rb
+    [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
     public abstract class PlantFSM : MonoBehaviour
     {
         [Header("HEALTH")] [SerializeField] protected float health = 100.0f;
         
         [SerializeField] protected GrowthParams growthParams;
-        [SerializeField] protected StateMachine<PlantStates> fsm;
+        [SerializeField] protected StateMachine fsm;
 
-        public StateMachine<PlantStates> FSM => fsm;
+        //Components
+        protected Rigidbody rb;
+
+        public Rigidbody Rb
+        {
+            get => rb;
+            set => rb = value;
+        }
+
+        public GrowthParams GrowthParams => growthParams;
+        public StateMachine FSM => fsm;
 
         // Start is called before the first frame update
+        protected void Awake()
+        {
+            rb = this.GetComponent<Rigidbody>();
+        }
+
         protected virtual void Start()
         {
-            fsm = new StateMachine<PlantStates>(this);
-            fsm.Add("Seed", new SeedState(growthParams));
-            fsm.Add("Grown", new GrownState(growthParams));
-            
+            fsm = new StateMachine();
+            fsm.Add("Seed", new SeedState<PlantFSM>(this));
+            fsm.Add("Grown", new GrownState<PlantFSM>(this));
+
             fsm.Initialize("Seed");
         }
 

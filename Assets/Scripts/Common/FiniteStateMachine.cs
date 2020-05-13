@@ -10,7 +10,7 @@ namespace PotatoGame
     [System.Serializable]
     public class State
     {
-        protected MonoBehaviour component;
+        // protected T component;
         protected Dictionary<string, State> allStates;
         
         protected const string name = "State";
@@ -19,6 +19,11 @@ namespace PotatoGame
         protected bool hasExecutedExit = false;
 
         protected string nextState;
+
+        // public State(T component)
+        // {
+        //     this.component = component;
+        // }
 
         public Dictionary<string, State> AllStates
         {
@@ -32,11 +37,11 @@ namespace PotatoGame
         public bool HasExecutedExit => hasExecutedExit;
         public string NextState => nextState;
 
-        public MonoBehaviour Component
-        {
-            get => component;
-            set => component = value;
-        }
+        // public MonoBehaviour Component
+        // {
+        //     get => component;
+        //     set => component = value;
+        // }
 
         public virtual void HandleInput(){}
         
@@ -95,9 +100,9 @@ namespace PotatoGame
     }
     
     [System.Serializable]
-    public class StateMachine<T> where T : Enum
+    public class StateMachine
     {
-        protected MonoBehaviour component;
+        // protected T component;
         [SerializeField] protected Dictionary<string, State> stateDict = new Dictionary<string, State>();
         [SerializeField] protected State currentState = new State();
 
@@ -107,18 +112,12 @@ namespace PotatoGame
         public void Remove(string id) { stateDict.Remove(id); }
         public void Clear() { stateDict.Clear(); }
 
-        public StateMachine(MonoBehaviour component)
-        {
-            this.component = component;
-            
-        }
-        
         public void Initialize(string id)
         {
             //assign the monobehaviour from parent to each ind. states
             foreach (KeyValuePair<string,State> state in stateDict)
             {
-                state.Value.Component = this.component;
+                // state.Value.Component = this.component;
                 state.Value.AllStates = stateDict;
             }
             

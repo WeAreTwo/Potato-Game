@@ -7,13 +7,19 @@ namespace PotatoGame
    
     public class PotatoFSM : PlantFSM
     {
-        private PlantStates pp;
+        [Header("POTATO PARTS")] 
+        [SerializeField] protected GameObject potatoEyes;
+        [SerializeField] protected GameObject eatingEffect;
+        
         protected override void Start()
         {
-            fsm = new StateMachine<PlantStates>(this);
-            fsm.Add("Seed", new SeedState(growthParams));
-            fsm.Add("Grown", new GrownState(growthParams));
-            fsm.Add("Autonomous", new AutonomousState(growthParams));
+            fsm = new StateMachine();
+            fsm.Add("Seed", new SeedState<PotatoFSM>(this));
+            fsm.Add("Grown", new GrownState<PotatoFSM>(this));
+            fsm.Add("Autonomous", new AutonomousState<PotatoFSM>(this));
+            fsm.Add("Idle", new Idle<PotatoFSM>(this));
+            fsm.Add("Move", new Move<PotatoFSM>(this));
+            fsm.Add("Eat", new Eat<PotatoFSM>(this));
             
             fsm.Initialize("Seed");
         }
