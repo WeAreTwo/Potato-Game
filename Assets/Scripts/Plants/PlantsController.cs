@@ -9,9 +9,9 @@ namespace PotatoGame
     public class PlantsController : MonoBehaviour
     {
         //PLANTS LIST
-        [SerializeField] protected List<Plant> plants = new List<Plant>();
+        [SerializeField] protected List<PlantFSM> plants = new List<PlantFSM>();
 
-        public List<Plant> Plants
+        public List<PlantFSM> Plants
         {
             get => plants;
             set => plants = value;
@@ -20,10 +20,10 @@ namespace PotatoGame
         protected void Awake()
         {
             plants.Clear();
-            var scenePlants = FindObjectsOfType(typeof(Plant));
+            var scenePlants = FindObjectsOfType(typeof(PlantFSM));
             foreach (var p in scenePlants)
             {
-                plants.Add((Plant)p);
+                plants.Add((PlantFSM)p);
             }
         }
         

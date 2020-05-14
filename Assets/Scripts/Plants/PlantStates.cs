@@ -148,7 +148,7 @@ namespace PotatoGame
             {
                 harvestPeriodCompleted = true;
                 harvestable = false;
-                TriggerExit(PlantState.Autonomous);
+                TriggerExit(PlantStates.Autonomous);
             }
         }
 
@@ -171,7 +171,6 @@ namespace PotatoGame
         protected T component;
         
         [Header("AUTONOMOUS AGENT")]
-        [SerializeField] protected Plant victim;
         [SerializeField] protected Vector3 seekPosition;
         [SerializeField] protected float seekRange = 5.0f;
         [SerializeField] protected float seekForce = 5.0f;
@@ -221,7 +220,7 @@ namespace PotatoGame
             component.Rb.constraints = RigidbodyConstraints.None;
     
             PickRandomPosition();
-            // component.potatoEyes.SetActive(true);
+            component.potatoEyes.SetActive(true);
         }
     
         protected virtual bool CheckLineOfSight(Vector3 target)
@@ -349,8 +348,31 @@ namespace PotatoGame
             if (Vector3.Distance(component.transform.position, seekPosition) < 1.5f * component.GrowthParams.growthRadius || moveTimer >= moveTime)
             {
                 moveTimer = 0;  // reset the timer 
-                // MakeDecision(); // make new decision 
+                MakeDecision(); // make new decision 
             }
+        }
+
+        protected virtual void MakeDecision()
+        {
+            //Check is there are other potatoes nearby
+            var allPlants = GameManager.Instance.plantsController.Plants;
+            if (allPlants != null)
+            {
+                foreach (var plant in allPlants)
+                {
+                    if (component == plant) continue; //ignore self by skipping it 
+
+                    if (Vector3.Distance(component.transform.position, plant.transform.position) < component.GrowthParams.growthRadius + plant.GrowthParams.growthRadius)
+                        component.victim = plant;
+                }
+            }
+
+            //if there is a victim, go to eating mode 
+            if (component.victim != null)
+                TriggerExit(PlantStates.Eat);
+            else
+                PickRandomPosition();
+
         }
     
         public override void DrawGizmos()
@@ -376,72 +398,96 @@ namespace PotatoGame
     {
         protected T component;
 
+        //timers
         protected float eatTimer = 0.0f;
         protected float eatTime = 3.0f;
-        
-        [Header("AUTONOMOUS AGENT")] 
-        [SerializeField] protected Plant victim;
-        [SerializeField] protected float seekForce = 5.0f;
-    
+
         public Eat(T component)
         {
             this.component = component;
         }
-    
-        //When you first switch into this state
-        public override void OnStateStart()
-        {
-            base.OnStateStart();
-        }
-    
+
         //Everyframe while ur in this state
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
+            EatPotato();
         }
-        
-        //When you exit this state
-        public override void OnStateExit()
-        {
-            base.OnStateExit();
-        }
-        
+
         protected virtual void EatPotato()
         {
             //condition for completion
-            if (victim == null)
+            if (component.victim == null)
             {
                 component.eatingEffect.SetActive(false);
-                // MakeDecision();
+                MakeDecision();
             }
             else
             {
-                Vector3 targetPosition = victim.transform.position;
+                Vector3 targetPosition = component.victim.transform.position;
                 if (Vector3.Distance(component.transform.position, targetPosition) < 2.5f * component.GrowthParams.growthRadius)
                 {
                     eatTimer += Time.deltaTime;
                     if (eatTimer >= eatTime)
                     {
                         eatTimer = 0.0f;
-                        if (victim.Health - 25.0f <= 0)
+                        if (component.victim.Health - 25.0f <= 0)
                         {
                             // killCount++;
-                            victim.Health -= 25.0f;
+                            component.victim.Health -= 25.0f;
+                            component.victim.Kill();
                         }
                         else
                         {
-                            victim.Health -= 25.0f;
+                            component.victim.Health -= 25.0f;
                         }
                     }
                 }
                 else
                 {
                     Vector3 force = (targetPosition - component.transform.position).normalized;
-                    component.Rb.AddForce(force * seekForce);
+                    component.Rb.AddForce(force * component.seekForce);
                 }
                 
             }
         }
+        
+        protected virtual void MakeDecision()
+        {
+            //Check is there are other potatoes nearby
+            var allPlants = GameManager.Instance.plantsController.Plants;
+            if (allPlants != null)
+            {
+                foreach (var plant in allPlants)
+                {
+                    if (component == plant) continue; //ignore self by skipping it 
+
+                    if (Vector3.Distance(component.transform.position, plant.transform.position) <
+                        component.GrowthParams.growthRadius + plant.GrowthParams.growthRadius)
+                    {
+                        component.victim = plant;
+                        TriggerExit(PlantStates.Move);
+                    }
+                }
+            }
+            
+            float roll = Random.value;   //roll
+            if (component.victim != null)
+            {
+                component.eatingEffect.SetActive(true);
+                TriggerExit(PlantStates.Eat);
+            }
+            else if (roll < 0.45f)
+            {
+                TriggerExit(PlantStates.Move);
+            }
+            else
+            {
+                TriggerExit(PlantStates.Idle); //idle in the same spot
+            }
+
+        }
+
     
         public override void DrawGizmos()
         {
@@ -450,11 +496,11 @@ namespace PotatoGame
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthParams.growthRadius);
     
-            if (victim != null)
+            if (component.victim != null)
             {
                 //draw a line to target
                 Gizmos.color = Color.black;
-                Gizmos.DrawLine(component.transform.position, victim.transform.position);
+                Gizmos.DrawLine(component.transform.position, component.victim.transform.position);
             }
     
         }

@@ -4,28 +4,51 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace PotatoGame
-{
+{ 
+    
+    [System.Serializable]
+    public class GrowthParams
+    {
+         //PLANTED/GROWTH PARAMS
+         [Header("GROWTH")]
+         public Vector3 growingAxis = Vector3.up;
+         public float growthRadius = 1.0f;  
+         public float growthPace = 1.0005f;                    
+        
+         public float growthTime = 0.0f;           //growth counter   
+         public float growthStartTime;             //time from when it was planted and growing
+         public float growthCompletionTime = 6.0f;      //time where it finished growing
+         
+         //PRIVATE MEMBERS 
+         public float harvestTime = 0.0f; 
+         public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
+         
+     
+    }
+    
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
     [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
     public abstract class PlantFSM : MonoBehaviour
     {
-        [Header("HEALTH")] [SerializeField] protected float health = 100.0f;
+        [Header("HEALTH")] 
+        [SerializeField] protected float health = 100.0f;
         
         [SerializeField] protected GrowthParams growthParams;
         [SerializeField] protected StateMachine fsm;
 
+        protected bool planting;
+        protected bool planted;
+
         //Components
         protected Rigidbody rb;
 
-        public Rigidbody Rb
-        {
-            get => rb;
-            set => rb = value;
-        }
-
-        public GrowthParams GrowthParams => growthParams;
+        public Rigidbody Rb { get => rb; set => rb = value; }
+        public float Health { get => health; set => health = value; }
+        public bool Planting { get => planting; set => planting = value; }
+        public bool Planted { get => planted; set => planted = value; }
+        public GrowthParams GrowthParams { get => growthParams; set => growthParams = value; }
         public StateMachine FSM => fsm;
-
+        
         // Start is called before the first frame update
         protected void Awake()
         {
@@ -45,6 +68,16 @@ namespace PotatoGame
         protected virtual void Update()
         {
             fsm.Update();
+        }
+
+        protected virtual void OnEnable()
+        {
+            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Add(this);
+        }
+
+        protected virtual void OnDisable()
+        {
+            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Remove(this);
         }
 
         protected virtual void OnCollisionEnter(Collision col)
@@ -67,7 +100,7 @@ namespace PotatoGame
             fsm.DrawGizmos();
         }
         
-        protected virtual void Die()
+        public virtual void Kill()
         {
             if (health <= 0)
             {
