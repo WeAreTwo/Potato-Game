@@ -38,10 +38,9 @@ namespace PotatoGame
                     Vector3 samplePosition = SampleRandomPosition();
                     Vector3 position = RaycastDown(samplePosition);
 
-                    if (CheckValidity(position, spawnObjects))
+                    if (CheckValidity(position, GameManager.Instance.plantsController.Plants))
                     {
                         PlantFSM spawnedObj = Instantiate(spawnObject, position, Quaternion.identity ) as PlantFSM;
-                        spawnObjects.Add(spawnedObj);
                     }
                 }
             }

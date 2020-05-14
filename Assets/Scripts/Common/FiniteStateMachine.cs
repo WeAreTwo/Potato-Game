@@ -47,6 +47,7 @@ namespace PotatoGame
         
         public void EnterState()
         {
+            Reset();
             OnStateStart();   
         }
 
@@ -61,6 +62,7 @@ namespace PotatoGame
             {
                 nextState = T.ToString();
                 hasFinished = true;
+                OnStateExit();
             }
         }
 
@@ -68,21 +70,28 @@ namespace PotatoGame
         //When you first switch into this state
         public virtual void OnStateStart()
         {
+            if(hasExecutedStart) return;
             hasExecutedStart = true;
         }
 
         //Everyframe while ur in this state
         public virtual void OnStateUpdate()
         {
-            if (hasFinished)
-                if(!hasExecutedExit)
-                    OnStateExit();
+            if (hasFinished) return;
         }
         
         //When you exit this state
         public virtual void OnStateExit()
         {
+            if(hasExecutedExit) return;
             hasExecutedExit = true;
+        }
+
+        public virtual void Reset()
+        {
+            hasFinished = false;
+            hasExecutedStart = false;
+            hasExecutedExit = false;
         }
         #endregion
 

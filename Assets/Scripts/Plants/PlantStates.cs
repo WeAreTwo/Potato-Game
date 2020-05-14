@@ -318,13 +318,7 @@ namespace PotatoGame
             base.OnStateUpdate();
             MoveToPosition();
         }
-        
-        //When you exit this state
-        public override void OnStateExit()
-        {
-            base.OnStateExit();
-        }
-        
+
         protected virtual void PickRandomPosition()
         {
             float randX = Random.Range(-1.0f, 1.0f);
@@ -352,7 +346,7 @@ namespace PotatoGame
             }
         }
 
-        protected virtual void MakeDecision()
+        protected virtual void CheckForNearbyPotatoes()
         {
             //Check is there are other potatoes nearby
             var allPlants = GameManager.Instance.plantsController.Plants;
@@ -366,7 +360,12 @@ namespace PotatoGame
                         component.victim = plant;
                 }
             }
+        }
 
+        protected virtual void MakeDecision()
+        {
+            CheckForNearbyPotatoes();
+            
             //if there is a victim, go to eating mode 
             if (component.victim != null)
                 TriggerExit(PlantStates.Eat);
@@ -452,7 +451,7 @@ namespace PotatoGame
             }
         }
         
-        protected virtual void MakeDecision()
+        protected virtual void CheckForNearbyPotatoes()
         {
             //Check is there are other potatoes nearby
             var allPlants = GameManager.Instance.plantsController.Plants;
@@ -462,25 +461,27 @@ namespace PotatoGame
                 {
                     if (component == plant) continue; //ignore self by skipping it 
 
-                    if (Vector3.Distance(component.transform.position, plant.transform.position) <
-                        component.GrowthParams.growthRadius + plant.GrowthParams.growthRadius)
-                    {
+                    if (Vector3.Distance(component.transform.position, plant.transform.position) < component.GrowthParams.growthRadius + plant.GrowthParams.growthRadius)
                         component.victim = plant;
-                        TriggerExit(PlantStates.Move);
-                    }
                 }
             }
+        }
+
+        
+        protected virtual void MakeDecision()
+        {
+            // CheckForNearbyPotatoes();
             
             float roll = Random.value;   //roll
             if (component.victim != null)
             {
                 component.eatingEffect.SetActive(true);
-                TriggerExit(PlantStates.Eat);
+                // TriggerExit(PlantStates.Eat);
             }
-            else if (roll < 0.45f)
-            {
-                TriggerExit(PlantStates.Move);
-            }
+            // else if (roll < 0.45f)
+            // {
+            //     TriggerExit(PlantStates.Move);
+            // }
             else
             {
                 TriggerExit(PlantStates.Idle); //idle in the same spot
