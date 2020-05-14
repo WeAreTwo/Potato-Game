@@ -72,9 +72,9 @@ public class ActionController : MonoBehaviour
                         !m_proximityObject.GetComponent<PlantingController>().m_planted)
                         Hold();                    
                     
-                    // Codrin Code for his potatoes
-                    if (m_proximityObject.GetComponent<Plant>() != null &&
-                        !m_proximityObject.GetComponent<Plant>().Planted)
+                    //Codrin Code for his potatoes
+                    if (m_proximityObject.GetComponent<PlantFSM>() != null &&
+                        !m_proximityObject.GetComponent<PlantFSM>().Planted)
                         Hold();
                 }
             }
@@ -171,12 +171,12 @@ public class ActionController : MonoBehaviour
         // Check if the object will be planted
         // Get the planting mechanic from the object activated
         if (m_proximityObject.GetComponent<PlantingController>() != null && plant)
-            m_proximityObject.GetComponent<PlantingController>().m_planting = true;
-
-
-        // Codrin Code for his potatoes
-        if (m_proximityObject.GetComponent<Plant>() != null && plant)
-            m_proximityObject.GetComponent<Plant>().Planting = true;
+            m_proximityObject.GetComponent<PlantingController>().m_planting = true;        
+        
+        
+        //Codrin Code for his potatoes
+        if (m_proximityObject.GetComponent<PlantFSM>() != null && plant)
+            m_proximityObject.GetComponent<PlantFSM>().Planting = true;
 
 
         // Get rid of the object
