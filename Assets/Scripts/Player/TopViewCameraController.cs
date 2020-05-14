@@ -10,13 +10,13 @@ namespace PotatoGame
     {
         // public variables -------------------------
         [ProgressBar("m_zoomMin", "m_zoomMax", Height = 20)]
-        public float mCurrentZoom;                     // Current player's zoom
-        public float mZoomSpeed = 300f;                // Speed when zooming in/out
+        public float m_currentZoom;                     // Current player's zoom
+        public float m_zoomSpeed = 300f;                // Speed when zooming in/out
 
         [Space(10)] [Title("Target and Position")]
-        public Transform mTarget;                      // The target that should be the subject to follow
+        public Transform m_target;                      // The target that should be the subject to follow
 
-        public float mSmoothSpeed = 0.125f;            // Smooth float for following movement
+        public float m_smoothSpeed = 0.125f;            // Smooth float for following movement
         public Vector3 offset;                          // Position of the camera around the target
 
 
@@ -39,7 +39,7 @@ namespace PotatoGame
             // Set zoom range and get the current zoom
             _mZoomMin = 10f;
             _mZoomMax = 35f;
-            mCurrentZoom = _mCam.fieldOfView;
+            m_currentZoom = _mCam.fieldOfView;
         }
 
         // ------------------------------------------
@@ -66,33 +66,33 @@ namespace PotatoGame
         private void FollowTarget()
         {
             // Instance of the desired position of the camera and the smooth(lerp) position
-            Vector3 desiredPosition = mTarget.position + offset;
-            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, mSmoothSpeed);
+            Vector3 desiredPosition = m_target.position + offset;
+            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, m_smoothSpeed);
 
             // Change the current position of the camera
             transform.position = smoothedPosition;
 
             // Make sure the camera is always looking at the target
-            transform.LookAt(mTarget);
+            transform.LookAt(m_target);
         }
 
 
         // Zoom in and out ---------------------------------------------------------
         private void Zoom()
         {
-            var step = mZoomSpeed * Time.deltaTime;
+            var step = m_zoomSpeed * Time.deltaTime;
 
             // Get the zoom directly from the mouse scroll input
-            mCurrentZoom += Input.GetAxis("Mouse ScrollWheel") * -step;
+            m_currentZoom += Input.GetAxis("Mouse ScrollWheel") * -step;
 
             // Safe net it
-            if (mCurrentZoom < _mZoomMin)
-                mCurrentZoom = _mZoomMin;
-            else if (mCurrentZoom > _mZoomMax)
-                mCurrentZoom = _mZoomMax;
+            if (m_currentZoom < _mZoomMin)
+                m_currentZoom = _mZoomMin;
+            else if (m_currentZoom > _mZoomMax)
+                m_currentZoom = _mZoomMax;
 
             // Smooth zoom
-            var smoothZoom = Mathf.Lerp(_mCam.fieldOfView, mCurrentZoom, mSmoothSpeed);
+            var smoothZoom = Mathf.Lerp(_mCam.fieldOfView, m_currentZoom, m_smoothSpeed);
 
             // Update current zoom
             _mCam.fieldOfView = smoothZoom;
@@ -107,7 +107,7 @@ namespace PotatoGame
             var step = rotationAxis * 300f;
 
             // Rotate around the target
-            transform.RotateAround(mTarget.position, Vector3.up, step * Time.deltaTime);
+            transform.RotateAround(m_target.position, Vector3.up, step * Time.deltaTime);
         }
     }
 }
