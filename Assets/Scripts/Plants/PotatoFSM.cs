@@ -46,7 +46,7 @@ namespace PotatoGame
             fsm.Add("Move", new Move<PotatoFSM>(this));
             fsm.Add("Eat", new Eat<PotatoFSM>(this));
             
-            fsm.Initialize("Autonomous");
+            fsm.Initialize("Seed");
         }
 
         // Update is called once per frame
