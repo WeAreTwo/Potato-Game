@@ -3,12 +3,14 @@
     Properties
     {
         [MainColor] _BaseColor("BaseColor", Color) = (1,1,1,1)
+        [InsideColor] _InsideColor("InsideColor", Color) = (1,1,1,1)
         [MainTexture] _BaseMap("BaseMap", 2D) = "white" {}
         //[BlueNoiseMap] _BlueNoiseMap("BlueNoiseMap", 2D) = "white" {}
         [BlueNoiseMapScale] _BlueNoiseMapScale("BlueNoiseMapScale", float) = 1
         //[DetailMap] _DetailMap("DetailMap", 2D) = "white" {}
         [DetailAmount] _DetailAmount("DetailAmount", float) = 0.5
         [DetailScale] _DetailScale("DetailScale", float) = 0.5
+        [NoiseScale] _NoiseScale("NoiseScale", float) = 0.5
         [LightStepThreshold] _LightStepThreshold("Light Step Threshold", float) = 0.5
         
         [TestParam] _TestParam("TestParam", float) = 0.5
@@ -29,6 +31,7 @@
             #pragma vertex vert
             #pragma fragment frag
             
+            #include "noise.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             
@@ -57,10 +60,12 @@
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST;
             half4 _BaseColor;
+            half4 _InsideColor;
             float _LightStepThreshold;
             float _BlueNoiseMapScale;
             float _DetailAmount;
             float _DetailScale;
+            float _NoiseScale;
             
             float _TestParam;
             CBUFFER_END
@@ -78,7 +83,10 @@
                 Varyings OUT;
                 VertexNormalInputs vNormalInputs = GetVertexNormalInputs(IN.normal);
                 
+                //float noiseMask = clamp(cnoise(IN.uv / _NoiseScale), 0.4, 1.0);
+                //IN.positionOS.xyz *= noiseMask;
                 OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
+                //OUT.positionHCS *= noiseMask * 2;
                 OUT.uv = TRANSFORM_TEX(IN.uv, _BaseMap);
                 
                 Light mainLight = GetMainLight();
@@ -109,6 +117,7 @@
                 //ABIENT COLOR (SHADOW COLOR)
                 //float4 ambientColor = float4(0.1,0.1,0.1,0.1);
                 float4 ambientColor = float4(0.1,0.1,0.1,0.1) + (_BaseColor * 0.05);
+                float4 white = float4(1,1,1,1);
                 
                 Light mainLight = GetMainLight();
                 float3 lightDirection = mainLight.direction;
@@ -120,8 +129,10 @@
                 
                 float4 base = baseTex * _BaseColor * lightColor;
                 float4 baseWithDetails = lerp(base, ambientColor, details);
-                output = lerp(ambientColor, baseWithDetails , attenuation);
+                //float noiseMask = clamp(cnoise(IN.uv / _NoiseScale), 0.1, 1.2);
                 
+                output = lerp(ambientColor, baseWithDetails , attenuation);
+                //output = lerp(output, _InsideColor, noiseMask);
                 
                 return output;
                 
