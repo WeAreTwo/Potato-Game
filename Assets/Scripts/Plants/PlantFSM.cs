@@ -9,21 +9,28 @@ namespace PotatoGame
     [System.Serializable]
     public class GrowthParams
     {
-         //PLANTED/GROWTH PARAMS
-         [Header("GROWTH")]
-         public Vector3 growingAxis = Vector3.up;
-         public float growthRadius = 1.0f;  
-         public float growthPace = 1.0005f;                    
+        //SEED PARAM
+        [Header("SEED")] 
+        public float seedSize = 0.25f;
         
-         public float growthTime = 0.0f;           //growth counter   
-         public float growthStartTime;             //time from when it was planted and growing
-         public float growthCompletionTime = 6.0f;      //time where it finished growing
-         
-         //PRIVATE MEMBERS 
-         public float harvestTime = 0.0f; 
-         public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
-         
-     
+        //PLANTED/GROWTH PARAMS
+        [Header("GROWTH")]
+        public Vector3 growingAxis = Vector3.up;
+        public float growthRadius = 1.0f;  
+        public float growthPace = 1.0005f;                    
+        public float growthSize = 1.0f;                    
+        
+        public float growthTime = 0.0f;           //growth counter   
+        public float growthStartTime;             //time from when it was planted and growing
+        public float growthCompletionTime = 12.0f;      //time where it finished growing
+        
+        //HARVEST PARAMS 
+        [Header("HARVEST")]
+        public float harvestTime = 0.0f; 
+        public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
+        public int harvestYield = 2; //how many seeds your gonna get out of this 
+        
+
     }
     
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
@@ -36,8 +43,8 @@ namespace PotatoGame
         [SerializeField] protected GrowthParams growthParams;
         [SerializeField] protected StateMachine fsm;
 
-        protected bool planting;
-        protected bool planted;
+        [SerializeField] protected bool planting;
+        [SerializeField] protected bool planted;
 
         //Components
         protected Rigidbody rb;

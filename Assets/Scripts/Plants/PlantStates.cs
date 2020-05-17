@@ -24,14 +24,23 @@ namespace PotatoGame
         public override void OnStateStart()
         {
             base.OnStateStart();
+            component.transform.localScale *= component.GrowthParams.seedSize;
         }
 
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
-            PlantedSettings();
-            Grow();
-            UpdateGrowthRadius();
+
+            if (component.Planted)
+            {
+                PlantedSettings();
+                Grow();
+                UpdateGrowthRadius();
+            }
+            else
+            {
+                UprootedSettings();
+            }
         }
 
         public override void OnStateExit()
@@ -53,6 +62,13 @@ namespace PotatoGame
             }
         }
 
+        protected virtual void UprootedSettings()
+        {
+            // Deactivate gravity and freeze all
+            if (component.Rb.useGravity == false) component.Rb.useGravity = true;
+            if (component.Rb.constraints != RigidbodyConstraints.None) component.Rb.constraints = RigidbodyConstraints.None;
+        }
+
         protected virtual void PlantedSettings()
         {
             // Deactivate gravity and freeze all
@@ -62,6 +78,7 @@ namespace PotatoGame
 
         protected void Grow()
         {
+            
             //growth period 
             if (component.GrowthParams.growthTime <= component.GrowthParams.growthCompletionTime && !growthCompleted)
             {
@@ -80,7 +97,14 @@ namespace PotatoGame
         {
             if (growing && !growthCompleted)
             {
-                this.component.transform.localScale *= component.GrowthParams.growthPace;
+                float dt = component.GrowthParams.growthTime / component.GrowthParams.growthCompletionTime;
+                this.component.transform.localScale = Vector3.Lerp(
+                    Vector3.one * component.GrowthParams.seedSize,
+                    Vector3.one * component.GrowthParams.growthSize,
+                    dt
+                    );
+                
+                // this.component.transform.localScale *= component.GrowthParams.growthPace;
                 component.GrowthParams.growthRadius *= component.GrowthParams.growthPace;
             }
         }

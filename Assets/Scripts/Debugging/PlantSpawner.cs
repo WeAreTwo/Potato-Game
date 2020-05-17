@@ -40,7 +40,7 @@ namespace PotatoGame
 
                     if (CheckValidity(position, GameManager.Instance.plantsController.Plants))
                     {
-                        PlantFSM spawnedObj = Instantiate(spawnObject, position, Quaternion.identity ) as PlantFSM;
+                        PlantFSM spawnedObj = Instantiate(spawnObject, position + Vector3.up, Quaternion.identity ) as PlantFSM;
                     }
                 }
             }
