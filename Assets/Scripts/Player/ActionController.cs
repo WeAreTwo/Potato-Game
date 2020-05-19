@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using PotatoGame;
 using UnityEngine;
@@ -10,14 +11,16 @@ public class ActionController : MonoBehaviour
     // public variables -------------------------
     public bool m_canInteract = true;               // Allow interaction with objects
     public GameObject m_proximityObject;            // Target caught by a trigger
-    public GameObject m_actionIcon;                 // Action icon to be displayed when target's valid
     public float m_trowForce = 2.5f;                // Force when an object is trow after holding
+    public float m_raycastOffsetX = 2f;             // Offset on the x axis for raycasts
+    public float m_raycastOffsetZ = -0.2f;          // Offset on the z axis for raycasts
 
     // private variables ------------------------
     private BoxCollider _mBoxCol;                   // Collider with the trigger
     private bool _mHolding;                         // Is an object in hand?
     private bool _mReadyToTrow;                     // If an object is ready to be dropped
     private bool _mReadyToPlant;                    // If the holding object is a potato, ready to plant
+    private bool _mReadyForTargets;                 // If ready for setting the targets
 
 
     // ------------------------------------------
@@ -35,6 +38,9 @@ public class ActionController : MonoBehaviour
     // ------------------------------------------
     void Update()
     {
+        if (_mReadyForTargets)
+            SetHandTargets();
+        
         // Always check for inputs
         CheckInputs();
 
@@ -133,6 +139,9 @@ public class ActionController : MonoBehaviour
         // Get its rigid body and cancel its gravity
         Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
         objectRb.useGravity = false;
+        
+        // Put hands on the object
+        _mReadyForTargets = true;
 
         // Disable object's collider
         foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
@@ -160,7 +169,12 @@ public class ActionController : MonoBehaviour
         // Reset object rigid body's property
         Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
         objectRb.useGravity = true;
-
+        
+        // Reset hand positions
+        _mReadyForTargets = false;
+        HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
+        handTargets.m_activateWeight = false;
+        
         // Enable object's collider
         foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
             objectCollider.isTrigger = false;
@@ -191,5 +205,43 @@ public class ActionController : MonoBehaviour
 
         // Set the trigger back
         _mBoxCol.isTrigger = true;
+    }
+    
+    
+    // Set targets in real time for the hands --------------------------------------
+    private void SetHandTargets()
+    {
+        RaycastHit leftEdge;
+        RaycastHit rightEdge;
+        
+        int layerMask = LayerMask.GetMask("InHand");
+        m_proximityObject.layer = LayerMask.NameToLayer("InHand");
+
+        HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
+        handTargets.m_activateWeight = true;
+        
+        // Set origins of the raycasts + offsets
+        Vector3 rightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
+        Vector3 leftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
+
+        // For right side ---------
+        if (Physics.Raycast(rightOrigin, transform.TransformDirection(Vector3.left), out rightEdge, m_raycastOffsetX, layerMask))
+        {
+            // Put the right hand at the edge hit
+            Debug.DrawRay(rightOrigin, transform.TransformDirection(Vector3.left) * rightEdge.distance, Color.yellow);
+            handTargets.m_rightHandTarget.position = Vector3.Lerp(handTargets.m_rightHandTarget.position, rightEdge.point, 0.5f * Time.deltaTime);
+        }
+        else
+            Debug.DrawRay(rightOrigin, transform.TransformDirection(Vector3.left) * 3, Color.magenta);
+
+        // For left side ----------
+        if (Physics.Raycast(leftOrigin, transform.TransformDirection(Vector3.right), out leftEdge, m_raycastOffsetX, layerMask))
+        {
+            // Put the left hand at the edge hit
+            Debug.DrawRay(leftOrigin, transform.TransformDirection(Vector3.right) * leftEdge.distance, Color.green);
+            handTargets.m_leftHandTarget.position = Vector3.Lerp(handTargets.m_leftHandTarget.position, leftEdge.point, 0.5f * Time.deltaTime);
+        }
+        else
+            Debug.DrawRay(leftOrigin, transform.TransformDirection(Vector3.right) * 3, Color.red);
     }
 }

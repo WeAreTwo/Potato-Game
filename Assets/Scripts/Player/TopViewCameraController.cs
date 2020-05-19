@@ -21,7 +21,6 @@ namespace PotatoGame
 
 
         // private variables ------------------------
-        private GameObject _mPlayer;                    // Instance of the player object
         private Camera _mCam;                           // Instance of the camera component
         private float _mZoomMin;                        // Minimum zoom of the camera
         private float _mZoomMax;                        // Maximum zoom of the camera
@@ -33,7 +32,6 @@ namespace PotatoGame
         void Start()
         {
             // Get components
-            _mPlayer = GameObject.FindGameObjectWithTag("Player");
             _mCam = GetComponent<Camera>();
 
             // Set zoom range and get the current zoom
