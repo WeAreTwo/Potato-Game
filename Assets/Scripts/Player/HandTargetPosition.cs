@@ -83,4 +83,12 @@ public class HandTargetPosition : MonoBehaviour
             return;
         }
     }
+    
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(m_leftHandTarget.position, 0.1f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(m_rightHandTarget.position, 0.1f);
+    }
 }

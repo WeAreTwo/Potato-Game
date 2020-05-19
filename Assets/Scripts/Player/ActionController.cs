@@ -244,4 +244,5 @@ public class ActionController : MonoBehaviour
         else
             Debug.DrawRay(leftOrigin, transform.TransformDirection(Vector3.right) * 3, Color.red);
     }
+    
 }
