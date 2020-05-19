@@ -21,6 +21,9 @@ public class HandTargetPosition : MonoBehaviour
     private bool _mDeactivated;                      // After an activation, deactivate all 
 
 
+    public Vector3 leftLook;
+    public Vector3 rightLook;
+    
     // ------------------------------------------
     // Start is called before update
     // ------------------------------------------
@@ -53,9 +56,12 @@ public class HandTargetPosition : MonoBehaviour
         
         // Place the hand effectors to the target position
         m_ik.solver.leftHandEffector.position = m_leftHandTarget.position;
-        m_ik.solver.leftHandEffector.rotation = m_leftHandTarget.rotation;
         m_ik.solver.rightHandEffector.position = m_rightHandTarget.position;
+        
+        m_ik.solver.leftHandEffector.rotation = m_leftHandTarget.rotation;
+        // m_ik.solver.leftHandEffector.rotation = Quaternion.LookRotation(leftLook);
         m_ik.solver.rightHandEffector.rotation = m_rightHandTarget.rotation;
+        // m_ik.solver.rightHandEffector.rotation = Quaternion.LookRotation(rightLook);
         
         // Set the weight of the effectors to 1 (active)
         m_ik.solver.leftHandEffector.positionWeight = _mWeightValue;
@@ -86,9 +92,14 @@ public class HandTargetPosition : MonoBehaviour
     
     private void OnDrawGizmos()
     {
+        //CODRIN DRAWS POSITION OF LEFT AND RIGHT HAND 
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(m_leftHandTarget.position, 0.1f);
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(m_rightHandTarget.position, 0.1f);
+        
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(m_leftHandTarget.position, m_leftHandTarget.position + m_leftHandTarget.forward * 0.5f);
+        Gizmos.DrawLine(m_rightHandTarget.position, m_rightHandTarget.position + m_rightHandTarget.forward * 0.5f);
     }
 }
