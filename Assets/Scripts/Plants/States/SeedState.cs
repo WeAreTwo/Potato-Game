@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
    [System.Serializable]
-    public class SeedState<T> : State where T : PlantFSM
+    public class SeedState<T> : State where T : Plant
     {
         //MEMBERS
         protected T component;
@@ -50,7 +50,7 @@ namespace PotatoGame
 
         public override void OnCollisionEnter(Collision col)
         {
-            var plantComponent = col.gameObject.GetComponent<PlantFSM>();
+            var plantComponent = col.gameObject.GetComponent<Plant>();
             //if its also in the same state (this is what get type does)
             // if (plantComponent != null && plantComponent.States.Current.Name == name)
             // {

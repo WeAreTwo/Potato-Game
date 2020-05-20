@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
     [System.Serializable]
-    public class Eat<T> : State where T : PotatoFSM
+    public class Eat<T> : State where T : Potato
     {
         protected T component;
 

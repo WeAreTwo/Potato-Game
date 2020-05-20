@@ -12,8 +12,8 @@ namespace PotatoGame
         [SerializeField] protected Vector3 areaSurface = new Vector3(1,1,1);
         [SerializeField] protected int sampleAmount = 20;
         [SerializeField] protected float minimumDistance = 1.0f; //minimum distance between each of the spawned points 
-        [SerializeField] protected PlantFSM spawnObject;
-        [SerializeField] protected List<PlantFSM> spawnObjects = new List<PlantFSM>();
+        [SerializeField] protected Plant spawnObject;
+        [SerializeField] protected List<Plant> spawnObjects = new List<Plant>();
 
         protected GameManager manager;
         
@@ -40,7 +40,7 @@ namespace PotatoGame
 
                     if (CheckValidity(position, GameManager.Instance.plantsController.Plants))
                     {
-                        PlantFSM spawnedObj = Instantiate(spawnObject, position + Vector3.up, Quaternion.identity ) as PlantFSM;
+                        Plant spawnedObj = Instantiate(spawnObject, position + Vector3.up, Quaternion.identity ) as Plant;
                     }
                 }
             }
@@ -69,7 +69,7 @@ namespace PotatoGame
             return Vector3.zero;
         }
 
-        protected bool CheckValidity(Vector3 currentPos, List<PlantFSM> otherObjects)
+        protected bool CheckValidity(Vector3 currentPos, List<Plant> otherObjects)
         {
             if (currentPos == Vector3.zero)
                 return false;

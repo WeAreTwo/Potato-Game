@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
     [System.Serializable]
-    public class GrownState<T> : State where T : PlantFSM
+    public class GrownState<T> : State where T : Plant
     {
 
         //MEMBERS

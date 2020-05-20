@@ -35,7 +35,7 @@ namespace PotatoGame
     
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
     [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
-    public abstract class PlantFSM : MonoBehaviour, IPickUp
+    public abstract class Plant : MonoBehaviour, IPickUp
     {
         [Header("HEALTH")] 
         [SerializeField] protected float health = 100.0f;
@@ -68,8 +68,8 @@ namespace PotatoGame
         protected virtual void Start()
         {
             fsm = new StateMachine();
-            fsm.Add("Seed", new SeedState<PlantFSM>(this));
-            fsm.Add("Grown", new GrownState<PlantFSM>(this));
+            fsm.Add("Seed", new SeedState<Plant>(this));
+            fsm.Add("Grown", new GrownState<Plant>(this));
 
             fsm.Initialize("Seed");
         }

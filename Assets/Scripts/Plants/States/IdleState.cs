@@ -6,7 +6,7 @@ namespace PotatoGame
 {
 
     [System.Serializable]
-    public class Idle<T> : State where T : PotatoFSM
+    public class Idle<T> : State where T : Potato
     {
         protected T component;
 

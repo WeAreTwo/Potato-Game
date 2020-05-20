@@ -5,15 +5,10 @@ using UnityEngine;
 namespace PotatoGame
 {
    [System.Serializable]
-    public class AutonomousState<T> : State where T : PotatoFSM
+    public class AutonomousState<T> : State where T : Potato
     {
         protected T component;
-        
-        [Header("AUTONOMOUS AGENT")]
-        [SerializeField] protected Vector3 seekPosition;
-        [SerializeField] protected float seekRange = 5.0f;
-        [SerializeField] protected float seekForce = 5.0f;
-
+        protected Vector3 seekPosition;
         protected float transitionTime = 0;
         protected float transitionTimer = 5.0f;
         
@@ -66,7 +61,7 @@ namespace PotatoGame
         {
             //check to see if the victim is in the line of sight 
             RaycastHit hit;
-            if (Physics.Raycast(component.transform.position, target, out hit, seekRange))
+            if (Physics.Raycast(component.transform.position, target, out hit, component.seekRange))
             {
                 return true;
             }
@@ -80,7 +75,7 @@ namespace PotatoGame
             float randY = Random.Range(-1.0f, 1.0f);
             Vector3 randomPos = new Vector3(randX, 0, randY);
             Vector3 currentPosXZ = new Vector3(component.transform.position.x, 0, component.transform.position.z);
-            seekPosition = currentPosXZ + (randomPos * seekRange);
+            seekPosition = currentPosXZ + (randomPos * component.seekRange);
         }
         
     }

@@ -81,8 +81,8 @@ public class ActionController : MonoBehaviour
                         Hold();                    
                     
                     //Codrin Code for his potatoes
-                    if (m_proximityObject.GetComponent<PlantFSM>() != null &&
-                        !m_proximityObject.GetComponent<PlantFSM>().Planted)
+                    if (m_proximityObject.GetComponent<Plant>() != null &&
+                        !m_proximityObject.GetComponent<Plant>().Planted)
                         Hold();
                 }
             }
@@ -191,8 +191,8 @@ public class ActionController : MonoBehaviour
         
         
         //Codrin Code for his potatoes
-        if (m_proximityObject.GetComponent<PlantFSM>() != null && plant)
-            m_proximityObject.GetComponent<PlantFSM>().Planting = true;
+        if (m_proximityObject.GetComponent<Plant>() != null && plant)
+            m_proximityObject.GetComponent<Plant>().Planting = true;
 
 
         // Get rid of the object
