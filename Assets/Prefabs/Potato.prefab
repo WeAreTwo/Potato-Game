@@ -107,9 +107,9 @@ GameObject:
   - component: {fileID: 2595752278288454029}
   - component: {fileID: 3785002684682347362}
   - component: {fileID: 7178054810660379476}
-  - component: {fileID: 5524511572595627561}
+  - component: {fileID: 3453454292911004909}
   m_Layer: 0
-  m_Name: GrowingPotato_Test
+  m_Name: Potato
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -208,7 +208,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5495902117074765545, guid: 6bfd5450b0228e74494ece13a45212a5, type: 3}
---- !u!114 &5524511572595627561
+--- !u!114 &3453454292911004909
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -217,23 +217,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 2595752278288454030}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d790077a6fafc74fa3b49cc87ec34d3, type: 3}
+  m_Script: {fileID: 11500000, guid: f964ac26e45d75b4eb46c90d6f62dcee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planting: 0
+  planted: 1
+  pickedUp: 0
   health: 100
   growthParams:
+    seedSize: 0.25
     growingAxis: {x: 0, y: 1, z: 0}
     growthRadius: 1
     growthPace: 1.0005
+    growthSize: 1
     growthTime: 0
     growthStartTime: 0
-    growthCompletionTime: 6
+    growthCompletionTime: 12
     harvestTime: 0
     harvestPeriod: 15
-  fsm: {}
+    harvestYield: 2
   potatoEyes: {fileID: 4872308936933172648}
   eatingEffect: {fileID: 6426147998878630201}
   victim: {fileID: 0}
+  seekRange: 5
   seekForce: 5
 --- !u!1 &4788158183361116559
 GameObject:

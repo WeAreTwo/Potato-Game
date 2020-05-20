@@ -26,27 +26,28 @@ namespace PotatoGame
     }
 
 
-    public class PotatoFSM : PlantFSM
+    public class Potato : Plant
     {
         [Header("POTATO PARTS")] 
         public GameObject potatoEyes;
         public GameObject eatingEffect;
         
         [Header("AUTONOMOUS AGENT")] 
-        public PlantFSM victim;
+        public Plant victim;
+        public float seekRange = 5.0f;
         public float seekForce = 5.0f;
         
         protected override void Start()
         {
             fsm = new StateMachine();
-            fsm.Add("Seed", new SeedState<PotatoFSM>(this));
-            fsm.Add("Grown", new GrownState<PotatoFSM>(this));
-            fsm.Add("Autonomous", new AutonomousState<PotatoFSM>(this));
-            fsm.Add("Idle", new Idle<PotatoFSM>(this));
-            fsm.Add("Move", new Move<PotatoFSM>(this));
-            fsm.Add("Eat", new Eat<PotatoFSM>(this));
+            fsm.Add(PlantStates.Seed.ToString(), new SeedState<Potato>(this));
+            fsm.Add(PlantStates.Grown.ToString(), new GrownState<Potato>(this));
+            fsm.Add(PlantStates.Autonomous.ToString(), new AutonomousState<Potato>(this));
+            fsm.Add(PlantStates.Idle.ToString(), new Idle<Potato>(this));
+            fsm.Add(PlantStates.Move.ToString(), new Move<Potato>(this));
+            fsm.Add(PlantStates.Eat.ToString(), new Eat<Potato>(this));
             
-            fsm.Initialize("Seed");
+            fsm.Initialize(PlantStates.Seed.ToString());
         }
 
         // Update is called once per frame
