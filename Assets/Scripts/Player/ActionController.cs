@@ -46,8 +46,19 @@ public class ActionController : MonoBehaviour
         // While holding
         if (_mHolding)
         {
-            // Keep the object stick on its original point and follow collisions
-            m_proximityObject.transform.position = transform.position;
+            // Pick up an object
+            if (m_proximityObject.transform.position.y < transform.position.y)
+            {
+                // Make the object move up to the current position
+                Vector3 currentPos = m_proximityObject.transform.position;
+                currentPos = Vector3.MoveTowards(currentPos, transform.position, 4f * Time.deltaTime);
+                m_proximityObject.transform.position = currentPos;
+            }
+            else
+            {
+                // Keep the object stick on its original point and follow collisions
+                m_proximityObject.transform.position = transform.position;
+            }
         }
     }
 
@@ -146,15 +157,11 @@ public class ActionController : MonoBehaviour
         foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
             objectCollider.isTrigger = true;
 
-
-        // Set the same position as our player hands
-        m_proximityObject.transform.position = transform.position;
-
         // Bring back the trigger box as a collider
         _mBoxCol.isTrigger = false;
 
-        // Currently holding
-        _mHolding = true;
+        // Start to pick up
+        StartCoroutine(PickUp(0.3f, m_proximityObject));
 
         // Check if it's a potato (activate the plant action)
         if (m_proximityObject.tag == ProjectTags.Potato)
@@ -241,6 +248,18 @@ public class ActionController : MonoBehaviour
             handTargets.m_leftHandTarget.position = leftEdge.point; // Codrin Note: no lerping, just snap directly to prevent hand overlap 
             handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal); //Codrin Note: make it face the direction of the polygon surface 
         }
+    }
+    
+
+    // Wait before starting to hold and simulate pick up ---------------------------
+    private IEnumerator PickUp(float delay, GameObject pickUpObject)
+    {
+        // Wait the delay before starting to hold
+        yield return new WaitForSeconds(delay);
+        
+        // Make sure the player did not target another object
+        m_proximityObject = pickUpObject;
+        _mHolding = true;
     }
 
     
