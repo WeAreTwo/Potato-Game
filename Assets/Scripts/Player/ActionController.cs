@@ -20,11 +20,11 @@ public class ActionController : MonoBehaviour
     private bool _mHolding;                         // Is an object in hand?
     private bool _mReadyToTrow;                     // If an object is ready to be dropped
     private bool _mReadyToPlant;                    // If the holding object is a potato, ready to plant
-    private bool _mReadyForTargets;                 // If ready for setting the targets
+    private Vector3 _mRightOrigin;                  // Use for right hand raycast starting point
+    private Vector3 _mLeftOrigin;                   // Use for left hand raycast starting point
+    private int _mOriginalLayer;                    // Original physic layer applied to the proximity object
 
-    Vector3 rightOrigin;
-    Vector3 leftOrigin;
-    
+
     // ------------------------------------------
     // Start is called before update
     // ------------------------------------------
@@ -40,9 +40,6 @@ public class ActionController : MonoBehaviour
     // ------------------------------------------
     void Update()
     {
-        if (_mReadyForTargets)
-            SetHandTargets();
-        
         // Always check for inputs
         CheckInputs();
 
@@ -143,7 +140,7 @@ public class ActionController : MonoBehaviour
         objectRb.useGravity = false;
         
         // Put hands on the object
-        _mReadyForTargets = true;
+        SetHandTargets();
 
         // Disable object's collider
         foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
@@ -173,9 +170,9 @@ public class ActionController : MonoBehaviour
         objectRb.useGravity = true;
         
         // Reset hand positions
-        _mReadyForTargets = false;
         HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
         handTargets.m_activateWeight = false;
+        m_proximityObject.layer = _mOriginalLayer;
         
         // Enable object's collider
         foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
@@ -213,57 +210,47 @@ public class ActionController : MonoBehaviour
     // Set targets in real time for the hands --------------------------------------
     private void SetHandTargets()
     {
-        /*CODRIN NOTE: ONLY CALL THIS ONCE WHEN U PICK UP THE OBJECT,
-         OTHERWISE THE HANDS ARE GOING TO JITTER BECAUSE YOU'RE ALWAYS
-         RAYCASTING TO NEW POSITIONS
-        */
-
         RaycastHit leftEdge;
         RaycastHit rightEdge;
         
         int layerMask = LayerMask.GetMask("InHand");
+        
+        // Capture current layer and change it
+        _mOriginalLayer = m_proximityObject.layer;
         m_proximityObject.layer = LayerMask.NameToLayer("InHand");
 
         HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
         handTargets.m_activateWeight = true;
         
         // Set origins of the raycasts + offsets
-        rightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
-        leftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
+        _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
+        _mLeftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
 
         // For right side ---------
-        if (Physics.Raycast(rightOrigin, transform.TransformDirection(Vector3.left), out rightEdge, m_raycastOffsetX, layerMask))
+        if (Physics.Raycast(_mRightOrigin, transform.TransformDirection(Vector3.left), out rightEdge, m_raycastOffsetX, layerMask))
         {
             // Put the right hand at the edge hit
-            Debug.DrawRay(rightOrigin, transform.TransformDirection(Vector3.left) * rightEdge.distance, Color.yellow);
-            // handTargets.m_rightHandTarget.position = Vector3.Lerp(handTargets.m_rightHandTarget.position, rightEdge.point, 0.5f * Time.deltaTime);
-            
             handTargets.m_rightHandTarget.position = rightEdge.point; // Codrin Note: no lerping, just snap directly to prevent hand overlap 
             handTargets.m_rightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal); //Codrin Note: make it face the direction of the polygon surface 
         }
-        else
-            Debug.DrawRay(rightOrigin, transform.TransformDirection(Vector3.left) * 3, Color.magenta);
 
         // For left side ----------
-        if (Physics.Raycast(leftOrigin, transform.TransformDirection(Vector3.right), out leftEdge, m_raycastOffsetX, layerMask))
+        if (Physics.Raycast(_mLeftOrigin, transform.TransformDirection(Vector3.right), out leftEdge, m_raycastOffsetX, layerMask))
         {
             // Put the left hand at the edge hit
-            Debug.DrawRay(leftOrigin, transform.TransformDirection(Vector3.right) * leftEdge.distance, Color.green);
-            // handTargets.m_leftHandTarget.position = Vector3.Lerp(handTargets.m_leftHandTarget.position, leftEdge.point, 0.5f * Time.deltaTime);
-            
             handTargets.m_leftHandTarget.position = leftEdge.point; // Codrin Note: no lerping, just snap directly to prevent hand overlap 
             handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal); //Codrin Note: make it face the direction of the polygon surface 
         }
-        else
-            Debug.DrawRay(leftOrigin, transform.TransformDirection(Vector3.right) * 3, Color.red);
     }
 
+    
+    // Draw gizmos on play ---------------------------------------------------------
     private void OnDrawGizmos()
     {
         //Codrin: POSITION OF THE HAND TARGETS 
         Gizmos.color = Color.magenta;
-        Gizmos.DrawSphere(leftOrigin, 0.1f);
+        Gizmos.DrawSphere(_mLeftOrigin, 0.1f);
         Gizmos.color = Color.green;
-        Gizmos.DrawSphere(rightOrigin, 0.1f);
+        Gizmos.DrawSphere(_mRightOrigin, 0.1f);
     }
 }

@@ -18,7 +18,7 @@ public class HandTargetPosition : MonoBehaviour
 
     // private variables ------------------------
     private float _mWeightValue;                    // Value that will be applied to the weight of the ik
-    private bool _mDeactivated;                      // After an activation, deactivate all 
+    private bool _mDeactivated;                     // After an activation, deactivate all 
 
 
     public Vector3 leftLook;
@@ -59,10 +59,8 @@ public class HandTargetPosition : MonoBehaviour
         m_ik.solver.rightHandEffector.position = m_rightHandTarget.position;
         
         m_ik.solver.leftHandEffector.rotation = m_leftHandTarget.rotation;
-        // m_ik.solver.leftHandEffector.rotation = Quaternion.LookRotation(leftLook);
         m_ik.solver.rightHandEffector.rotation = m_rightHandTarget.rotation;
-        // m_ik.solver.rightHandEffector.rotation = Quaternion.LookRotation(rightLook);
-        
+
         // Set the weight of the effectors to 1 (active)
         m_ik.solver.leftHandEffector.positionWeight = _mWeightValue;
         m_ik.solver.leftHandEffector.rotationWeight = _mWeightValue;
@@ -77,9 +75,8 @@ public class HandTargetPosition : MonoBehaviour
         // Do this once per clear
         if (_mWeightValue > 0f)
         {
-            _mWeightValue = 0f;
-            _mDeactivated = true;
-            
+            _mWeightValue -= m_weightSpeed * Time.deltaTime;
+
             // Set the weight of the effectors to 1 (active)
             m_ik.solver.leftHandEffector.positionWeight = _mWeightValue;
             m_ik.solver.leftHandEffector.rotationWeight = _mWeightValue;
@@ -88,8 +85,16 @@ public class HandTargetPosition : MonoBehaviour
             
             return;
         }
+        else if (!_mDeactivated)
+        {
+            _mWeightValue = 0f;
+            _mDeactivated = true;
+            return;
+        }
     }
     
+    
+    // Draw gizmos on play ---------------------------------------------------------
     private void OnDrawGizmos()
     {
         //CODRIN DRAWS POSITION OF LEFT AND RIGHT HAND 
