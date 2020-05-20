@@ -24,7 +24,7 @@ namespace PotatoGame
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
-            Harvest();
+            if (component.Planted) Harvest();
         }
 
         protected void Harvest()

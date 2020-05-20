@@ -35,7 +35,7 @@ namespace PotatoGame
     
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
     [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
-    public abstract class PlantFSM : MonoBehaviour
+    public abstract class PlantFSM : MonoBehaviour, IPickUp
     {
         [Header("HEALTH")] 
         [SerializeField] protected float health = 100.0f;
@@ -46,6 +46,8 @@ namespace PotatoGame
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
 
+        [SerializeField] protected bool pickedUp;
+
         //Components
         protected Rigidbody rb;
 
@@ -53,6 +55,7 @@ namespace PotatoGame
         public float Health { get => health; set => health = value; }
         public bool Planting { get => planting; set => planting = value; }
         public bool Planted { get => planted; set => planted = value; }
+        public bool PickedUp { get => pickedUp; set => pickedUp = value; }
         public GrowthParams GrowthParams { get => growthParams; set => growthParams = value; }
         public StateMachine FSM => fsm;
         
@@ -74,7 +77,7 @@ namespace PotatoGame
         // Update is called once per frame
         protected virtual void Update()
         {
-            fsm.Update();
+            if(!pickedUp) fsm.Update();
         }
 
         protected virtual void OnEnable()
@@ -89,17 +92,17 @@ namespace PotatoGame
 
         protected virtual void OnCollisionEnter(Collision col)
         {
-            fsm.OnCollisionEnter(col);
+            if(!pickedUp) fsm.OnCollisionEnter(col);
         }
 
         protected virtual void OnCollisionStay(Collision col)
         {
-            fsm.OnCollisionStay(col);
+            if(!pickedUp) fsm.OnCollisionStay(col);
         }
 
         protected virtual void OnCollisionExit(Collision col)
         {
-            fsm.OnCollisionExit(col);
+            if(!pickedUp) fsm.OnCollisionExit(col);
         }
 
         protected virtual void OnDrawGizmos()
@@ -113,6 +116,11 @@ namespace PotatoGame
             {
                 Destroy(this.gameObject);
             }
+        }
+
+        public virtual void PickUp()
+        {
+            //Put pick up code here 
         }
     }
 }
