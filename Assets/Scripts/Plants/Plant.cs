@@ -29,7 +29,6 @@ namespace PotatoGame
         public float harvestTime = 0.0f; 
         public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
         public int harvestYield = 2; //how many seeds your gonna get out of this 
-        
 
     }
     
@@ -37,20 +36,22 @@ namespace PotatoGame
     [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
     public abstract class Plant : MonoBehaviour, IPickUp
     {
-        [Header("HEALTH")] 
-        [SerializeField] protected float health = 100.0f;
+        //Finite State Machine
+        protected StateMachine fsm;
         
-        [SerializeField] protected GrowthParams growthParams;
-        [SerializeField] protected StateMachine fsm;
-
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
-
         [SerializeField] protected bool pickedUp;
+
+        [Header("HEALTH")] 
+        [SerializeField] protected float health = 100.0f;
+        [SerializeField] protected GrowthParams growthParams;
+
 
         //Components
         protected Rigidbody rb;
 
+        //Properties
         public Rigidbody Rb { get => rb; set => rb = value; }
         public float Health { get => health; set => health = value; }
         public bool Planting { get => planting; set => planting = value; }
@@ -59,8 +60,7 @@ namespace PotatoGame
         public GrowthParams GrowthParams { get => growthParams; set => growthParams = value; }
         public StateMachine FSM => fsm;
         
-        // Start is called before the first frame update
-        protected void Awake()
+        protected virtual void Awake()
         {
             rb = this.GetComponent<Rigidbody>();
         }
@@ -68,10 +68,10 @@ namespace PotatoGame
         protected virtual void Start()
         {
             fsm = new StateMachine();
-            fsm.Add("Seed", new SeedState<Plant>(this));
-            fsm.Add("Grown", new GrownState<Plant>(this));
+            fsm.Add(PlantStates.Seed.ToString(), new SeedState<Plant>(this));
+            fsm.Add(PlantStates.Grown.ToString(), new GrownState<Plant>(this));
 
-            fsm.Initialize("Seed");
+            fsm.Initialize(PlantStates.Seed.ToString());
         }
 
         // Update is called once per frame
@@ -112,6 +112,7 @@ namespace PotatoGame
         
         public virtual void Kill()
         {
+            //when the health is below 0
             if (health <= 0)
             {
                 Destroy(this.gameObject);

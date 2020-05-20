@@ -45,6 +45,9 @@ namespace PotatoGame
     
         protected virtual void PopOutOfTheGround()
         {
+            //set the planted state to false 
+            component.Planted = false;
+
             // pop out of the ground 
             component.transform.position += new Vector3(0, component.GrowthParams.growthRadius, 0);
             component.transform.rotation = Random.rotation;

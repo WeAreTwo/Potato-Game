@@ -220,6 +220,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f964ac26e45d75b4eb46c90d6f62dcee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planting: 0
+  planted: 1
+  pickedUp: 0
   health: 100
   growthParams:
     seedSize: 0.25
@@ -233,13 +236,10 @@ MonoBehaviour:
     harvestTime: 0
     harvestPeriod: 15
     harvestYield: 2
-  fsm: {}
-  planting: 0
-  planted: 0
-  pickedUp: 0
   potatoEyes: {fileID: 4872308936933172648}
   eatingEffect: {fileID: 6426147998878630201}
   victim: {fileID: 0}
+  seekRange: 5
   seekForce: 5
 --- !u!1 &4788158183361116559
 GameObject:

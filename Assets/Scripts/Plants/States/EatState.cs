@@ -9,7 +9,6 @@ namespace PotatoGame
     {
         protected T component;
 
-        //timers
         protected float eatTimer = 0.0f;
         protected float eatTime = 3.0f;
 
