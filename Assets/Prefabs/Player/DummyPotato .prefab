@@ -430,8 +430,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3064457621664104531}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.128, z: 1.48}
-  m_LocalScale: {x: 1.1809593, y: 1.1809593, z: 1.1809593}
+  m_LocalPosition: {x: 0, y: 1.128, z: 0.882}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8069772367280120038}
   m_RootOrder: 3
@@ -448,7 +448,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.38, y: 1, z: 1.27}
-  m_Center: {x: 0, y: -0.3, z: -0.19}
+  m_Center: {x: 0, y: -0.3, z: 0.33}
 --- !u!114 &3064457621664104529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -463,8 +463,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_canInteract: 1
   m_proximityObject: {fileID: 0}
-  m_actionIcon: {fileID: 0}
   m_trowForce: 2.5
+  m_raycastOffsetX: 2
+  m_raycastOffsetZ: -0.1
 --- !u!1 &3064457623437008840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1245,12 +1246,11 @@ GameObject:
   - component: {fileID: 8069772367280120038}
   - component: {fileID: 3064457623205746666}
   - component: {fileID: 6960636026518744350}
-  - component: {fileID: 4552639335139675090}
   - component: {fileID: 3064457623205746645}
   - component: {fileID: 3064457623205746644}
   m_Layer: 0
   m_Name: 'DummyPotato '
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1750,34 +1750,6 @@ MonoBehaviour:
     spineStiffness: 0.5
     pullBodyVertical: 0.5
     pullBodyHorizontal: 0
---- !u!114 &4552639335139675090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6460078239362077429}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 537b81dc57e504256a6c74c4bcf6bca9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetTag: 
-  fadeInTime: 0.3
-  speed: 1
-  resetToDefaultsSpeed: 1
-  characterCollider: {fileID: 3064457623205746645}
-  FPSCamera: {fileID: 0}
-  camRaycastLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  camRaycastDistance: 1
-  fullBody: {fileID: 6960636026518744350}
-  lookAt:
-    ik: {fileID: 0}
-    lerpSpeed: 5
-    weightSpeed: 1
-    isPaused: 0
 --- !u!143 &3064457623205746645
 CharacterController:
   m_ObjectHideFlags: 0

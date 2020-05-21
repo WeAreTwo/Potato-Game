@@ -146,9 +146,10 @@ public class ActionController : MonoBehaviour
         // Set the object as a child
         m_proximityObject.transform.SetParent(transform);
 
-        // Get its rigid body and cancel its gravity
+        // Get its rigid body and cancel its gravity and freeze rotation
         Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
         objectRb.useGravity = false;
+        objectRb.constraints = RigidbodyConstraints.FreezeRotation;
         
         // Put hands on the object
         SetHandTargets();
@@ -172,9 +173,10 @@ public class ActionController : MonoBehaviour
     // Trowing a dynamic object ----------------------------------------------------
     private void Trow(bool plant)
     {
-        // Reset object rigid body's property
+        // Reset object rigid body's property and unfreeze rotation
         Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
         objectRb.useGravity = true;
+        objectRb.constraints = RigidbodyConstraints.None;
         
         // Reset hand positions
         HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
@@ -219,7 +221,7 @@ public class ActionController : MonoBehaviour
     {
         RaycastHit leftEdge;
         RaycastHit rightEdge;
-        
+
         int layerMask = LayerMask.GetMask("InHand");
         
         // Capture current layer and change it
@@ -232,22 +234,36 @@ public class ActionController : MonoBehaviour
         // Set origins of the raycasts + offsets
         _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
         _mLeftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
+        
+        // Get the origins to the correct height (since object might be on the ground)
+        float currentHeight = m_proximityObject.transform.position.y;
+        _mRightOrigin.y = currentHeight;
+        _mRightOrigin.y = currentHeight;
+        
 
         // For right side ---------
-        if (Physics.Raycast(_mRightOrigin, transform.TransformDirection(Vector3.left), out rightEdge, m_raycastOffsetX, layerMask))
+        if (Physics.Raycast(_mRightOrigin, transform.TransformDirection(Vector3.left), out rightEdge, 2f, layerMask))
         {
             // Put the right hand at the edge hit
-            handTargets.m_rightHandTarget.position = rightEdge.point; // Codrin Note: no lerping, just snap directly to prevent hand overlap 
-            handTargets.m_rightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal); //Codrin Note: make it face the direction of the polygon surface 
+            handTargets.m_rightHandTarget.position = rightEdge.point;
+            handTargets.m_rightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);
+            Debug.Log("Hit Right");
         }
+        else
+            Debug.Log("Nope Right");
+        
 
         // For left side ----------
-        if (Physics.Raycast(_mLeftOrigin, transform.TransformDirection(Vector3.right), out leftEdge, m_raycastOffsetX, layerMask))
+        if (Physics.Raycast(_mLeftOrigin, transform.TransformDirection(Vector3.right), out leftEdge, 2f, layerMask))
         {
             // Put the left hand at the edge hit
-            handTargets.m_leftHandTarget.position = leftEdge.point; // Codrin Note: no lerping, just snap directly to prevent hand overlap 
-            handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal); //Codrin Note: make it face the direction of the polygon surface 
+            handTargets.m_leftHandTarget.position = leftEdge.point; 
+            handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
+            Debug.Log("Hit Left");
         }
+        else
+            Debug.Log("Nope Left");
+        
     }
     
 
@@ -269,6 +285,7 @@ public class ActionController : MonoBehaviour
         //Codrin: POSITION OF THE HAND TARGETS 
         Gizmos.color = Color.magenta;
         Gizmos.DrawSphere(_mLeftOrigin, 0.1f);
+        //Gizmos.DrawLine(_mLeftOrigin, _mRightOrigin);
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(_mRightOrigin, 0.1f);
     }
