@@ -232,12 +232,14 @@ public class ActionController : MonoBehaviour
         m_proximityObject.layer = LayerMask.NameToLayer("InHand");
 
         // Set origins of the raycasts + offsets
-        float currentHeight = m_proximityObject.transform.position.y;
-        _mRightOrigin = m_proximityObject.transform.TransformPoint((Vector3.right * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
-        _mLeftOrigin = m_proximityObject.transform.TransformPoint((Vector3.left * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
+        Vector3 objectRelativePosition = m_proximityObject.transform.position - transform.position;
+        objectRelativePosition.Normalize();
+        
+        _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ) + objectRelativePosition);
+        _mLeftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ) + objectRelativePosition);
 
         // For right side ---------
-        if (Physics.Raycast(_mRightOrigin, transform.TransformDirection(Vector3.left), out rightEdge, 2f, layerMask))
+        if (Physics.Raycast(_mRightOrigin, transform.TransformDirection(Vector3.left), out rightEdge, m_raycastOffsetX, layerMask))
         {
             // Put the right hand at the edge hit
             handTargets.m_rightHandTarget.position = rightEdge.point;
@@ -249,7 +251,7 @@ public class ActionController : MonoBehaviour
         
 
         // For left side ----------
-        if (Physics.Raycast(_mLeftOrigin, transform.TransformDirection(Vector3.right), out leftEdge, 2f, layerMask))
+        if (Physics.Raycast(_mLeftOrigin, transform.TransformDirection(Vector3.right), out leftEdge, m_raycastOffsetX, layerMask))
         {
             // Put the left hand at the edge hit
             handTargets.m_leftHandTarget.position = leftEdge.point; 
