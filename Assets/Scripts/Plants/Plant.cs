@@ -123,5 +123,12 @@ namespace PotatoGame
         {
             //Put pick up code here 
         }
+
+        void PlantedConfig()
+        {
+            
+        }
+        
+        
     }
 }

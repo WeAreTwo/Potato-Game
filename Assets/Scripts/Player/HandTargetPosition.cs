@@ -20,11 +20,7 @@ namespace PotatoGame
         // private variables ------------------------
         private float _mWeightValue; // Value that will be applied to the weight of the ik
         private bool _mDeactivated; // After an activation, deactivate all 
-
-
-        public Vector3 leftLook;
-        public Vector3 rightLook;
-
+        
         // ------------------------------------------
         // Start is called before update
         // ------------------------------------------
