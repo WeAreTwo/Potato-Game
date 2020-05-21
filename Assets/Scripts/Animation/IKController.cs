@@ -19,7 +19,11 @@ namespace PotatoGame
         private float _mWeightValue; // Value that will be applied to the weight of the ik
         private bool _mDeactivated; // After an activation, deactivate all 
         
+
         public bool ActivateWeight { get => m_activateWeight; set => m_activateWeight = value; }
+        public Transform LeftHandTarget { get => m_leftHandTarget; set => m_leftHandTarget = value; }
+        public Transform RightHandTarget { get => m_rightHandTarget; set => m_rightHandTarget = value; }
+
 
         protected void Awake()
         {
