@@ -224,22 +224,17 @@ public class ActionController : MonoBehaviour
 
         int layerMask = LayerMask.GetMask("InHand");
         
+        HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
+        handTargets.m_activateWeight = true;
+        
         // Capture current layer and change it
         _mOriginalLayer = m_proximityObject.layer;
         m_proximityObject.layer = LayerMask.NameToLayer("InHand");
 
-        HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
-        handTargets.m_activateWeight = true;
-        
         // Set origins of the raycasts + offsets
-        _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
-        _mLeftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
-        
-        // Get the origins to the correct height (since object might be on the ground)
         float currentHeight = m_proximityObject.transform.position.y;
-        _mRightOrigin.y = currentHeight;
-        _mRightOrigin.y = currentHeight;
-        
+        _mRightOrigin = m_proximityObject.transform.TransformPoint((Vector3.right * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
+        _mLeftOrigin = m_proximityObject.transform.TransformPoint((Vector3.left * m_raycastOffsetX) + (Vector3.forward * m_raycastOffsetZ));
 
         // For right side ---------
         if (Physics.Raycast(_mRightOrigin, transform.TransformDirection(Vector3.left), out rightEdge, 2f, layerMask))
@@ -263,7 +258,6 @@ public class ActionController : MonoBehaviour
         }
         else
             Debug.Log("Nope Left");
-        
     }
     
 
@@ -285,8 +279,9 @@ public class ActionController : MonoBehaviour
         //Codrin: POSITION OF THE HAND TARGETS 
         Gizmos.color = Color.magenta;
         Gizmos.DrawSphere(_mLeftOrigin, 0.1f);
-        //Gizmos.DrawLine(_mLeftOrigin, _mRightOrigin);
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(_mRightOrigin, 0.1f);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(_mLeftOrigin, _mRightOrigin);
     }
 }
