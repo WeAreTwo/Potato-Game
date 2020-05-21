@@ -11,6 +11,7 @@ namespace PotatoGame
         protected void Singleton() { }
 
         public PlayerController playerController;
+        public InventoryController inventoryController;
         public TopViewCameraController cameraController;
         public PlantsController plantsController;
         public ShaderController shaderController;
