@@ -238,8 +238,6 @@ namespace PotatoGame
         // Set targets in real time for the hands --------------------------------------
         private void SetHandTargets()
         {
-            RaycastHit leftEdge;
-            RaycastHit rightEdge;
 
             int layerMask = LayerMask.GetMask("InHand");
 
@@ -259,7 +257,7 @@ namespace PotatoGame
             _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) +
                                                      (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
 
-            //TODO RAYCAST TO FACE THE PROX OBJECT
+            //TODO add check to make sure that both hands rays land on the same obj and not on separate ones 
             //we will use the normalized direction towards the prox. obj instead of a fixed direction
             leftDirectionToObject = (m_proximityObject.transform.position - _mLeftOrigin).normalized;
             rightDirectionToObject = (m_proximityObject.transform.position - _mRightOrigin).normalized;
@@ -273,6 +271,7 @@ namespace PotatoGame
              */
             
             // For left side ----------
+            RaycastHit leftEdge;
             if (Physics.Raycast(_mLeftOrigin, leftDirectionToObject, out leftEdge,
                 m_raycastOffsetX + 10.0f, layerMask))
             {
@@ -288,6 +287,7 @@ namespace PotatoGame
                 Debug.Log("Nope Left");
 
             // For right side ---------
+            RaycastHit rightEdge;
             if (Physics.Raycast(_mRightOrigin, rightDirectionToObject, out rightEdge,
                 m_raycastOffsetX + 10.0f, layerMask))
             {

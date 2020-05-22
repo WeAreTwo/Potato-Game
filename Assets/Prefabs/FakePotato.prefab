@@ -75,7 +75,6 @@ GameObject:
   - component: {fileID: 3578870753580590794}
   - component: {fileID: 3578870753580590798}
   - component: {fileID: 3578870753580590799}
-  - component: {fileID: 2286035105280454969}
   m_Layer: 0
   m_Name: FakePotato
   m_TagString: Potato
@@ -191,25 +190,6 @@ MonoBehaviour:
   m_planting: 0
   m_planted: 0
   m_depthRange: {x: 0.3, y: 0.45}
---- !u!114 &2286035105280454969
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3578870753580590793}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c11891be470a154f93ac3ae4436b0a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ik: {fileID: 0}
-  m_leftHandTarget: {fileID: 3104470080798935652}
-  m_rightHandTarget: {fileID: 1733417676676412848}
-  m_activateWeight: 0
-  m_weightSpeed: 5
-  leftLook: {x: 0, y: 0, z: 0}
-  rightLook: {x: 0, y: 0, z: 0}
 --- !u!1 &6915663565687079069
 GameObject:
   m_ObjectHideFlags: 0
