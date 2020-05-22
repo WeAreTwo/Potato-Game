@@ -10,8 +10,8 @@ namespace PotatoGame
     {
         // public variables -------------------------
         protected FullBodyBipedIK m_ik; // Instance of the body ik on the player
-        protected Transform m_leftHandTarget; // Position where the left hand will be placed
-        protected Transform m_rightHandTarget; // Position where the right hand will be placed
+        public Transform m_leftHandTarget; // Position where the left hand will be placed
+        public Transform m_rightHandTarget; // Position where the right hand will be placed
         protected bool m_activateWeight; // Activate the weight for the hands (going to target)
         protected float m_weightSpeed = 5f; // Speed for the weight transition
 

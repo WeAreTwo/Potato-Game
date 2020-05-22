@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 
 namespace PotatoGame
 {
+    [RequireComponent(typeof(IKController))]
     public class ActionController : MonoBehaviour
     {
         // public variables -------------------------
@@ -26,6 +27,7 @@ namespace PotatoGame
         private Vector3 _mLeftOrigin; // Use for left hand raycast starting point
         private int _mOriginalLayer; // Original physic layer applied to the proximity object
 
+        [SerializeField] protected IKController _ik;
 
         // ------------------------------------------
         // Start is called before update
@@ -33,6 +35,7 @@ namespace PotatoGame
         void Start()
         {
             // Get components
+            _ik = GameManager.Instance.playerController.gameObject.GetComponent<IKController>();
             _mBoxCol = GetComponent<BoxCollider>();
         }
 
@@ -94,20 +97,20 @@ namespace PotatoGame
 
                         
                         //Codrin Code for his potatoes
-                        if (m_proximityObject.GetComponent<Plant>() != null &&
-                            !m_proximityObject.GetComponent<Plant>().Planted)
-                        {
-                            Hold();
-                            m_proximityObject.GetComponent<Plant>().PickedUp = true;
-                        }
-                        else if (m_proximityObject.GetComponent<Plant>().Planted)
-                            Harvest();
+                        // if (m_proximityObject.GetComponent<Plant>() != null &&
+                        //     !m_proximityObject.GetComponent<Plant>().Planted)
+                        // {
+                        //     Hold();
+                        //     m_proximityObject.GetComponent<Plant>().PickedUp = true;
+                        // }
+                        // else if (m_proximityObject.GetComponent<Plant>().Planted)
+                        //     Harvest();
                     }
                 }
 
                 // If player is holding an object, trow it
                 if (_mHolding && _mReadyToTrow)
-                    Trow(false);
+                    Throw(false);
             }
 
             // When the action input is not triggered ----------
@@ -122,7 +125,7 @@ namespace PotatoGame
             if (Input.GetAxisRaw("Plant") != 0 && _mReadyToPlant)
             {
                 // Plant a potato
-                Trow(true);
+                Throw(true);
             }
 
         }
@@ -182,7 +185,7 @@ namespace PotatoGame
 
 
         // Trowing a dynamic object ----------------------------------------------------
-        private void Trow(bool plant)
+        private void Throw(bool plant)
         {
             // Reset object rigid body's property and unfreeze rotation
             Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
@@ -190,8 +193,9 @@ namespace PotatoGame
             objectRb.constraints = RigidbodyConstraints.None;
 
             // Reset hand positions
-            HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
-            handTargets.m_activateWeight = false;
+            // HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
+            // handTargets.m_activateWeight = false;
+            _ik.ActivateWeight = false;
             m_proximityObject.layer = _mOriginalLayer;
 
             // Enable object's collider
@@ -201,6 +205,7 @@ namespace PotatoGame
             // Apply a velocity to the object
             objectRb.velocity = transform.forward * m_trowForce;
 
+            //TODO REFACTOR TO INTERFACE GENERIC
             // Check if the object will be planted
             // Get the planting mechanic from the object activated
             if (m_proximityObject.GetComponent<PlantingController>() != null && plant)
@@ -235,8 +240,9 @@ namespace PotatoGame
 
             int layerMask = LayerMask.GetMask("InHand");
 
-            HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
-            handTargets.m_activateWeight = true;
+            // HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
+            // handTargets.m_activateWeight = true;
+            _ik.ActivateWeight = true;
 
             // Capture current layer and change it
             _mOriginalLayer = m_proximityObject.layer;
@@ -250,13 +256,18 @@ namespace PotatoGame
             _mLeftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) +
                                                     (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
 
+            //TODO RAYCAST TO FACE THE PROX OBJECT
+            
             // For right side ---------
             if (Physics.Raycast(_mRightOrigin, transform.TransformDirection(Vector3.left), out rightEdge,
                 m_raycastOffsetX, layerMask))
             {
                 // Put the right hand at the edge hit
-                handTargets.m_rightHandTarget.position = rightEdge.point;
-                handTargets.m_rightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);
+                // handTargets.m_rightHandTarget.position = rightEdge.point;
+                // handTargets.m_rightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);     
+                _ik.RightHandTarget.parent = m_proximityObject.transform;
+                _ik.RightHandTarget.position = rightEdge.point;
+                _ik.RightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);
                 Debug.Log("Hit Right");
             }
             else
@@ -268,8 +279,11 @@ namespace PotatoGame
                 m_raycastOffsetX, layerMask))
             {
                 // Put the left hand at the edge hit
-                handTargets.m_leftHandTarget.position = leftEdge.point;
-                handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
+                // handTargets.m_leftHandTarget.position = leftEdge.point;
+                // handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);        
+                _ik.LeftHandTarget.parent = m_proximityObject.transform;
+                _ik.LeftHandTarget.position = leftEdge.point;
+                _ik.LeftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
                 Debug.Log("Hit Left");
             }
             else
