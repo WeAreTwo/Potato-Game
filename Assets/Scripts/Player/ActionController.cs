@@ -96,7 +96,12 @@ namespace PotatoGame
                         //Codrin Code for his potatoes
                         if (m_proximityObject.GetComponent<Plant>() != null &&
                             !m_proximityObject.GetComponent<Plant>().Planted)
+                        {
                             Hold();
+                            m_proximityObject.GetComponent<Plant>().PickedUp = true;
+                        }
+                        else if (m_proximityObject.GetComponent<Plant>().Planted)
+                            Harvest();
                     }
                 }
 
@@ -126,6 +131,7 @@ namespace PotatoGame
         // Sccan an object when colliding with it --------------------------------------
         private void OnTriggerEnter(Collider col)
         {
+
             // Check if the object can be grabbed
             if (col.gameObject.tag == ProjectTags.DynamicObject ||
                 col.gameObject.tag == ProjectTags.Potato)

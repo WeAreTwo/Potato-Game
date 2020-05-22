@@ -110,9 +110,9 @@ namespace PotatoGame
             if(!pickedUp) fsm.OnCollisionExit(col);
         }
 
-        protected virtual void OnDrawGizmos()
+        protected virtual void OnDrawGizmosSelected()
         {
-            fsm.DrawGizmos();
+            if(fsm != null) fsm.DrawGizmos();
         }
         
         public virtual void Kill()

@@ -87,14 +87,21 @@ namespace PotatoGame
 
         protected void OnDrawGizmos()
         {
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(m_leftHandTarget.position, 0.1f);
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(m_rightHandTarget.position, 0.1f);
+            if (m_leftHandTarget != null)
+            {
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawWireSphere(m_leftHandTarget.position, 0.1f);
+                Gizmos.DrawLine(m_leftHandTarget.position, m_leftHandTarget.position + m_leftHandTarget.forward * 0.5f);
+            }
 
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(m_leftHandTarget.position, m_leftHandTarget.position + m_leftHandTarget.forward * 0.5f);
-            Gizmos.DrawLine(m_rightHandTarget.position, m_rightHandTarget.position + m_rightHandTarget.forward * 0.5f);
+            if (m_rightHandTarget != null)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(m_rightHandTarget.position, 0.1f);
+                Gizmos.DrawLine(m_rightHandTarget.position, m_rightHandTarget.position + m_rightHandTarget.forward * 0.5f);
+            }
+
+            
         }
     }
 }
