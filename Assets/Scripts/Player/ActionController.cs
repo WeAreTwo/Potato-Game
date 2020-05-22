@@ -26,6 +26,9 @@ namespace PotatoGame
         private Vector3 _mRightOrigin; // Use for right hand raycast starting point
         private Vector3 _mLeftOrigin; // Use for left hand raycast starting point
         private int _mOriginalLayer; // Original physic layer applied to the proximity object
+        
+        protected Vector3 leftDirectionToObject;
+        protected Vector3 rightDirectionToObject;
 
         [SerializeField] protected IKController _ik;
 
@@ -251,16 +254,42 @@ namespace PotatoGame
             // Set origins of the raycasts + offsets
             Vector3 objectPositionOffset = m_proximityObject.transform.position - transform.position;
 
-            _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) +
-                                                     (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
             _mLeftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) +
                                                     (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
+            _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) +
+                                                     (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
 
             //TODO RAYCAST TO FACE THE PROX OBJECT
+            //we will use the normalized direction towards the prox. obj instead of a fixed direction
+            leftDirectionToObject = (m_proximityObject.transform.position - _mLeftOrigin).normalized;
+            rightDirectionToObject = (m_proximityObject.transform.position - _mRightOrigin).normalized;
             
+            /* Thought process here 
+             * 1- get direction towards object
+             * 2- ray cast there
+             * 3- set parent to obj and weights to IKController
+             *
+             * NOTE: Need to call this function only once 
+             */
+            
+            // For left side ----------
+            if (Physics.Raycast(_mLeftOrigin, leftDirectionToObject, out leftEdge,
+                m_raycastOffsetX + 10.0f, layerMask))
+            {
+                // Put the left hand at the edge hit
+                // handTargets.m_leftHandTarget.position = leftEdge.point;
+                // handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);        
+                _ik.LeftHandTarget.parent = m_proximityObject.transform;
+                _ik.LeftHandTarget.position = leftEdge.point;
+                _ik.LeftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
+                Debug.Log("Hit Left");
+            }
+            else
+                Debug.Log("Nope Left");
+
             // For right side ---------
-            if (Physics.Raycast(_mRightOrigin, transform.TransformDirection(Vector3.left), out rightEdge,
-                m_raycastOffsetX, layerMask))
+            if (Physics.Raycast(_mRightOrigin, rightDirectionToObject, out rightEdge,
+                m_raycastOffsetX + 10.0f, layerMask))
             {
                 // Put the right hand at the edge hit
                 // handTargets.m_rightHandTarget.position = rightEdge.point;
@@ -273,21 +302,6 @@ namespace PotatoGame
             else
                 Debug.Log("Nope Right");
 
-
-            // For left side ----------
-            if (Physics.Raycast(_mLeftOrigin, transform.TransformDirection(Vector3.right), out leftEdge,
-                m_raycastOffsetX, layerMask))
-            {
-                // Put the left hand at the edge hit
-                // handTargets.m_leftHandTarget.position = leftEdge.point;
-                // handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);        
-                _ik.LeftHandTarget.parent = m_proximityObject.transform;
-                _ik.LeftHandTarget.position = leftEdge.point;
-                _ik.LeftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
-                Debug.Log("Hit Left");
-            }
-            else
-                Debug.Log("Nope Left");
         }
 
 
@@ -326,8 +340,8 @@ namespace PotatoGame
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(_mRightOrigin, 0.1f);
 
-            Debug.DrawRay(_mLeftOrigin, transform.TransformDirection(Vector3.right) * m_raycastOffsetX, Color.magenta);
-            Debug.DrawRay(_mRightOrigin, transform.TransformDirection(Vector3.left) * m_raycastOffsetX, Color.green);
+            Debug.DrawRay(_mLeftOrigin, leftDirectionToObject * 1.5f, Color.magenta);
+            Debug.DrawRay(_mRightOrigin, rightDirectionToObject * 1.5f, Color.green);
 
         }
     }
