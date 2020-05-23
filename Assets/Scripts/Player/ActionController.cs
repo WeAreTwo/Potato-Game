@@ -14,12 +14,12 @@ namespace PotatoGame
         // public variables -------------------------
         public bool m_canInteract = true; // Allow interaction with objects
         public GameObject m_proximityObject; // Target caught by a trigger
-        public float m_trowForce = 2.5f; // Force when an object is trow after holding
+        public float _m_throwForce = 2.5f; // Force when an object is trow after holding
         public float m_raycastOffsetX = 2f; // Offset on the x axis for raycasts
         public float m_raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
 
         // private variables ------------------------
-        private BoxCollider _mBoxCol; // Collider with the trigger
+        private BoxCollider _mInteractionBoxCol; // Collider with the trigger
         private bool _mHolding; // Is an object in hand?
         private bool _mReadyToTrow; // If an object is ready to be dropped
         private bool _mReadyToPlant; // If the holding object is a potato, ready to plant
@@ -39,7 +39,7 @@ namespace PotatoGame
         {
             // Get components
             _ik = GameManager.Instance.playerController.gameObject.GetComponent<IKController>();
-            _mBoxCol = GetComponent<BoxCollider>();
+            _mInteractionBoxCol = GetComponent<BoxCollider>();
         }
 
 
@@ -166,6 +166,7 @@ namespace PotatoGame
 
         void ResetProximityObject(Collider col)
         {
+            // col.gameObject.IsType<>()
             if(col.GetComponent<IPickUp>() != null && !_mHolding)
                 m_proximityObject = null;
         }
@@ -174,51 +175,72 @@ namespace PotatoGame
         // When holding a dynamic object -----------------------------------------------
         private void Hold()
         {
-            // Set the object as a child
-            m_proximityObject.transform.SetParent(transform);
+            /* PROCESS
+             * 1 - SET PARENT
+             * 2 - DISTABLED GRAVITY AND FREEZE ROTATION
+             * 3 - SET HANDS
+             * 4 - DISABLE COLLIDER
+             * 5 - ENABLED INTERACTION COLLIDER
+             * 6-  START PICK ANIM
+             * 7 - IF POTATO, ITS READY TO PLANT 
+             */
+            
+            HoldConstraints(); //parent setting and rb handling
+            SetHandTargets(); // Put hands on the object
+            SetProximityObjectCollider(true);
 
-            // Get its rigid body and cancel its gravity and freeze rotation
-            Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
-            objectRb.useGravity = false;
-            objectRb.constraints = RigidbodyConstraints.FreezeRotation;
-
-            // Put hands on the object
-            SetHandTargets();
-
-            // Disable object's collider
-            foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
-                objectCollider.isTrigger = true;
 
             // Bring back the trigger box as a collider
-            _mBoxCol.isTrigger = false;
+            _mInteractionBoxCol.isTrigger = false;
 
             // Start to pick up
             StartCoroutine(PickUp(0.3f, m_proximityObject));
 
-            // Check if it's a potato (activate the plant action)
-            if (m_proximityObject.tag == ProjectTags.Potato)
+            // Check if it's a plantable obj
+            if (m_proximityObject.IsType<IPlantable>())
                 _mReadyToPlant = true;
+            
         }
 
+        void HoldConstraints()
+        {
+            m_proximityObject.transform.SetParent(transform); // Set the object as a child
+            Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>(); // Get its rigid body and cancel its gravity and freeze rotation
+            if(objectRb != null)
+                objectRb.DeActivatePhysics();
+        }
+
+        void ThrowConstraints()
+        {
+            // Reset object rigid body's property and unfreeze rotation
+            Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
+            if (objectRb != null)
+            {
+                objectRb.ActivatePhysics();
+                objectRb.ThrowObject(transform.forward, _m_throwForce); // Apply a velocity to the object
+            }
+        }
+
+        void ResetHandPosition()
+        {
+            _ik.ActivateWeight = false; //reset hand position
+            m_proximityObject.layer = _mOriginalLayer;
+        }
+
+        void SetProximityObjectCollider(bool value)
+        {
+            // Enable object's collider
+            foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
+                objectCollider.isTrigger = value;
+        }
 
         // Trowing a dynamic object ----------------------------------------------------
         private void Throw(bool plant)
         {
-            // Reset object rigid body's property and unfreeze rotation
-            Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
-            objectRb.useGravity = true;
-            objectRb.constraints = RigidbodyConstraints.None;
+            ThrowConstraints();
+            ResetHandPosition();
+            SetProximityObjectCollider(false);
 
-            //reset hand position
-            _ik.ActivateWeight = false;
-            m_proximityObject.layer = _mOriginalLayer;
-
-            // Enable object's collider
-            foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
-                objectCollider.isTrigger = false;
-
-            // Apply a velocity to the object
-            objectRb.velocity = transform.forward * m_trowForce;
 
             //TODO REFACTOR TO INTERFACE GENERIC
             // Check if the object will be planted
@@ -243,7 +265,21 @@ namespace PotatoGame
             _mReadyToPlant = false;
 
             // Set the trigger back
-            _mBoxCol.isTrigger = true;
+            _mInteractionBoxCol.isTrigger = true;
+        }
+
+        void Plant()
+        {
+            //TODO REFACTOR TO INTERFACE GENERIC
+            // Check if the object will be planted
+            // Get the planting mechanic from the object activated
+            if (m_proximityObject.GetComponent<PlantingController>() != null)
+                m_proximityObject.GetComponent<PlantingController>().m_planting = true;
+
+
+            //Codrin Code for his potatoes
+            if (m_proximityObject.GetComponent<Plant>() != null)
+                m_proximityObject.GetComponent<Plant>().Planting = true;
         }
 
 
@@ -293,11 +329,8 @@ namespace PotatoGame
                 _ik.LeftHandTarget.parent = m_proximityObject.transform;
                 _ik.LeftHandTarget.position = leftEdge.point;
                 _ik.LeftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
-                Debug.Log("Hit Left");
             }
-            else
-                Debug.Log("Nope Left");
-
+            
             // For right side ---------
             RaycastHit rightEdge;
             if (Physics.Raycast(_mRightOrigin, rightDirectionToObject, out rightEdge,
@@ -309,11 +342,7 @@ namespace PotatoGame
                 _ik.RightHandTarget.parent = m_proximityObject.transform;
                 _ik.RightHandTarget.position = rightEdge.point;
                 _ik.RightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);
-                Debug.Log("Hit Right");
             }
-            else
-                Debug.Log("Nope Right");
-
         }
 
 
