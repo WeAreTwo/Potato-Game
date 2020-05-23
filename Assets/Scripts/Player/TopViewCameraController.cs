@@ -12,6 +12,7 @@ namespace PotatoGame
         [ProgressBar("m_zoomMin", "_mZoomMax", Height = 20)]
         public float m_currentZoom; // Current player's zoom
         public float m_zoomSpeed = 300f; // Speed when zooming in/out
+        public float m_rotateSpeed = 25f; // Rotation speed of the camera around the target
 
         [Space(10)] [Title("Target and Position")]
         public Transform m_target; // The target that should be the subject to follow
@@ -102,10 +103,11 @@ namespace PotatoGame
         {
             // Get the rotation axis
             var rotationAxis = Input.GetAxis("Rotate");
-            var step = rotationAxis * 300f;
+            var step = rotationAxis * m_rotateSpeed;
 
             // Rotate around the target
-            transform.RotateAround(m_target.position, Vector3.up, step * Time.deltaTime);
+            // transform.RotateAround(m_target.position, Vector3.up, step * Time.deltaTime);
+            offset = Quaternion.AngleAxis(step, Vector3.up) * offset;
         }
     }
 }
