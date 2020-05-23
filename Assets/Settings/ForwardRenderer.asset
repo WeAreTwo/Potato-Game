@@ -48,4 +48,4 @@ MonoBehaviour:
   m_Name: Outline
   m_EditorClassIdentifier: 
   settings:
-    outlineMaterial: {fileID: 0}
+    outlineMaterial: {fileID: 2100000, guid: e22fe6d0583d83a41be2412d20863db3, type: 2}

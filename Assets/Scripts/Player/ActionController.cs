@@ -12,17 +12,14 @@ namespace PotatoGame
     public class ActionController : MonoBehaviour
     {
         // public variables -------------------------
-        public bool m_canInteract = true; // Allow interaction with objects
         public GameObject m_proximityObject; // Target caught by a trigger
-        public float _m_throwForce = 2.5f; // Force when an object is trow after holding
+        public float m_throwForce = 2.5f; // Force when an object is trow after holding
         public float m_raycastOffsetX = 2f; // Offset on the x axis for raycasts
         public float m_raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
 
         // private variables ------------------------
         private BoxCollider _mInteractionBoxCol; // Collider with the trigger
         private bool _mHolding; // Is an object in hand?
-        private bool _mReadyToTrow; // If an object is ready to be dropped
-        private bool _mReadyToPlant; // If the holding object is a potato, ready to plant
         private Vector3 _mRightOrigin; // Use for right hand raycast starting point
         private Vector3 _mLeftOrigin; // Use for left hand raycast starting point
         private int _mOriginalLayer; // Original physic layer applied to the proximity object
@@ -80,41 +77,30 @@ namespace PotatoGame
             // Check if the action button is triggered ----------
             if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
             {
-                if (m_canInteract)
+                if (!_mHolding)
                 {
-                    // Disable interaction 
-                    m_canInteract = !m_canInteract;
-
                     // Scan for the correct type of object
                     if (m_proximityObject.IsType<IPickUp>())
                         Hold();
                     else if (m_proximityObject.IsType<IHarvestable>())
                         Harvest();
-                        
                 }
 
                 // If player is holding an object, trow it
-                if (_mHolding && _mReadyToTrow)
+                if (_mHolding)
                     Throw(false);
             }
-
-            // When the action input is not triggered ----------
-            if (Input.GetAxisRaw("Action") == 0 && m_proximityObject != null)
-            {
-                // When holding an object, next ready a trow
-                if (_mHolding)
-                    _mReadyToTrow = true;
-            }
-
+            
+            
             // If you can plant an object ----------------------
-            if (Input.GetAxisRaw("Plant") != 0 && _mReadyToPlant)
+            if (Input.GetAxisRaw("Plant") != 0 && _mHolding)
             {
                 Throw(true); // Plant a potato
             }
-
         }
 
-        // Sccan an object when colliding with it --------------------------------------
+        
+        // Scan an object when colliding with it ---------------------------------------
         private void OnTriggerEnter(Collider col)
         {
             CheckForNearbyPickableObject(col);
@@ -144,12 +130,11 @@ namespace PotatoGame
         {
             /* PROCESS
              * 1 - SET PARENT
-             * 2 - DISTABLED GRAVITY AND FREEZE ROTATION
+             * 2 - DISABLED GRAVITY AND FREEZE ROTATION
              * 3 - SET HANDS
              * 4 - DISABLE COLLIDER
              * 5 - ENABLED INTERACTION COLLIDER
              * 6-  START PICK ANIM
-             * 7 - IF POTATO, ITS READY TO PLANT 
              */
             
             
@@ -158,12 +143,6 @@ namespace PotatoGame
             _mInteractionBoxCol.SetColliderTrigger(false); // Bring back the trigger box as a collider
             SetHandTargets(); // Put hands on the object
             StartCoroutine(PickUp(0.3f, m_proximityObject)); // Start to pick up
-
-
-            // Check if it's a plantable obj
-            if (m_proximityObject.IsType<IPlantable>())
-                _mReadyToPlant = true;
-            
         }
         
         void ResetHandWeight()
@@ -176,7 +155,7 @@ namespace PotatoGame
         private void Throw(bool plant)
         {
             ResetHandWeight();
-            m_proximityObject.ThrowObject(transform.forward, _m_throwForce); //throws the object 
+            m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
             m_proximityObject.SetAllColliderTriggers(false);
             
             if(plant) Plant();
@@ -185,11 +164,8 @@ namespace PotatoGame
             m_proximityObject.transform.parent = null;
             m_proximityObject = null;
 
-            // Enable interaction
-            m_canInteract = true;
+            // Clear hold
             _mHolding = false;
-            _mReadyToTrow = false;
-            _mReadyToPlant = false;
 
             // Set the trigger back
             _mInteractionBoxCol.SetColliderTrigger(true);
@@ -200,15 +176,14 @@ namespace PotatoGame
             //check if it can be planted
             if (m_proximityObject.IsType<IPlantable>())
                 m_proximityObject.GetComponent<IPlantable>().Planting = true;
-            
         }
 
 
         // Set targets in real time for the hands --------------------------------------
         private void SetHandTargets()
         {
-
-            int layerMask = LayerMask.GetMask("InHand");
+            var objectPos = m_proximityObject.transform.position;
+            var layerMask = LayerMask.GetMask("InHand");
             _ik.ActivateWeight = true;
 
             // Capture current layer and change it
@@ -216,14 +191,14 @@ namespace PotatoGame
             m_proximityObject.layer = LayerMask.NameToLayer("InHand");
 
             // Set origins of the raycasts + offsets
-            Vector3 objectPositionOffset = m_proximityObject.transform.position - transform.position;
+            Vector3 objectPositionOffset = objectPos - transform.position;
 
             _mLeftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) +
                                                     (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
             _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) +
                                                      (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
 
-            //TODO add check to make sure that both hands rays land on the same obj and not on separate ones 
+            // TODO add check to make sure that both hands rays land on the same obj and not on separate ones 
             
             /* Thought process here 
              * 1- get direction towards object
@@ -233,9 +208,9 @@ namespace PotatoGame
              * NOTE: Need to call this function only once 
              */
             
-            //we will use the normalized direction towards the prox. obj instead of a fixed direction
-            leftDirectionToObject = (m_proximityObject.transform.position - _mLeftOrigin).normalized;
-            rightDirectionToObject = (m_proximityObject.transform.position - _mRightOrigin).normalized;
+            // we will use the normalized direction towards the prox. obj instead of a fixed direction
+            leftDirectionToObject = (objectPos - _mLeftOrigin).normalized;
+            rightDirectionToObject = (objectPos - _mRightOrigin).normalized;
             
             // For left side ----------
             RaycastHit leftEdge;
@@ -266,7 +241,6 @@ namespace PotatoGame
             // Make sure the player did not target another object
             m_proximityObject = pickUpObject;
             _mHolding = true;
-            
         }
         
         
@@ -279,8 +253,6 @@ namespace PotatoGame
             
             // Destroy the object
             Destroy(m_proximityObject);
-
-            m_canInteract = true;
         }
 
 
