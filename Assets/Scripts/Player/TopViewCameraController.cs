@@ -9,21 +9,21 @@ namespace PotatoGame
     public class TopViewCameraController : MonoBehaviour
     {
         // public variables -------------------------
-        [ProgressBar("m_zoomMin", "m_zoomMax", Height = 20)]
-        public float m_currentZoom;                     // Current player's zoom
-        public float m_zoomSpeed = 300f;                // Speed when zooming in/out
+        [ProgressBar("m_zoomMin", "_mZoomMax", Height = 20)]
+        public float m_currentZoom; // Current player's zoom
+        public float m_zoomSpeed = 300f; // Speed when zooming in/out
 
         [Space(10)] [Title("Target and Position")]
-        public Transform m_target;                      // The target that should be the subject to follow
+        public Transform m_target; // The target that should be the subject to follow
 
-        public float m_smoothSpeed = 0.125f;            // Smooth float for following movement
-        public Vector3 offset;                          // Position of the camera around the target
+        public float m_smoothSpeed = 0.125f; // Smooth float for following movement
+        public Vector3 offset; // Position of the camera around the target
 
 
         // private variables ------------------------
-        private Camera _mCam;                           // Instance of the camera component
-        private float _mZoomMin;                        // Minimum zoom of the camera
-        private float _mZoomMax;                        // Maximum zoom of the camera
+        private Camera _mCam; // Instance of the camera component
+        private float _mZoomMin; // Minimum zoom of the camera
+        private float _mZoomMax; // Maximum zoom of the camera
 
 
         // ------------------------------------------
@@ -47,12 +47,12 @@ namespace PotatoGame
         {
             // Always listen to player's inputs
             Zoom();
-            RotateCam();
         }
 
         void LateUpdate()
         {
             // Look at the player
+            RotateCam();
             FollowTarget();
         }
 
