@@ -29,9 +29,40 @@ namespace PotatoGame
             rb.constraints = RigidbodyConstraints.FreezeRotation;               
         }
 
+        public static void SetColliderTrigger(this Collider col, bool value)
+        {
+            col.isTrigger = value;
+        }
+        
+        public static void SetAllColliderTriggers(this GameObject obj, bool value)
+        {
+            foreach (Collider objectCollider in obj.GetComponents<Collider>())
+                objectCollider.isTrigger = value;
+        }
+
         public static void ThrowObject(this Rigidbody rb, Vector3 direction, float force)
         {
             rb.velocity = direction * force;
+        } 
+        
+        public static void ThrowObject(this GameObject obj, Vector3 direction, float force)
+        {
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.ActivatePhysics();
+                rb.ThrowObject(direction, force);
+            }
+        }
+        
+        public static void HoldObject(this GameObject obj, Transform parent)
+        {
+            obj.transform.SetParent(parent);
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.DeActivatePhysics();
+            }
         }
     }
 }

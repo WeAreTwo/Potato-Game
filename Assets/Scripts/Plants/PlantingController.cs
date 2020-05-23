@@ -9,15 +9,18 @@ namespace PotatoGame
     public class PlantingController : MonoBehaviour, IPickUp, IPlantable
     {
         // public variables -------------------------
-        [Title("Planting States")] [ReadOnly] public bool m_planting; // When ready to be planted in the ground
-        [ReadOnly] public bool m_planted; // Is the potato currently planted
+        [Title("Planting States")] 
+        public bool m_planting; // When ready to be planted in the ground
+        public bool m_planted; // Is the potato currently planted
 
-        [Space] public Vector2 m_depthRange; // Range for the depth of the potato when planted
+        public Vector2 m_depthRange; // Range for the depth of the potato when planted
 
         // private variables ------------------------
         private Rigidbody m_rb; // Instance of the rigidbody
         private float m_depth; // How deep will the potato be planted
 
+        public bool Planting { get => m_planting; set => m_planting = value; }
+        public bool Planted { get => m_planted; set => m_planted = value; }
 
         // ------------------------------------------
         // Start is called before update

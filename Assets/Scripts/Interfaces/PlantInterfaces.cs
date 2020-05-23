@@ -6,6 +6,8 @@ namespace PotatoGame
 {
     public interface IPlantable
     {
+        bool Planted { get; set; }
+        bool Planting { get; set; }
         void PlantObject();
     }
     

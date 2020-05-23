@@ -78,7 +78,7 @@ namespace PotatoGame
         // Update is called once per frame
         protected virtual void Update()
         {
-            if(!pickedUp) fsm.Update();
+            // if(!pickedUp) fsm.Update();
         }
 
         protected virtual void OnEnable()
@@ -94,8 +94,8 @@ namespace PotatoGame
         protected virtual void OnCollisionEnter(Collision col)
         {
             // Plant when in contact with the ground
-            if (col.gameObject.tag == ProjectTags.Ground && planting)
-                PlantObject();
+            // if (col.gameObject.tag == ProjectTags.Ground && planting)
+            //     PlantObject();
             
             if(!pickedUp) fsm.OnCollisionEnter(col);
         }

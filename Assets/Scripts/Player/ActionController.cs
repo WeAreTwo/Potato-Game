@@ -86,29 +86,11 @@ namespace PotatoGame
                     m_canInteract = !m_canInteract;
 
                     // Scan for the correct type of object
-                    if (m_proximityObject.tag == ProjectTags.DynamicObject)
+                    if (m_proximityObject.IsType<IPickUp>())
                         Hold();
-
-                    if (m_proximityObject.tag == ProjectTags.Potato)
-                    {
-                        // Make sure the potato is not already planted
-                        if (m_proximityObject.GetComponent<PlantingController>() != null &&
-                            !m_proximityObject.GetComponent<PlantingController>().m_planted)
-                            Hold();
-                        else if (m_proximityObject.GetComponent<PlantingController>().m_planted)
-                            Harvest();
-
+                    else if (m_proximityObject.IsType<IHarvestable>())
+                        Harvest();
                         
-                        //Codrin Code for his potatoes
-                        // if (m_proximityObject.GetComponent<Plant>() != null &&
-                        //     !m_proximityObject.GetComponent<Plant>().Planted)
-                        // {
-                        //     Hold();
-                        //     m_proximityObject.GetComponent<Plant>().PickedUp = true;
-                        // }
-                        // else if (m_proximityObject.GetComponent<Plant>().Planted)
-                        //     Harvest();
-                    }
                 }
 
                 // If player is holding an object, trow it
@@ -127,41 +109,26 @@ namespace PotatoGame
             // If you can plant an object ----------------------
             if (Input.GetAxisRaw("Plant") != 0 && _mReadyToPlant)
             {
-                // Plant a potato
-                Throw(true);
+                Throw(true); // Plant a potato
             }
 
         }
 
-
         // Sccan an object when colliding with it --------------------------------------
         private void OnTriggerEnter(Collider col)
         {
-
-            // Check if the object can be grabbed
-            // if (col.gameObject.tag == ProjectTags.DynamicObject ||
-            //     col.gameObject.tag == ProjectTags.Potato)
-            // {
-            //     m_proximityObject = col.gameObject;
-            // }
             CheckForNearbyPickableObject(col);
+        }
+        
+        private void OnTriggerExit(Collider col)
+        {
+            ResetProximityObject(col);
         }
 
         void CheckForNearbyPickableObject(Collider col)
         {
             if(col.GetComponent<IPickUp>() != null)
                 m_proximityObject = col.gameObject;
-        }
-
-        private void OnTriggerExit(Collider col)
-        {
-            // Empty out the proximity object
-            // if (col.gameObject.tag == ProjectTags.DynamicObject && !_mHolding ||
-            //     col.gameObject.tag == ProjectTags.Potato && !_mHolding)
-            // {
-            //     m_proximityObject = null;
-            // }
-            ResetProximityObject(col);
         }
 
         void ResetProximityObject(Collider col)
@@ -185,74 +152,34 @@ namespace PotatoGame
              * 7 - IF POTATO, ITS READY TO PLANT 
              */
             
-            HoldConstraints(); //parent setting and rb handling
+            
+            m_proximityObject.HoldObject(this.transform); //hold the object 
+            m_proximityObject.SetAllColliderTriggers(true);
+            _mInteractionBoxCol.SetColliderTrigger(false); // Bring back the trigger box as a collider
             SetHandTargets(); // Put hands on the object
-            SetProximityObjectCollider(true);
+            StartCoroutine(PickUp(0.3f, m_proximityObject)); // Start to pick up
 
-
-            // Bring back the trigger box as a collider
-            _mInteractionBoxCol.isTrigger = false;
-
-            // Start to pick up
-            StartCoroutine(PickUp(0.3f, m_proximityObject));
 
             // Check if it's a plantable obj
             if (m_proximityObject.IsType<IPlantable>())
                 _mReadyToPlant = true;
             
         }
-
-        void HoldConstraints()
-        {
-            m_proximityObject.transform.SetParent(transform); // Set the object as a child
-            Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>(); // Get its rigid body and cancel its gravity and freeze rotation
-            if(objectRb != null)
-                objectRb.DeActivatePhysics();
-        }
-
-        void ThrowConstraints()
-        {
-            // Reset object rigid body's property and unfreeze rotation
-            Rigidbody objectRb = m_proximityObject.GetComponent<Rigidbody>();
-            if (objectRb != null)
-            {
-                objectRb.ActivatePhysics();
-                objectRb.ThrowObject(transform.forward, _m_throwForce); // Apply a velocity to the object
-            }
-        }
-
-        void ResetHandPosition()
+        
+        void ResetHandWeight()
         {
             _ik.ActivateWeight = false; //reset hand position
             m_proximityObject.layer = _mOriginalLayer;
         }
 
-        void SetProximityObjectCollider(bool value)
-        {
-            // Enable object's collider
-            foreach (Collider objectCollider in m_proximityObject.GetComponents<Collider>())
-                objectCollider.isTrigger = value;
-        }
-
         // Trowing a dynamic object ----------------------------------------------------
         private void Throw(bool plant)
         {
-            ThrowConstraints();
-            ResetHandPosition();
-            SetProximityObjectCollider(false);
-
-
-            //TODO REFACTOR TO INTERFACE GENERIC
-            // Check if the object will be planted
-            // Get the planting mechanic from the object activated
-            if (m_proximityObject.GetComponent<PlantingController>() != null && plant)
-                m_proximityObject.GetComponent<PlantingController>().m_planting = true;
-
-
-            //Codrin Code for his potatoes
-            if (m_proximityObject.GetComponent<Plant>() != null && plant)
-                m_proximityObject.GetComponent<Plant>().Planting = true;
-
+            ResetHandWeight();
+            m_proximityObject.ThrowObject(transform.forward, _m_throwForce); //throws the object 
+            m_proximityObject.SetAllColliderTriggers(false);
+            
+            if(plant) Plant();
 
             // Get rid of the object
             m_proximityObject.transform.parent = null;
@@ -265,21 +192,15 @@ namespace PotatoGame
             _mReadyToPlant = false;
 
             // Set the trigger back
-            _mInteractionBoxCol.isTrigger = true;
+            _mInteractionBoxCol.SetColliderTrigger(true);
         }
 
         void Plant()
         {
-            //TODO REFACTOR TO INTERFACE GENERIC
-            // Check if the object will be planted
-            // Get the planting mechanic from the object activated
-            if (m_proximityObject.GetComponent<PlantingController>() != null)
-                m_proximityObject.GetComponent<PlantingController>().m_planting = true;
-
-
-            //Codrin Code for his potatoes
-            if (m_proximityObject.GetComponent<Plant>() != null)
-                m_proximityObject.GetComponent<Plant>().Planting = true;
+            //check if it can be planted
+            if (m_proximityObject.IsType<IPlantable>())
+                m_proximityObject.GetComponent<IPlantable>().Planting = true;
+            
         }
 
 
@@ -288,9 +209,6 @@ namespace PotatoGame
         {
 
             int layerMask = LayerMask.GetMask("InHand");
-
-            // HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
-            // handTargets.m_activateWeight = true;
             _ik.ActivateWeight = true;
 
             // Capture current layer and change it
@@ -306,9 +224,6 @@ namespace PotatoGame
                                                      (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
 
             //TODO add check to make sure that both hands rays land on the same obj and not on separate ones 
-            //we will use the normalized direction towards the prox. obj instead of a fixed direction
-            leftDirectionToObject = (m_proximityObject.transform.position - _mLeftOrigin).normalized;
-            rightDirectionToObject = (m_proximityObject.transform.position - _mRightOrigin).normalized;
             
             /* Thought process here 
              * 1- get direction towards object
@@ -318,14 +233,14 @@ namespace PotatoGame
              * NOTE: Need to call this function only once 
              */
             
+            //we will use the normalized direction towards the prox. obj instead of a fixed direction
+            leftDirectionToObject = (m_proximityObject.transform.position - _mLeftOrigin).normalized;
+            rightDirectionToObject = (m_proximityObject.transform.position - _mRightOrigin).normalized;
+            
             // For left side ----------
             RaycastHit leftEdge;
-            if (Physics.Raycast(_mLeftOrigin, leftDirectionToObject, out leftEdge,
-                m_raycastOffsetX + 10.0f, layerMask))
+            if (Physics.Raycast(_mLeftOrigin, leftDirectionToObject, out leftEdge, m_raycastOffsetX + 10.0f, layerMask))
             {
-                // Put the left hand at the edge hit
-                // handTargets.m_leftHandTarget.position = leftEdge.point;
-                // handTargets.m_leftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);        
                 _ik.LeftHandTarget.parent = m_proximityObject.transform;
                 _ik.LeftHandTarget.position = leftEdge.point;
                 _ik.LeftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
@@ -333,12 +248,8 @@ namespace PotatoGame
             
             // For right side ---------
             RaycastHit rightEdge;
-            if (Physics.Raycast(_mRightOrigin, rightDirectionToObject, out rightEdge,
-                m_raycastOffsetX + 10.0f, layerMask))
+            if (Physics.Raycast(_mRightOrigin, rightDirectionToObject, out rightEdge, m_raycastOffsetX + 10.0f, layerMask))
             {
-                // Put the right hand at the edge hit
-                // handTargets.m_rightHandTarget.position = rightEdge.point;
-                // handTargets.m_rightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);     
                 _ik.RightHandTarget.parent = m_proximityObject.transform;
                 _ik.RightHandTarget.position = rightEdge.point;
                 _ik.RightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);
@@ -356,7 +267,6 @@ namespace PotatoGame
             m_proximityObject = pickUpObject;
             _mHolding = true;
             
-            //NOTE: CAN CALL
         }
         
         
