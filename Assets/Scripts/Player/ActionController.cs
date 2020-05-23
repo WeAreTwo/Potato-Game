@@ -147,13 +147,13 @@ namespace PotatoGame
         void ResetHandWeight()
         {
             _ik.ActivateWeight = false; //reset hand position
-            m_proximityObject.layer = 0;
         }
 
         // Trowing a dynamic object ----------------------------------------------------
         private void Throw(bool plant)
         {
             ResetHandWeight();
+            m_proximityObject.layer = 0; // bring back the default physic layer
             m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
             m_proximityObject.SetAllColliderTriggers(false);
             
