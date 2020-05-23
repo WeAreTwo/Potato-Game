@@ -24,9 +24,7 @@ namespace PotatoGame
         private Vector3 _mVelocity;                     // Velocity to apply to the player
         private bool _mIsGrounded;                      // Check if the controller is in contact with the ground
         private Quaternion _mLookRotation;              // Rotation that need to be look at
-
-
-
+        
 
         // ------------------------------------------
         // Start is called before update
@@ -69,12 +67,15 @@ namespace PotatoGame
             var verticalAxis = Input.GetAxis("Vertical");
 
             // Catch the inputs in a vector3
+            // (make sure inputs makes sense with camera view)
             var move = new Vector3(horizontalAxis, 0, verticalAxis);
+            move = Camera.main.transform.TransformDirection(move);
+            move.y = 0f;
 
             // When we record input, move the controller
             if (move != Vector3.zero)
             {
-                _mController.Move(new Vector3(horizontalAxis, 0, verticalAxis) * step);
+                _mController.Move(move * step);
                 _mLookRotation = Quaternion.LookRotation(move);
                 transform.rotation = Quaternion.Lerp(transform.rotation, _mLookRotation, m_rotationSpeed * Time.deltaTime);
                 
@@ -87,8 +88,6 @@ namespace PotatoGame
                 _mAnim.SetBool("walking", false);
             }
             
-            
-
             // Add gravity
             _mVelocity.y += m_gravityForce * Time.deltaTime;
             _mController.Move(_mVelocity * Time.deltaTime);

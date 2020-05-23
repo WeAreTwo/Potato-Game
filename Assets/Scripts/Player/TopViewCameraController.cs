@@ -105,8 +105,7 @@ namespace PotatoGame
             var rotationAxis = Input.GetAxis("Rotate");
             var step = rotationAxis * m_rotateSpeed;
 
-            // Rotate around the target
-            // transform.RotateAround(m_target.position, Vector3.up, step * Time.deltaTime);
+            // Rotate around the target while keeping the offset
             offset = Quaternion.AngleAxis(step, Vector3.up) * offset;
         }
     }
