@@ -34,7 +34,7 @@ namespace PotatoGame
     
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
     [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
-    public abstract class Plant : MonoBehaviour, IPickUp
+    public abstract class Plant : MonoBehaviour, IPickUp, IPlantable
     {
         //Finite State Machine
         protected StateMachine fsm;
@@ -42,7 +42,8 @@ namespace PotatoGame
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
         [SerializeField] protected bool pickedUp;
-
+        [SerializeField] protected Vector2 plantingDepthRange; // Range for the depth of the potato when planted
+        
         [Header("HEALTH")] 
         [SerializeField] protected float health = 100.0f;
         [SerializeField] protected GrowthParams growthParams;
@@ -77,7 +78,7 @@ namespace PotatoGame
         // Update is called once per frame
         protected virtual void Update()
         {
-            if(!pickedUp) fsm.Update();
+            // if(!pickedUp) fsm.Update();
         }
 
         protected virtual void OnEnable()
@@ -92,6 +93,10 @@ namespace PotatoGame
 
         protected virtual void OnCollisionEnter(Collision col)
         {
+            // Plant when in contact with the ground
+            // if (col.gameObject.tag == ProjectTags.Ground && planting)
+            //     PlantObject();
+            
             if(!pickedUp) fsm.OnCollisionEnter(col);
         }
 
@@ -105,9 +110,9 @@ namespace PotatoGame
             if(!pickedUp) fsm.OnCollisionExit(col);
         }
 
-        protected virtual void OnDrawGizmos()
+        protected virtual void OnDrawGizmosSelected()
         {
-            fsm.DrawGizmos();
+            if(fsm != null) fsm.DrawGizmos();
         }
         
         public virtual void Kill()
@@ -119,9 +124,39 @@ namespace PotatoGame
             }
         }
 
+        public virtual void PlantObject()
+        {
+            // Pick a random depth number
+            var depth = UnityEngine.Random.Range(plantingDepthRange.x, plantingDepthRange.y);
+
+            // Deactivate gravity and freeze all
+            rb.useGravity = false;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+
+            // Deactivate the colliders
+            foreach (Collider objectCollider in GetComponents<Collider>())
+                objectCollider.isTrigger = true;
+
+            // Get the potato in the ground
+            Vector3 currentPos = transform.position;
+            currentPos.y -= depth;
+            transform.position = currentPos;
+
+            // The potato is now planted!
+            planting = false;
+            planted = true;
+        }
+
         public virtual void PickUp()
         {
             //Put pick up code here 
         }
+
+        void PlantedConfig()
+        {
+            
+        }
+        
+        
     }
 }

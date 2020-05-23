@@ -167,7 +167,7 @@ GameObject:
   - component: {fileID: 152371154211809765}
   - component: {fileID: 152371154211809763}
   - component: {fileID: 152371154211809762}
-  - component: {fileID: 2085008932}
+  - component: {fileID: 2892520393150625469}
   m_Layer: 0
   m_Name: PickObject
   m_TagString: DynamicObject
@@ -482,7 +482,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.7, y: 0.7, z: 0.7}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2085008932
+--- !u!114 &2892520393150625469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -491,11 +491,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 152371154211809760}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c11891be470a154f93ac3ae4436b0a0, type: 3}
+  m_Script: {fileID: 11500000, guid: 43b1f311f071ada4f9468f160f337f66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ik: {fileID: 0}
-  m_leftHandTarget: {fileID: 1141386896}
-  m_rightHandTarget: {fileID: 1445744128}
-  m_activateWeight: 0
-  m_weightSpeed: 5

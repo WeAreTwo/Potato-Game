@@ -49,12 +49,6 @@ namespace PotatoGame
             
             fsm.Initialize(PlantStates.Seed.ToString());
         }
-
-        // Update is called once per frame
-        protected override void Update()
-        {
-            base.Update();
-        }
         
     }
 
