@@ -1,5 +1,65 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &433660778
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 433660779}
+  m_Layer: 0
+  m_Name: LeftHand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &433660779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433660778}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8069772367280120038}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1361283822
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1361283823}
+  m_Layer: 0
+  m_Name: RightHand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1361283823
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361283822}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8069772367280120038}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &158214650653408245
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,7 +507,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.38, y: 1, z: 1.27}
+  m_Size: {x: 1.38, y: 1.86, z: 1.27}
   m_Center: {x: 0, y: -0.3, z: 0.33}
 --- !u!114 &3064457621664104529
 MonoBehaviour:
@@ -461,11 +521,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 224a80179db8b9841b4560a5b0600657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_canInteract: 1
   m_proximityObject: {fileID: 0}
-  m_trowForce: 2.5
+  m_throwForce: 2.5
   m_raycastOffsetX: 2
   m_raycastOffsetZ: -0.1
+  _ik: {fileID: 0}
 --- !u!1 &3064457623437008840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1248,6 +1308,8 @@ GameObject:
   - component: {fileID: 6960636026518744350}
   - component: {fileID: 3064457623205746645}
   - component: {fileID: 3064457623205746644}
+  - component: {fileID: 386519607}
+  - component: {fileID: 386519608}
   m_Layer: 0
   m_Name: 'DummyPotato '
   m_TagString: Player
@@ -1270,6 +1332,8 @@ Transform:
   - {fileID: 4434909518997311572}
   - {fileID: 3064457623437008841}
   - {fileID: 3064457621664104528}
+  - {fileID: 433660779}
+  - {fileID: 1361283823}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1787,6 +1851,34 @@ MonoBehaviour:
   m_ground:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &386519607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6460078239362077429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cbf3ee533efd264c8e535e78a4e3768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_numberOfPotato: 0
+  m_inventoryCapacity: 0
+--- !u!114 &386519608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6460078239362077429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5af18b58cedcbe47ae37e859e6b6c35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_leftHandTarget: {fileID: 433660779}
+  m_rightHandTarget: {fileID: 1361283823}
 --- !u!1 &6523366872682511388
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,8 +22,7 @@ namespace PotatoGame
         private bool _mHolding; // Is an object in hand?
         private Vector3 _mRightOrigin; // Use for right hand raycast starting point
         private Vector3 _mLeftOrigin; // Use for left hand raycast starting point
-        private int _mOriginalLayer; // Original physic layer applied to the proximity object
-        
+
         protected Vector3 leftDirectionToObject;
         protected Vector3 rightDirectionToObject;
 
@@ -91,7 +90,7 @@ namespace PotatoGame
                     Throw(false);
             }
             
-            
+
             // If you can plant an object ----------------------
             if (Input.GetAxisRaw("Plant") != 0 && _mHolding)
             {
@@ -113,7 +112,7 @@ namespace PotatoGame
 
         void CheckForNearbyPickableObject(Collider col)
         {
-            if(col.GetComponent<IPickUp>() != null)
+            if(col.GetComponent<IPickUp>() != null && !_mHolding)
                 m_proximityObject = col.gameObject;
         }
 
@@ -148,7 +147,7 @@ namespace PotatoGame
         void ResetHandWeight()
         {
             _ik.ActivateWeight = false; //reset hand position
-            m_proximityObject.layer = _mOriginalLayer;
+            m_proximityObject.layer = 0;
         }
 
         // Trowing a dynamic object ----------------------------------------------------
@@ -187,7 +186,6 @@ namespace PotatoGame
             _ik.ActivateWeight = true;
 
             // Capture current layer and change it
-            _mOriginalLayer = m_proximityObject.layer;
             m_proximityObject.layer = LayerMask.NameToLayer("InHand");
 
             // Set origins of the raycasts + offsets
@@ -198,8 +196,6 @@ namespace PotatoGame
             _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) +
                                                      (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
 
-            // TODO add check to make sure that both hands rays land on the same obj and not on separate ones 
-            
             /* Thought process here 
              * 1- get direction towards object
              * 2- ray cast there
