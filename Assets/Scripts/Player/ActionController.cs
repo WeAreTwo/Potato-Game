@@ -139,21 +139,35 @@ namespace PotatoGame
         {
 
             // Check if the object can be grabbed
-            if (col.gameObject.tag == ProjectTags.DynamicObject ||
-                col.gameObject.tag == ProjectTags.Potato)
-            {
+            // if (col.gameObject.tag == ProjectTags.DynamicObject ||
+            //     col.gameObject.tag == ProjectTags.Potato)
+            // {
+            //     m_proximityObject = col.gameObject;
+            // }
+            CheckForNearbyPickableObject(col);
+        }
+
+        void CheckForNearbyPickableObject(Collider col)
+        {
+            if(col.GetComponent<IPickUp>() != null)
                 m_proximityObject = col.gameObject;
-            }
         }
 
         private void OnTriggerExit(Collider col)
         {
             // Empty out the proximity object
-            if (col.gameObject.tag == ProjectTags.DynamicObject && !_mHolding ||
-                col.gameObject.tag == ProjectTags.Potato && !_mHolding)
-            {
+            // if (col.gameObject.tag == ProjectTags.DynamicObject && !_mHolding ||
+            //     col.gameObject.tag == ProjectTags.Potato && !_mHolding)
+            // {
+            //     m_proximityObject = null;
+            // }
+            ResetProximityObject(col);
+        }
+
+        void ResetProximityObject(Collider col)
+        {
+            if(col.GetComponent<IPickUp>() != null && !_mHolding)
                 m_proximityObject = null;
-            }
         }
 
 
@@ -195,9 +209,7 @@ namespace PotatoGame
             objectRb.useGravity = true;
             objectRb.constraints = RigidbodyConstraints.None;
 
-            // Reset hand positions
-            // HandTargetPosition handTargets = m_proximityObject.GetComponent<HandTargetPosition>();
-            // handTargets.m_activateWeight = false;
+            //reset hand position
             _ik.ActivateWeight = false;
             m_proximityObject.layer = _mOriginalLayer;
 
@@ -314,6 +326,8 @@ namespace PotatoGame
             // Make sure the player did not target another object
             m_proximityObject = pickUpObject;
             _mHolding = true;
+            
+            //NOTE: CAN CALL
         }
         
         
