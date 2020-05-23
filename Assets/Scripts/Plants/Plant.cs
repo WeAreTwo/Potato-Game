@@ -34,7 +34,7 @@ namespace PotatoGame
     
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
     [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
-    public abstract class Plant : MonoBehaviour, IPickUp
+    public abstract class Plant : MonoBehaviour, IPickUp, IPlantable
     {
         //Finite State Machine
         protected StateMachine fsm;

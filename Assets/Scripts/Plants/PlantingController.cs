@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 namespace PotatoGame
 {
 
-    public class PlantingController : MonoBehaviour, IPickUp
+    public class PlantingController : MonoBehaviour, IPickUp, IPlantable
     {
         // public variables -------------------------
         [Title("Planting States")] [ReadOnly] public bool m_planting; // When ready to be planted in the ground
@@ -72,6 +72,11 @@ namespace PotatoGame
             // The potato is now planted!
             m_planting = false;
             m_planted = true;
+        }
+
+        public void PlantObject()
+        {
+            
         }
 
         public void PickUp()
