@@ -34,7 +34,7 @@ namespace PotatoGame
     
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
     [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
-    public abstract class Plant : MonoBehaviour, IPickUp, IPlantable
+    public abstract class Plant : MonoBehaviour, IPickUp, IPlantable, IHarvestable
     {
         //Finite State Machine
         protected StateMachine fsm;
@@ -78,7 +78,7 @@ namespace PotatoGame
         // Update is called once per frame
         protected virtual void Update()
         {
-            // if(!pickedUp) fsm.Update();
+            if(!pickedUp) fsm.Update();
         }
 
         protected virtual void OnEnable()
@@ -94,8 +94,8 @@ namespace PotatoGame
         protected virtual void OnCollisionEnter(Collision col)
         {
             // Plant when in contact with the ground
-            // if (col.gameObject.tag == ProjectTags.Ground && planting)
-            //     PlantObject();
+            if (col.gameObject.tag == ProjectTags.Ground && planting)
+                PlantObject();
             
             if(!pickedUp) fsm.OnCollisionEnter(col);
         }
@@ -129,13 +129,8 @@ namespace PotatoGame
             // Pick a random depth number
             var depth = UnityEngine.Random.Range(plantingDepthRange.x, plantingDepthRange.y);
 
-            // Deactivate gravity and freeze all
-            rb.useGravity = false;
-            rb.constraints = RigidbodyConstraints.FreezeAll;
-
-            // Deactivate the colliders
-            foreach (Collider objectCollider in GetComponents<Collider>())
-                objectCollider.isTrigger = true;
+            rb.ActivatePlantingPhysics();
+            this.gameObject.SetAllColliderTriggers(true);
 
             // Get the potato in the ground
             Vector3 currentPos = transform.position;
@@ -152,11 +147,9 @@ namespace PotatoGame
             //Put pick up code here 
         }
 
-        void PlantedConfig()
+        public void Harvest()
         {
             
         }
-        
-        
     }
 }

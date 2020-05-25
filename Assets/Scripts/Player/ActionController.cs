@@ -104,9 +104,16 @@ namespace PotatoGame
                 {
                     // Scan for the correct type of object
                     if (m_proximityObject.IsType<IPickUp>())
+                    {
+                        m_proximityObject.GetComponent<IPickUp>().PickedUp = true;
+                        m_proximityObject.GetComponent<IPickUp>().PickUp(); //call interface method
                         Hold();
+                    }
                     else if (m_proximityObject.IsType<IHarvestable>())
+                    {
+                        m_proximityObject.GetComponent<IHarvestable>().Harvest(); //call interface method
                         Harvest();
+                    }
                 }
             }
         }
@@ -162,6 +169,7 @@ namespace PotatoGame
             ResetHandWeight();
             m_proximityObject.layer = 0; // bring back the default physic layer
             m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
+            m_proximityObject.GetComponent<IPickUp>().PickedUp = false;
             ResetInteraction();
         }
 
@@ -197,7 +205,10 @@ namespace PotatoGame
             
             //check if it can be planted
             if (m_proximityObject.IsType<IPlantable>())
+            {
                 m_proximityObject.GetComponent<IPlantable>().Planting = true;
+                m_proximityObject.GetComponent<IPickUp>().PickedUp = false;
+            }
             
             ResetInteraction();
         }

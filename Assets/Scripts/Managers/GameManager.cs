@@ -21,13 +21,13 @@ namespace PotatoGame
 
         protected void Awake()
         {
-            if(playerController == null) Debug.LogAssertion("playerController not set in the game manager!");
-            if(ikController == null) Debug.LogAssertion("ikController not set in the game manager!");
-            if(inventoryController == null) Debug.LogAssertion("inventoryController not set in the game manager!");
-            if(cameraController == null) Debug.LogAssertion("cameraController not set in the game manager!");
-            if(plantsController == null) Debug.LogAssertion("plantsController not set in the game manager!");
-            if(shaderController == null) Debug.LogAssertion("shaderController not set in the game manager!");
-            if(varietyPool == null) Debug.LogAssertion("varietyPool not set in the game manager!");
+            if(playerController == null) Debug.LogWarning("playerController not set in the game manager!");
+            if(ikController == null) Debug.LogWarning("ikController not set in the game manager!");
+            if(inventoryController == null) Debug.LogWarning("inventoryController not set in the game manager!");
+            if(cameraController == null) Debug.LogWarning("cameraController not set in the game manager!");
+            if(plantsController == null) Debug.LogWarning("plantsController not set in the game manager!");
+            if(shaderController == null) Debug.LogWarning("shaderController not set in the game manager!");
+            if(varietyPool == null) Debug.LogWarning("varietyPool not set in the game manager!");
         }
     }
 

@@ -18,6 +18,7 @@ namespace PotatoGame
     
     public interface IPickUp
     {
+        bool PickedUp { get; set; }
         void PickUp();
     }
 }

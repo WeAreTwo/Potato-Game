@@ -23,6 +23,7 @@ namespace PotatoGame
             else
                 return false;
         }
+        
 
         //RIGIDBODY EXTENSION METHODS
         public static void ActivatePhysics(this Rigidbody rb)
@@ -35,6 +36,12 @@ namespace PotatoGame
         {
             rb.useGravity = false;
             rb.constraints = RigidbodyConstraints.FreezeRotation;               
+        }
+        
+        public static void ActivatePlantingPhysics(this Rigidbody rb)
+        {
+            rb.useGravity = false;
+            rb.constraints = RigidbodyConstraints.FreezeAll;               
         }
 
         public static void SetColliderTrigger(this Collider col, bool value)
