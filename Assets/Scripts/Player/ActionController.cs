@@ -23,15 +23,15 @@ namespace PotatoGame
         private Vector3 _mRightOrigin; // Use for right hand raycast starting point
         private Vector3 _mLeftOrigin; // Use for left hand raycast starting point
 
-        protected Vector3 leftDirectionToObject;
-        protected Vector3 rightDirectionToObject;
+        private Vector3 leftDirectionToObject;
+        private Vector3 rightDirectionToObject;
+        private IKController _ik;
 
-        [SerializeField] protected IKController _ik;
         
         void Start()
         {
             // Get components
-            _ik = GameManager.Instance.playerController.gameObject.GetComponent<IKController>();
+            _ik = GameManager.Instance.ikController;
             _mInteractionBoxCol = GetComponent<BoxCollider>();
         }
         
