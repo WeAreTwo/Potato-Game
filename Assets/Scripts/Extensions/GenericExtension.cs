@@ -14,6 +14,14 @@ namespace PotatoGame
                 return true;
             else
                 return false;
+        }        
+        
+        public static bool IsType<T>(this Collider comparison) where T : class
+        {
+            if (comparison.GetComponent<T>() != null)
+                return true;
+            else
+                return false;
         }
 
         //RIGIDBODY EXTENSION METHODS
@@ -53,6 +61,8 @@ namespace PotatoGame
                 rb.ActivatePhysics();
                 rb.ThrowObject(direction, force);
             }
+            
+            obj.SetAllColliderTriggers(false);
         }
         
         public static void HoldObject(this GameObject obj, Transform parent)
@@ -63,6 +73,7 @@ namespace PotatoGame
             {
                 rb.DeActivatePhysics();
             }
+            obj.SetAllColliderTriggers(true);
         }
     }
 }

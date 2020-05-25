@@ -112,33 +112,32 @@ namespace PotatoGame
 
         void CheckForNearbyPickableObject(Collider col)
         {
-            if(col.GetComponent<IPickUp>() != null && !_mHolding)
+            if(col.IsType<IPickUp>() && !_mHolding)
                 m_proximityObject = col.gameObject;
         }
 
         void ResetProximityObject(Collider col)
         {
             // col.gameObject.IsType<>()
-            if(col.GetComponent<IPickUp>() != null && !_mHolding)
+            if(col.IsType<IPickUp>() && !_mHolding)
                 m_proximityObject = null;
         }
 
 
         // When holding a dynamic object -----------------------------------------------
+        /* PROCESS
+         * 1 - SET PARENT
+         * 2 - DISABLED GRAVITY AND FREEZE ROTATION
+         * 3 - SET HANDS
+         * 4 - DISABLE COLLIDER
+         * 5 - ENABLED INTERACTION COLLIDER
+         * 6-  START PICK ANIM
+         */
+        
+        
         private void Hold()
         {
-            /* PROCESS
-             * 1 - SET PARENT
-             * 2 - DISABLED GRAVITY AND FREEZE ROTATION
-             * 3 - SET HANDS
-             * 4 - DISABLE COLLIDER
-             * 5 - ENABLED INTERACTION COLLIDER
-             * 6-  START PICK ANIM
-             */
-            
-            
             m_proximityObject.HoldObject(this.transform); //hold the object 
-            m_proximityObject.SetAllColliderTriggers(true);
             _mInteractionBoxCol.SetColliderTrigger(false); // Bring back the trigger box as a collider
             SetHandTargets(); // Put hands on the object
             StartCoroutine(PickUp(0.3f, m_proximityObject)); // Start to pick up
@@ -155,10 +154,14 @@ namespace PotatoGame
             ResetHandWeight();
             m_proximityObject.layer = 0; // bring back the default physic layer
             m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
-            m_proximityObject.SetAllColliderTriggers(false);
             
             if(plant) Plant();
 
+            ResetInteraction();
+        }
+
+        void ResetInteraction()
+        {
             // Get rid of the object
             m_proximityObject.transform.parent = null;
             m_proximityObject = null;
@@ -179,6 +182,13 @@ namespace PotatoGame
 
 
         // Set targets in real time for the hands --------------------------------------
+        /* Thought process here 
+         * 1- get direction towards object
+         * 2- ray cast there
+         * 3- set parent to obj and weights to IKController
+         *
+         * NOTE: Need to call this function only once 
+         */
         private void SetHandTargets()
         {
             var objectPos = m_proximityObject.transform.position;
@@ -195,14 +205,6 @@ namespace PotatoGame
                                                     (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
             _mRightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) +
                                                      (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
-
-            /* Thought process here 
-             * 1- get direction towards object
-             * 2- ray cast there
-             * 3- set parent to obj and weights to IKController
-             *
-             * NOTE: Need to call this function only once 
-             */
             
             // we will use the normalized direction towards the prox. obj instead of a fixed direction
             leftDirectionToObject = (objectPos - _mLeftOrigin).normalized;
