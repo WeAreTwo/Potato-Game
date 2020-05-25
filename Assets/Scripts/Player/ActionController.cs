@@ -27,26 +27,96 @@ namespace PotatoGame
         protected Vector3 rightDirectionToObject;
 
         [SerializeField] protected IKController _ik;
-
-        // ------------------------------------------
-        // Start is called before update
-        // ------------------------------------------
+        
         void Start()
         {
             // Get components
             _ik = GameManager.Instance.playerController.gameObject.GetComponent<IKController>();
             _mInteractionBoxCol = GetComponent<BoxCollider>();
         }
-
-
-        // ------------------------------------------
-        // Update is called once per frame
-        // ------------------------------------------
+        
         void Update()
         {
-            // Always check for inputs
-            CheckInputs();
+            CheckInputs(); // Always check for inputs
+            HoldingState();
+        }
+        
+        #region Collision Handling
 
+        // Scan an object when colliding with it ---------------------------------------
+        private void OnTriggerEnter(Collider col)
+        {
+            CheckForNearbyPickableObject(col);
+        }
+        
+        private void OnTriggerExit(Collider col)
+        {
+            ResetProximityObject(col);
+        }
+
+        private void CheckForNearbyPickableObject(Collider col)
+        {
+            if(col.IsType<IPickUp>() && !_mHolding)
+                m_proximityObject = col.gameObject;
+        }
+
+        private void ResetProximityObject(Collider col)
+        {
+            // col.gameObject.IsType<>()
+            if(col.IsType<IPickUp>() && !_mHolding)
+                m_proximityObject = null;
+        }
+
+        #endregion
+
+        #region Input Handling/Action States
+
+        // Check for inputs to trigger an action ---------------------------------------
+        private void CheckInputs()
+        {
+            DefaultActions();
+            HoldingActions();
+        }
+
+        void HoldingActions()
+        {
+            // Check if the action button is triggered ----------
+            if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
+            {
+                // If player is holding an object, trow it
+                if (_mHolding)
+                    Throw();
+            }
+            
+            // If you can plant an object ----------------------
+            if (Input.GetAxisRaw("Plant") != 0 && _mHolding)
+            {
+                Plant(); // Plant a potato
+            }
+        }        
+        
+        void DefaultActions()
+        {
+            // Check if the action button is triggered ----------
+            if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
+            {
+                if (!_mHolding)
+                {
+                    // Scan for the correct type of object
+                    if (m_proximityObject.IsType<IPickUp>())
+                        Hold();
+                    else if (m_proximityObject.IsType<IHarvestable>())
+                        Harvest();
+                }
+            }
+        }
+        
+        #endregion
+
+        #region Pick Up/ Holding/ Throwing
+
+        private void HoldingState()
+        {
             // While holding
             if (_mHolding)
             {
@@ -64,66 +134,9 @@ namespace PotatoGame
                     m_proximityObject.transform.position = transform.position;
                 }
             }
-        }
-
-
-        // ------------------------------------------
-        // Methods
-        // ------------------------------------------
-        // Check for inputs to trigger an action ---------------------------------------
-        private void CheckInputs()
-        {
-            // Check if the action button is triggered ----------
-            if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
-            {
-                if (!_mHolding)
-                {
-                    // Scan for the correct type of object
-                    if (m_proximityObject.IsType<IPickUp>())
-                        Hold();
-                    else if (m_proximityObject.IsType<IHarvestable>())
-                        Harvest();
-                }
-
-                // If player is holding an object, trow it
-                if (_mHolding)
-                    Throw(false);
-            }
             
-
-            // If you can plant an object ----------------------
-            if (Input.GetAxisRaw("Plant") != 0 && _mHolding)
-            {
-                Throw(true); // Plant a potato
-            }
         }
-
-        
-        // Scan an object when colliding with it ---------------------------------------
-        private void OnTriggerEnter(Collider col)
-        {
-            CheckForNearbyPickableObject(col);
-        }
-        
-        private void OnTriggerExit(Collider col)
-        {
-            ResetProximityObject(col);
-        }
-
-        void CheckForNearbyPickableObject(Collider col)
-        {
-            if(col.IsType<IPickUp>() && !_mHolding)
-                m_proximityObject = col.gameObject;
-        }
-
-        void ResetProximityObject(Collider col)
-        {
-            // col.gameObject.IsType<>()
-            if(col.IsType<IPickUp>() && !_mHolding)
-                m_proximityObject = null;
-        }
-
-
+                
         // When holding a dynamic object -----------------------------------------------
         /* PROCESS
          * 1 - SET PARENT
@@ -143,24 +156,58 @@ namespace PotatoGame
             StartCoroutine(PickUp(0.3f, m_proximityObject)); // Start to pick up
         }
         
-        void ResetHandWeight()
+        // Trowing a dynamic object ----------------------------------------------------
+        private void Throw()
         {
-            _ik.ActivateWeight = false; //reset hand position
+            ResetHandWeight();
+            m_proximityObject.layer = 0; // bring back the default physic layer
+            m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
+            ResetInteraction();
         }
 
-        // Trowing a dynamic object ----------------------------------------------------
-        private void Throw(bool plant)
+        
+        // Wait before starting to hold and simulate pick up ---------------------------
+        private IEnumerator PickUp(float delay, GameObject pickUpObject)
+        {
+            // Wait the delay before starting to hold
+            yield return new WaitForSeconds(delay);
+
+            // Make sure the player did not target another object
+            m_proximityObject = pickUpObject;
+            _mHolding = true;
+        }
+        
+        
+        // For harvesting potatoes when they are ready ---------------------------------
+        private void Harvest()
+        {
+            // Add count to inventory
+            var inventoryController = GameManager.Instance.inventoryController;
+            inventoryController.InventoryCount(1);
+            
+            // Destroy the object
+            Destroy(m_proximityObject);
+        }
+
+        private void Plant()
         {
             ResetHandWeight();
             m_proximityObject.layer = 0; // bring back the default physic layer
             m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
             
-            if(plant) Plant();
-
+            //check if it can be planted
+            if (m_proximityObject.IsType<IPlantable>())
+                m_proximityObject.GetComponent<IPlantable>().Planting = true;
+            
             ResetInteraction();
         }
 
-        void ResetInteraction()
+        private void ResetHandWeight()
+        {
+            _ik.ActivateWeight = false; //reset hand position
+        }
+
+        private void ResetInteraction()
         {
             // Get rid of the object
             m_proximityObject.transform.parent = null;
@@ -172,15 +219,9 @@ namespace PotatoGame
             // Set the trigger back
             _mInteractionBoxCol.SetColliderTrigger(true);
         }
+        #endregion
 
-        void Plant()
-        {
-            //check if it can be planted
-            if (m_proximityObject.IsType<IPlantable>())
-                m_proximityObject.GetComponent<IPlantable>().Planting = true;
-        }
-
-
+        #region Raycasting
         // Set targets in real time for the hands --------------------------------------
         /* Thought process here 
          * 1- get direction towards object
@@ -228,32 +269,9 @@ namespace PotatoGame
                 _ik.RightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);
             }
         }
-
-
-        // Wait before starting to hold and simulate pick up ---------------------------
-        private IEnumerator PickUp(float delay, GameObject pickUpObject)
-        {
-            // Wait the delay before starting to hold
-            yield return new WaitForSeconds(delay);
-
-            // Make sure the player did not target another object
-            m_proximityObject = pickUpObject;
-            _mHolding = true;
-        }
+        #endregion
         
-        
-        // For harvesting potatoes when they are ready ---------------------------------
-        private void Harvest()
-        {
-            // Add count to inventory
-            var inventoryController = GameManager.Instance.inventoryController;
-            inventoryController.InventoryCount(1);
-            
-            // Destroy the object
-            Destroy(m_proximityObject);
-        }
-
-
+        #region Gizmos
         // Draw gizmos on play ---------------------------------------------------------
         private void OnDrawGizmos()
         {
@@ -267,5 +285,6 @@ namespace PotatoGame
             Debug.DrawRay(_mRightOrigin, rightDirectionToObject * 1.5f, Color.green);
 
         }
+        #endregion
     }
 }
