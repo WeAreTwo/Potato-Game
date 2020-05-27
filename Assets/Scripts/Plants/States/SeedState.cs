@@ -24,7 +24,7 @@ namespace PotatoGame
         public override void OnStateStart()
         {
             base.OnStateStart();
-            component.transform.localScale *= component.GrowthParams.seedSize;
+            // component.transform.localScale *= component.GrowthParams.seedSize;
         }
 
         public override void OnStateUpdate()
@@ -33,13 +33,13 @@ namespace PotatoGame
 
             if (component.Planted)
             {
-                PlantedSettings();
+                // PlantedSettings();
                 Grow();
                 UpdateGrowthRadius();
             }
             else
             {
-                UprootedSettings();
+                // UprootedSettings();
             }
         }
 
