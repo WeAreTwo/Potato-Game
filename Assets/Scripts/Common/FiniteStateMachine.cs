@@ -18,6 +18,7 @@ namespace PotatoGame
         protected bool hasExecutedStart = false;
         protected bool hasExecutedExit = false;
 
+        protected Enum currentState;
         protected Enum nextState;
 
         // public State(T component)
@@ -114,9 +115,11 @@ namespace PotatoGame
         // protected T component;
         [SerializeField] protected Dictionary<Enum, State> stateDict = new Dictionary<Enum, State>();
         [SerializeField] protected State currentState = new State();
-
+        [SerializeField] protected Enum currentStateKey;
+        
         public Dictionary<Enum, State> StateDict => stateDict;
         public State Current { get { return currentState; } }
+        public Enum CurrentStateKey { get { return currentStateKey; } }
         public void Add(Enum id, State state)	{ stateDict.Add(id, state); }
         public void Remove(Enum id) { stateDict.Remove(id); }
         public void Clear() { stateDict.Clear(); }
@@ -133,6 +136,7 @@ namespace PotatoGame
             //assign current state
             State initState = stateDict[id];
             currentState = initState;
+            currentStateKey = id;
             initState.EnterState();
         }
 
@@ -151,6 +155,7 @@ namespace PotatoGame
             State next = stateDict[id];
             next.EnterState();
             currentState = next;
+            currentStateKey = id;
         }
 
         public void HandleInput()

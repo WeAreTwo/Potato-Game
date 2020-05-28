@@ -98,12 +98,12 @@ namespace PotatoGame
             if (growing && !growthCompleted)
             {
                 float dt = component.GrowthParams.growthTime / component.GrowthParams.growthCompletionTime;
-                this.component.transform.localScale = Vector3.Lerp(
-                    Vector3.one * component.GrowthParams.seedSize,
-                    Vector3.one * component.GrowthParams.growthSize,
-                    dt
-                    );
-                
+                // this.component.transform.localScale = Vector3.Lerp(
+                //     Vector3.one * component.GrowthParams.seedSize,
+                //     Vector3.one * component.GrowthParams.growthSize,
+                //     dt
+                //     );
+                //
                 // this.component.transform.localScale *= component.GrowthParams.growthPace;
                 component.GrowthParams.growthRadius *= component.GrowthParams.growthPace;
             }
