@@ -11,21 +11,21 @@ namespace PotatoGame
     public class State
     {
         // protected T component;
-        protected Dictionary<string, State> allStates;
+        protected Dictionary<Enum, State> allStates;
         
         protected const string name = "State";
         protected bool hasFinished = false;
         protected bool hasExecutedStart = false;
         protected bool hasExecutedExit = false;
 
-        protected string nextState;
+        protected Enum nextState;
 
         // public State(T component)
         // {
         //     this.component = component;
         // }
 
-        public Dictionary<string, State> AllStates
+        public Dictionary<Enum, State> AllStates
         {
             get => allStates;
             set => allStates = value;
@@ -35,7 +35,7 @@ namespace PotatoGame
         public bool HasFinished => hasFinished;
         public bool HasExecutedStart => hasExecutedStart;
         public bool HasExecutedExit => hasExecutedExit;
-        public string NextState => nextState;
+        public Enum NextState => nextState;
 
         // public MonoBehaviour Component
         // {
@@ -58,9 +58,9 @@ namespace PotatoGame
 
         public void TriggerExit(Enum T)
         {
-            if (allStates.ContainsKey(T.ToString()))
+            if (allStates.ContainsKey(T))
             {
-                nextState = T.ToString();
+                nextState = T;
                 hasFinished = true;
                 OnStateExit();
             }
@@ -112,19 +112,19 @@ namespace PotatoGame
     public class StateMachine
     {
         // protected T component;
-        [SerializeField] protected Dictionary<string, State> stateDict = new Dictionary<string, State>();
+        [SerializeField] protected Dictionary<Enum, State> stateDict = new Dictionary<Enum, State>();
         [SerializeField] protected State currentState = new State();
 
-        public Dictionary<string, State> StateDict => stateDict;
+        public Dictionary<Enum, State> StateDict => stateDict;
         public State Current { get { return currentState; } }
-        public void Add(string id, State state)	{ stateDict.Add(id, state); }
-        public void Remove(string id) { stateDict.Remove(id); }
+        public void Add(Enum id, State state)	{ stateDict.Add(id, state); }
+        public void Remove(Enum id) { stateDict.Remove(id); }
         public void Clear() { stateDict.Clear(); }
 
-        public void Initialize(string id)
+        public void Initialize(Enum id)
         {
             //assign the monobehaviour from parent to each ind. states
-            foreach (KeyValuePair<string,State> state in stateDict)
+            foreach (KeyValuePair<Enum,State> state in stateDict)
             {
                 // state.Value.Component = this.component;
                 state.Value.AllStates = stateDict;
@@ -145,7 +145,7 @@ namespace PotatoGame
             }
         }
 
-        public void ChangeState(string id)
+        public void ChangeState(Enum id)
         {
             currentState.ExitState();
             State next = stateDict[id];

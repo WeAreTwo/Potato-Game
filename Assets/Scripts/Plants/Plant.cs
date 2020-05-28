@@ -69,10 +69,10 @@ namespace PotatoGame
         protected virtual void Start()
         {
             fsm = new StateMachine();
-            fsm.Add(PlantStates.Seed.ToString(), new SeedState<Plant>(this));
-            fsm.Add(PlantStates.Grown.ToString(), new GrownState<Plant>(this));
+            fsm.Add(PlantStates.Seed, new SeedState<Plant>(this));
+            fsm.Add(PlantStates.Grown, new GrownState<Plant>(this));
 
-            fsm.Initialize(PlantStates.Seed.ToString());
+            fsm.Initialize(PlantStates.Seed);
         }
 
         // Update is called once per frame

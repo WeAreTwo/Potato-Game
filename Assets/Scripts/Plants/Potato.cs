@@ -40,14 +40,14 @@ namespace PotatoGame
         protected override void Start()
         {
             fsm = new StateMachine();
-            fsm.Add(PlantStates.Seed.ToString(), new SeedState<Potato>(this));
-            fsm.Add(PlantStates.Grown.ToString(), new GrownState<Potato>(this));
-            fsm.Add(PlantStates.Autonomous.ToString(), new AutonomousState<Potato>(this));
-            fsm.Add(PlantStates.Idle.ToString(), new Idle<Potato>(this));
-            fsm.Add(PlantStates.Move.ToString(), new Move<Potato>(this));
-            fsm.Add(PlantStates.Eat.ToString(), new Eat<Potato>(this));
+            fsm.Add(PlantStates.Seed, new SeedState<Potato>(this));
+            fsm.Add(PlantStates.Grown, new GrownState<Potato>(this));
+            fsm.Add(PlantStates.Autonomous, new AutonomousState<Potato>(this));
+            fsm.Add(PlantStates.Idle, new Idle<Potato>(this));
+            fsm.Add(PlantStates.Move, new Move<Potato>(this));
+            fsm.Add(PlantStates.Eat, new Eat<Potato>(this));
             
-            fsm.Initialize(PlantStates.Seed.ToString());
+            fsm.Initialize(PlantStates.Seed);
         }
         
     }
