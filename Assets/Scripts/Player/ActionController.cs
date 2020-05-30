@@ -262,7 +262,7 @@ namespace PotatoGame
             _mHolding = false;
 
             // Set the trigger back
-            _mInteractionBoxCol.SetColliderTrigger(true);
+            _mInteractionBoxCol.SetColliderTrigger(true); //TODO this wont work with potatoes and rigidbody movement
         }
         #endregion
 

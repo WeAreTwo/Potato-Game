@@ -12,6 +12,9 @@ namespace PotatoGame
         protected float eatTimer = 0.0f;
         protected float eatTime = 3.0f;
 
+        protected float popOutTimer = 0.0f;
+        protected float popOutTime = 3.0f;
+
         public Eat(T component)
         {
             this.component = component;
@@ -21,7 +24,36 @@ namespace PotatoGame
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
+            if(component.Planted) PopOut();
             EatPotato();
+        }
+
+        protected void PopOut()
+        {
+            if (popOutTimer < popOutTime)
+            {
+                popOutTimer += Time.deltaTime;
+            }
+            else
+            {
+                PopOutOfTheGround();
+                popOutTimer = 0;
+            }
+        }
+        
+        protected void PopOutOfTheGround()
+        {
+            //set the planted state to false 
+            component.Planted = false;
+
+            // pop out of the ground 
+            component.transform.position += new Vector3(0, component.GrowthParams.growthRadius * 2, 0);
+            component.transform.rotation = Random.rotation;
+    
+            // Activate gravity and defreeze all
+            component.Rb.ActivatePhysics();
+    
+            component.potatoEyes.SetActive(true);
         }
 
         protected virtual void EatPotato()

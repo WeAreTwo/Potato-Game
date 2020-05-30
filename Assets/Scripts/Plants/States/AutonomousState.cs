@@ -43,7 +43,7 @@ namespace PotatoGame
             }
         }
     
-        protected virtual void PopOutOfTheGround()
+        protected void PopOutOfTheGround()
         {
             //set the planted state to false 
             component.Planted = false;
@@ -59,7 +59,7 @@ namespace PotatoGame
             component.potatoEyes.SetActive(true);
         }
     
-        protected virtual bool CheckLineOfSight(Vector3 target)
+        protected bool CheckLineOfSight(Vector3 target)
         {
             //check to see if the victim is in the line of sight 
             RaycastHit hit;
@@ -71,7 +71,7 @@ namespace PotatoGame
             return false;
         }
     
-        protected virtual void PickRandomPosition()
+        protected void PickRandomPosition()
         {
             float randX = Random.Range(-1.0f, 1.0f);
             float randY = Random.Range(-1.0f, 1.0f);
