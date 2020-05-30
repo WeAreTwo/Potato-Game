@@ -53,8 +53,7 @@ namespace PotatoGame
             component.transform.rotation = Random.rotation;
     
             // Activate gravity and defreeze all
-            component.Rb.useGravity = true;
-            component.Rb.constraints = RigidbodyConstraints.None;
+            component.Rb.ActivatePhysics();
     
             PickRandomPosition();
             component.potatoEyes.SetActive(true);
