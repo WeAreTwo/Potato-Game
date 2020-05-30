@@ -55,7 +55,7 @@ namespace PotatoGame
         public static void DeActivatePhysics(this Rigidbody rb)
         {
             rb.useGravity = false;
-            rb.constraints = RigidbodyConstraints.FreezeRotation;               
+            rb.constraints = RigidbodyConstraints.FreezeAll;               
         }
         
         public static void ActivatePlantingPhysics(this Rigidbody rb)
