@@ -33,6 +33,7 @@ namespace PotatoGame
             {
                 rb.useGravity = true;
                 rb.constraints = RigidbodyConstraints.None;
+                rb.gameObject.GetComponent<Collider>().isTrigger = false;
             }
         }
         
@@ -50,6 +51,7 @@ namespace PotatoGame
         {
             rb.useGravity = true;
             rb.constraints = RigidbodyConstraints.None;
+            rb.gameObject.GetComponent<Collider>().isTrigger = false;
         }
         
         public static void DeActivatePhysics(this Rigidbody rb)
