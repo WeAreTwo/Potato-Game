@@ -6,13 +6,12 @@ using Sirenix.OdinInspector;
 namespace PotatoGame
 {
 
-    public class PlantingController : MonoBehaviour, IPickUp, IPlantable, IHarvestable
+    public class PlantingController : InteractableObject, IPlantable, IHarvestable
     {
         // public variables -------------------------
         [Title("Planting States")] 
         public bool m_planting; // When ready to be planted in the ground
         public bool m_planted; // Is the potato currently planted
-        public bool m_pickedUp;
         
         public Vector2 m_depthRange; // Range for the depth of the potato when planted
 
@@ -22,7 +21,6 @@ namespace PotatoGame
 
         public bool Planting { get => m_planting; set => m_planting = value; }
         public bool Planted { get => m_planted; set => m_planted = value; }
-        public bool PickedUp { get => m_pickedUp; set => m_pickedUp = value; }
 
         // ------------------------------------------
         // Start is called before update
@@ -83,12 +81,7 @@ namespace PotatoGame
         {
             
         }
-
-        public void PickUp()
-        {
-            
-        }
-
+        
         public void Harvest()
         {
             

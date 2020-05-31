@@ -34,14 +34,13 @@ namespace PotatoGame
     
     [RequireComponent(typeof(Rigidbody))]        //automatically add rb
     [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
-    public abstract class Plant : MonoBehaviour, IPickUp, IPlantable, IHarvestable
+    public abstract class Plant : InteractableObject, IPlantable, IHarvestable
     {
         //Finite State Machine
         protected StateMachine fsm;
         
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
-        [SerializeField] protected bool pickedUp;
         [SerializeField] protected Vector2 plantingDepthRange; // Range for the depth of the potato when planted
         
         [Header("HEALTH")] 
@@ -57,7 +56,6 @@ namespace PotatoGame
         public float Health { get => health; set => health = value; }
         public bool Planting { get => planting; set => planting = value; }
         public bool Planted { get => planted; set => planted = value; }
-        public bool PickedUp { get => pickedUp; set => pickedUp = value; }
         public GrowthParams GrowthParams { get => growthParams; set => growthParams = value; }
         public StateMachine FSM => fsm;
         
@@ -144,11 +142,6 @@ namespace PotatoGame
             // The potato is now planted!
             planting = false;
             planted = true;
-        }
-
-        public virtual void PickUp()
-        {
-            //Put pick up code here 
         }
 
         public void Harvest()

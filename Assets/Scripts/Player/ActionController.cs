@@ -57,14 +57,14 @@ namespace PotatoGame
 
         private void CheckForNearbyPickableObject(Collider col)
         {
-            if(col.IsType<IPickUp>() && !_mHolding)
+            if(col.IsType<InteractableObject>() && !_mHolding)
                 m_proximityObject = col.gameObject;
         }
 
         private void ResetProximityObject(Collider col)
         {
             // col.gameObject.IsType<>()
-            if(col.IsType<IPickUp>() && !_mHolding)
+            if(col.IsType<InteractableObject>() && !_mHolding)
                 m_proximityObject = null;
         }
 
@@ -111,10 +111,10 @@ namespace PotatoGame
                 if (!_mHolding)
                 {
                     // Scan for the correct type of object
-                    if (m_proximityObject.IsType<IPickUp>())
+                    if (m_proximityObject.IsType<InteractableObject>())
                     {
-                        m_proximityObject.GetComponent<IPickUp>().PickedUp = true;
-                        m_proximityObject.GetComponent<IPickUp>().PickUp(); //call interface method
+                        m_proximityObject.GetComponent<InteractableObject>().PickedUp = true;
+                        m_proximityObject.GetComponent<InteractableObject>().PickUp(); //call interface method
                         Hold();
                         Debug.Log("HOLD ACTION");
                     }
@@ -179,7 +179,7 @@ namespace PotatoGame
             ResetHandWeight();
             m_proximityObject.layer = 0; // bring back the default physic layer
             m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
-            m_proximityObject.GetComponent<IPickUp>().PickedUp = false;
+            m_proximityObject.GetComponent<InteractableObject>().PickedUp = false;
             ResetInteraction();
         }
 
@@ -218,7 +218,7 @@ namespace PotatoGame
             if (m_proximityObject.IsType<IPlantable>())
             {
                 m_proximityObject.GetComponent<IPlantable>().Planting = true;
-                m_proximityObject.GetComponent<IPickUp>().PickedUp = false;
+                m_proximityObject.GetComponent<InteractableObject>().PickedUp = false;
             }
             
             ResetInteraction();
@@ -233,7 +233,7 @@ namespace PotatoGame
             if (m_proximityObject.IsType<IPlantable>())
             {
                 m_proximityObject.GetComponent<IPlantable>().Planted = true;
-                m_proximityObject.GetComponent<IPickUp>().PickedUp = false;
+                m_proximityObject.GetComponent<InteractableObject>().PickedUp = false;
 
                 var layerMask = LayerMask.GetMask("Ground");
                 RaycastHit plantingPosition;
