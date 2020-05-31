@@ -93,14 +93,14 @@ namespace PotatoGame
 
         protected virtual void OnCollisionEnter(Collision col)
         {
-            bool condition = fsm.Current.GetType() != typeof(AutonomousState<>) && 
-                             fsm.Current.GetType() != typeof(Move<>) && 
-                             fsm.Current.GetType() != typeof(Idle<>) && 
-                             fsm.Current.GetType() != typeof(Eat<>);
-            // Plant when in contact with the ground
-            if (col.gameObject.tag == ProjectTags.Ground && planting)
-                PlantObject();
-            
+            // bool condition = fsm.Current.GetType() != typeof(AutonomousState<>) && 
+            //                  fsm.Current.GetType() != typeof(Move<>) && 
+            //                  fsm.Current.GetType() != typeof(Idle<>) && 
+            //                  fsm.Current.GetType() != typeof(Eat<>);
+            // // Plant when in contact with the ground
+            // if (col.gameObject.tag == ProjectTags.Ground && planting)
+            //     PlantObject();
+            //
             if(!pickedUp) fsm.OnCollisionEnter(col);
         }
 

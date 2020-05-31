@@ -43,24 +43,23 @@ namespace PotatoGame
             }
         }
     
-        protected virtual void PopOutOfTheGround()
+        protected void PopOutOfTheGround()
         {
             //set the planted state to false 
             component.Planted = false;
 
             // pop out of the ground 
-            component.transform.position += new Vector3(0, component.GrowthParams.growthRadius, 0);
+            component.transform.position += new Vector3(0, component.GrowthParams.growthRadius * 2, 0);
             component.transform.rotation = Random.rotation;
     
             // Activate gravity and defreeze all
-            component.Rb.useGravity = true;
-            component.Rb.constraints = RigidbodyConstraints.None;
+            component.Rb.ActivatePhysics();
     
             PickRandomPosition();
             component.potatoEyes.SetActive(true);
         }
     
-        protected virtual bool CheckLineOfSight(Vector3 target)
+        protected bool CheckLineOfSight(Vector3 target)
         {
             //check to see if the victim is in the line of sight 
             RaycastHit hit;
@@ -72,7 +71,7 @@ namespace PotatoGame
             return false;
         }
     
-        protected virtual void PickRandomPosition()
+        protected void PickRandomPosition()
         {
             float randX = Random.Range(-1.0f, 1.0f);
             float randY = Random.Range(-1.0f, 1.0f);

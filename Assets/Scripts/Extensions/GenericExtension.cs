@@ -26,6 +26,26 @@ namespace PotatoGame
         
 
         //RIGIDBODY EXTENSION METHODS
+        public static void ActivatePhysics(this GameObject obj)
+        {
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            if(rb != null)
+            {
+                rb.useGravity = true;
+                rb.constraints = RigidbodyConstraints.None;
+            }
+        }
+        
+        public static void DeActivatePhysics(this GameObject obj)
+        {
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            if(rb != null)
+            {
+                rb.useGravity = false;
+                rb.constraints = RigidbodyConstraints.FreezeAll;               
+            }
+        }
+                
         public static void ActivatePhysics(this Rigidbody rb)
         {
             rb.useGravity = true;
@@ -35,7 +55,7 @@ namespace PotatoGame
         public static void DeActivatePhysics(this Rigidbody rb)
         {
             rb.useGravity = false;
-            rb.constraints = RigidbodyConstraints.FreezeRotation;               
+            rb.constraints = RigidbodyConstraints.FreezeAll;               
         }
         
         public static void ActivatePlantingPhysics(this Rigidbody rb)

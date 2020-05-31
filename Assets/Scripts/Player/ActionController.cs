@@ -13,6 +13,7 @@ namespace PotatoGame
     {
         // public variables -------------------------
         public GameObject m_proximityObject; // Target caught by a trigger
+        public GameObject m_planterObject;
         public float m_throwForce = 2.5f; // Force when an object is trow after holding
         public float m_raycastOffsetX = 2f; // Offset on the x axis for raycasts
         public float m_raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
@@ -85,13 +86,20 @@ namespace PotatoGame
             {
                 // If player is holding an object, trow it
                 if (_mHolding)
+                {
                     Throw();
+                    Debug.Log("THROW ACTION");
+                }
+                   
             }
             
             // If you can plant an object ----------------------
             if (Input.GetAxisRaw("Plant") != 0 && _mHolding)
             {
-                Plant(); // Plant a potato
+                // Plant(); // Plant a potato
+                InstantPlant();
+               
+                Debug.Log("PLANT ACTION");
             }
         }        
         
@@ -108,11 +116,13 @@ namespace PotatoGame
                         m_proximityObject.GetComponent<IPickUp>().PickedUp = true;
                         m_proximityObject.GetComponent<IPickUp>().PickUp(); //call interface method
                         Hold();
+                        Debug.Log("HOLD ACTION");
                     }
                     else if (m_proximityObject.IsType<IHarvestable>())
                     {
                         m_proximityObject.GetComponent<IHarvestable>().Harvest(); //call interface method
                         Harvest();
+                        Debug.Log("HARVEST ACTION");
                     }
                 }
             }
@@ -197,6 +207,7 @@ namespace PotatoGame
             Destroy(m_proximityObject);
         }
 
+        //physics plant
         private void Plant()
         {
             ResetHandWeight();
@@ -208,6 +219,29 @@ namespace PotatoGame
             {
                 m_proximityObject.GetComponent<IPlantable>().Planting = true;
                 m_proximityObject.GetComponent<IPickUp>().PickedUp = false;
+            }
+            
+            ResetInteraction();
+        }
+        
+        //Instant plant
+        private void InstantPlant()
+        {
+            ResetHandWeight();
+            m_proximityObject.layer = 0;
+
+            if (m_proximityObject.IsType<IPlantable>())
+            {
+                m_proximityObject.GetComponent<IPlantable>().Planted = true;
+                m_proximityObject.GetComponent<IPickUp>().PickedUp = false;
+
+                var layerMask = LayerMask.GetMask("Ground");
+                RaycastHit plantingPosition;
+                if (Physics.Raycast(m_planterObject.transform.position, Vector3.down, out plantingPosition, 10.0f, layerMask))
+                {
+                    m_proximityObject.DeActivatePhysics();
+                    m_proximityObject.transform.position = plantingPosition.point;
+                }
             }
             
             ResetInteraction();
@@ -228,7 +262,7 @@ namespace PotatoGame
             _mHolding = false;
 
             // Set the trigger back
-            _mInteractionBoxCol.SetColliderTrigger(true);
+            _mInteractionBoxCol.SetColliderTrigger(true); //TODO this wont work with potatoes and rigidbody movement
         }
         #endregion
 
@@ -291,6 +325,7 @@ namespace PotatoGame
             Gizmos.DrawSphere(_mLeftOrigin, 0.1f);
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(_mRightOrigin, 0.1f);
+            Gizmos.DrawSphere(m_planterObject.transform.position, 0.1f);
 
             Debug.DrawRay(_mLeftOrigin, leftDirectionToObject * 1.5f, Color.magenta);
             Debug.DrawRay(_mRightOrigin, rightDirectionToObject * 1.5f, Color.green);

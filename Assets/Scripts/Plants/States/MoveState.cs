@@ -12,6 +12,9 @@ namespace PotatoGame
         protected Vector3 seekPosition;
         protected float moveTimer = 0.0f;
         protected float moveTime = 5.0f;
+        
+        protected float popOutTimer = 0.0f;
+        protected float popOutTime = 3.0f;
 
         public Move(T component)
         {
@@ -29,9 +32,39 @@ namespace PotatoGame
         public override void OnStateUpdate()
         {
             base.OnStateUpdate();
+            if(component.Planted) PopOut();
             MoveToPosition();
         }
 
+        protected void PopOut()
+        {
+            if (popOutTimer < popOutTime)
+            {
+                popOutTimer += Time.deltaTime;
+            }
+            else
+            {
+                PopOutOfTheGround();
+                popOutTimer = 0;
+            }
+        }
+
+        protected void PopOutOfTheGround()
+        {
+            //set the planted state to false 
+            component.Planted = false;
+
+            // pop out of the ground 
+            component.transform.position += new Vector3(0, component.GrowthParams.growthRadius * 2, 0);
+            component.transform.rotation = Random.rotation;
+    
+            // Activate gravity and defreeze all
+            component.Rb.ActivatePhysics();
+    
+            PickRandomPosition();
+            component.potatoEyes.SetActive(true);
+        }
+        
         protected virtual void PickRandomPosition()
         {
             float randX = Random.Range(-1.0f, 1.0f);
