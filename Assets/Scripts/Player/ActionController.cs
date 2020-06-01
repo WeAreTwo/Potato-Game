@@ -205,17 +205,17 @@ namespace PotatoGame
         //Instant plant
         private void InstantPlant()
         {
-            ResetHandWeight();
-            m_proximityObject.layer = 0;
-
             if (m_proximityObject.TryGetComponent(out Plant plant))
             {
-                var layerMask = LayerMask.GetMask("Ground");
-                if (Physics.Raycast(m_planterObject.transform.position, Vector3.down, out RaycastHit plantingPosition, 10.0f, layerMask))
-                    plant.PlantObject(plantingPosition.point);
+                ResetHandWeight();
+                m_proximityObject.layer = 0;
+    
+                    var layerMask = LayerMask.GetMask("Ground");
+                    if (Physics.Raycast(m_planterObject.transform.position, Vector3.down, out RaycastHit plantingPosition, 10.0f, layerMask))
+                        plant.PlantObject(plantingPosition.point);
+                
+                ResetInteraction();
             }
-            
-            ResetInteraction();
         }
 
         private void ResetHandWeight()
