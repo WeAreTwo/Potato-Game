@@ -8,7 +8,7 @@ namespace PotatoGame
     [RequireComponent(typeof(MeshCollider))]       
     public class InteractableObject : MonoBehaviour, IPickUp
     {
-        protected bool pickedUp;
+        [SerializeField] protected bool pickedUp;
         protected Rigidbody rb;
 
         public bool PickedUp { get => pickedUp; set => pickedUp = value; }
@@ -19,9 +19,24 @@ namespace PotatoGame
             rb = this.GetComponent<Rigidbody>();
         }
         
-        public void PickUp()
+        public virtual void PickUp()
         {
             //nothing for now
+            pickedUp = true;
+            rb.DeActivatePhysics();
+        }
+
+        public virtual void Drop()
+        {
+            pickedUp = false;
+            rb.ActivatePhysics();
+        }
+
+        public virtual void Throw(Vector3 direction, float force)
+        {
+            pickedUp = false;
+            this.gameObject.layer = 0; // bring back the default physic layer
+            this.gameObject.ThrowObject(direction, force);
         }
     }
 

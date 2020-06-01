@@ -114,22 +114,26 @@ namespace PotatoGame
             }
         }
 
-        public virtual void PlantObject()
+        public override void PickUp()
         {
-            // Pick a random depth number
-            var depth = UnityEngine.Random.Range(plantingDepthRange.x, plantingDepthRange.y);
+            base.PickUp();
+            planted = false;
+        }
 
-            rb.ActivatePlantingPhysics();
-            this.gameObject.SetAllColliderTriggers(true);
+        public void PlantObject()
+        {
+            throw new NotImplementedException();
+        }
 
-            // Get the potato in the ground
-            Vector3 currentPos = transform.position;
-            currentPos.y -= depth;
-            transform.position = currentPos;
+        public virtual void PlantObject(Vector3 plantingPosition)
+        {
+            this.gameObject.DeActivatePhysics();
+            this.transform.position = plantingPosition;
 
             // The potato is now planted!
             planting = false;
             planted = true;
+            pickedUp = false;
         }
 
         public virtual void Harvest()

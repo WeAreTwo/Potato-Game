@@ -86,21 +86,12 @@ namespace PotatoGame
             {
                 // If player is holding an object, trow it
                 if (_mHolding)
-                {
                     Throw();
-                    Debug.Log("THROW ACTION");
-                }
-                   
             }
             
             // If you can plant an object ----------------------
             if (Input.GetAxisRaw("Plant") != 0 && _mHolding)
-            {
-                // Plant(); // Plant a potato
                 InstantPlant();
-               
-                Debug.Log("PLANT ACTION");
-            }
         }        
         
         void DefaultActions()
@@ -113,16 +104,13 @@ namespace PotatoGame
                     // Scan for the correct type of object
                     if (m_proximityObject.TryGetComponent(out InteractableObject interactable))
                     {
-                        interactable.PickedUp = true;
                         interactable.PickUp();
                         Hold();
-                        Debug.Log("HOLD ACTION");
                     }
                     else if (m_proximityObject.TryGetComponent(out Plant plant))
                     {
                         plant.Harvest(); //call interface method
                         Harvest();
-                        Debug.Log("HARVEST ACTION");
                     }
                 }
             }
@@ -153,17 +141,6 @@ namespace PotatoGame
             }
             
         }
-                
-        // When holding a dynamic object -----------------------------------------------
-        /* PROCESS
-         * 1 - SET PARENT
-         * 2 - DISABLED GRAVITY AND FREEZE ROTATION
-         * 3 - SET HANDS
-         * 4 - DISABLE COLLIDER
-         * 5 - ENABLED INTERACTION COLLIDER
-         * 6-  START PICK ANIM
-         */
-        
         
         private void Hold()
         {
@@ -177,11 +154,9 @@ namespace PotatoGame
         private void Throw()
         {
             ResetHandWeight();
-            m_proximityObject.layer = 0; // bring back the default physic layer
-            m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
             
-            if(m_proximityObject.TryGetComponent(out InteractableObject interactable)) 
-                interactable.PickedUp = false;
+            if (m_proximityObject.TryGetComponent(out InteractableObject interactable))
+                interactable.Throw(transform.forward, m_throwForce);
             
             ResetInteraction();
         }
@@ -210,23 +185,23 @@ namespace PotatoGame
             Destroy(m_proximityObject);
         }
 
-        //physics plant
-        private void Plant()
-        {
-            ResetHandWeight();
-            m_proximityObject.layer = 0; // bring back the default physic layer
-            m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
-            
-            //check if it can be planted
-            if (m_proximityObject.TryGetComponent(out Plant plant))
-            {
-                plant.Planting = true;
-                plant.PickedUp = false;
-            }
-            
-            ResetInteraction();
-        }
-        
+        // //physics plant
+        // private void Plant()
+        // {
+        //     ResetHandWeight();
+        //     m_proximityObject.layer = 0; // bring back the default physic layer
+        //     m_proximityObject.ThrowObject(transform.forward, m_throwForce); //throws the object 
+        //     
+        //     //check if it can be planted
+        //     if (m_proximityObject.TryGetComponent(out Plant plant))
+        //     {
+        //         plant.Planting = true;
+        //         plant.PickedUp = false;
+        //     }
+        //     
+        //     ResetInteraction();
+        // }
+        //
         //Instant plant
         private void InstantPlant()
         {
@@ -235,16 +210,9 @@ namespace PotatoGame
 
             if (m_proximityObject.TryGetComponent(out Plant plant))
             {
-                plant.Planted = true;
-                plant.PickedUp = false;
-
                 var layerMask = LayerMask.GetMask("Ground");
-                RaycastHit plantingPosition;
-                if (Physics.Raycast(m_planterObject.transform.position, Vector3.down, out plantingPosition, 10.0f, layerMask))
-                {
-                    m_proximityObject.DeActivatePhysics();
-                    m_proximityObject.transform.position = plantingPosition.point;
-                }
+                if (Physics.Raycast(m_planterObject.transform.position, Vector3.down, out RaycastHit plantingPosition, 10.0f, layerMask))
+                    plant.PlantObject(plantingPosition.point);
             }
             
             ResetInteraction();
