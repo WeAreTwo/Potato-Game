@@ -10,21 +10,14 @@ namespace PotatoGame
         //COMPONENT EXTENSION METHODS 
         public static bool IsType<T>(this GameObject comparison) where T : class
         {
-            if (comparison.GetComponent<T>() != null)
-                return true;
-            else
-                return false;
+            return comparison.TryGetComponent(out T component);
         }        
         
         public static bool IsType<T>(this Collider comparison) where T : class
         {
-            if (comparison.GetComponent<T>() != null)
-                return true;
-            else
-                return false;
+            return comparison.TryGetComponent(out T component);
         }
         
-
         //RIGIDBODY EXTENSION METHODS
         public static void ActivatePhysics(this GameObject obj)
         {
@@ -33,6 +26,7 @@ namespace PotatoGame
             {
                 rb.useGravity = true;
                 rb.constraints = RigidbodyConstraints.None;
+                rb.gameObject.GetComponent<Collider>().isTrigger = false;
             }
         }
         
@@ -50,6 +44,7 @@ namespace PotatoGame
         {
             rb.useGravity = true;
             rb.constraints = RigidbodyConstraints.None;
+            rb.gameObject.GetComponent<Collider>().isTrigger = false;
         }
         
         public static void DeActivatePhysics(this Rigidbody rb)

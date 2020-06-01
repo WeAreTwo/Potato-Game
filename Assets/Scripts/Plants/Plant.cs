@@ -32,39 +32,25 @@ namespace PotatoGame
 
     }
     
-    [RequireComponent(typeof(Rigidbody))]        //automatically add rb
-    [RequireComponent(typeof(MeshCollider))]    //automatically add meshcollider        
-    public abstract class Plant : MonoBehaviour, IPickUp, IPlantable, IHarvestable
+    public abstract class Plant : InteractableObject, IPlantable
     {
         //Finite State Machine
         protected StateMachine fsm;
         
         [SerializeField] protected bool planting;
         [SerializeField] protected bool planted;
-        [SerializeField] protected bool pickedUp;
         [SerializeField] protected Vector2 plantingDepthRange; // Range for the depth of the potato when planted
         
         [Header("HEALTH")] 
         [SerializeField] protected float health = 100.0f;
         [SerializeField] protected GrowthParams growthParams;
 
-
-        //Components
-        protected Rigidbody rb;
-
         //Properties
-        public Rigidbody Rb { get => rb; set => rb = value; }
         public float Health { get => health; set => health = value; }
         public bool Planting { get => planting; set => planting = value; }
         public bool Planted { get => planted; set => planted = value; }
-        public bool PickedUp { get => pickedUp; set => pickedUp = value; }
         public GrowthParams GrowthParams { get => growthParams; set => growthParams = value; }
         public StateMachine FSM => fsm;
-        
-        protected virtual void Awake()
-        {
-            rb = this.GetComponent<Rigidbody>();
-        }
 
         protected virtual void Start()
         {
@@ -128,30 +114,29 @@ namespace PotatoGame
             }
         }
 
-        public virtual void PlantObject()
+        public override void PickUp()
         {
-            // Pick a random depth number
-            var depth = UnityEngine.Random.Range(plantingDepthRange.x, plantingDepthRange.y);
+            base.PickUp();
+            planted = false;
+        }
 
-            rb.ActivatePlantingPhysics();
-            this.gameObject.SetAllColliderTriggers(true);
+        public void PlantObject()
+        {
+            throw new NotImplementedException();
+        }
 
-            // Get the potato in the ground
-            Vector3 currentPos = transform.position;
-            currentPos.y -= depth;
-            transform.position = currentPos;
+        public virtual void PlantObject(Vector3 plantingPosition)
+        {
+            this.gameObject.DeActivatePhysics();
+            this.transform.position = plantingPosition;
 
             // The potato is now planted!
             planting = false;
             planted = true;
+            pickedUp = false;
         }
 
-        public virtual void PickUp()
-        {
-            //Put pick up code here 
-        }
-
-        public void Harvest()
+        public virtual void Harvest()
         {
             
         }
