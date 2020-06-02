@@ -14,7 +14,7 @@ namespace PotatoGame
         }
 
         // public abstract void Interact();
-        public abstract void Interact(params object[] args);
+        public abstract void Interact();
     }
 
 }

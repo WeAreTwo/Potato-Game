@@ -6,23 +6,15 @@ using UnityEngine;
 namespace PotatoGame
 {
 
-    public class Slicer : InteractableStationary
+    public class Slicer : MachineBase
     {
         [Header("SLICER PARAMETERS")] 
         [SerializeField] protected Transform feeder;
         [SerializeField] protected Transform output;
         [SerializeField] protected float ejectionForce = 3.0f;
         
-        [SerializeField] protected bool isProcessing;
-        [SerializeField] protected float processingTime = 3.0f;
-        [SerializeField] protected float processingTimer = 0;
-
-        public override void Interact(params object[] args)
+        public override void Interact()
         {
-            // int yield = plantObj.GrowthParams.harvestYield;
-            if (args[0] == typeof(Plant))
-            {
-            }
 
         }
 
