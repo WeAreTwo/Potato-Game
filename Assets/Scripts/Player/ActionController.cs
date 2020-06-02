@@ -75,8 +75,8 @@ namespace PotatoGame
         // Check for inputs to trigger an action ---------------------------------------
         private void CheckInputs()
         {
-            DefaultActions();
             HoldingActions();
+            DefaultActions();
         }
 
         void HoldingActions()
@@ -167,10 +167,10 @@ namespace PotatoGame
         {
             // Wait the delay before starting to hold
             yield return new WaitForSeconds(delay);
-
             // Make sure the player did not target another object
-            m_proximityObject = pickUpObject;
             _mHolding = true;
+            m_proximityObject = pickUpObject;
+
         }
         
         

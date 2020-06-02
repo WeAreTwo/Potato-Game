@@ -8,6 +8,37 @@ using Random = UnityEngine.Random;
 namespace PotatoGame
 {
 
+    [System.Serializable]
+    public class SlicerProcessingTask
+    {
+        protected Slicer component;
+        [SerializeField] protected bool isProcessing;
+        [SerializeField] protected float processingTime = 3.0f;
+        [SerializeField] protected float processingTimer = 0;
+        
+        public bool IsProcessing { get => isProcessing; set => isProcessing = value; }
+
+        public SlicerProcessingTask(Slicer component)
+        {
+            this.component = component;
+            isProcessing = true;
+        }
+
+        public void Update()
+        {
+            if (isProcessing && processingTimer < processingTime)
+            {
+                processingTimer += Time.deltaTime;
+            }
+
+            if (isProcessing && processingTimer >= processingTime)
+            {
+                isProcessing = false;
+                component.EjectPotato();
+            }
+        }
+    }
+
     public class Slicer : MachineBase
     {
         [Header("SLICER PARAMETERS")] 
@@ -18,6 +49,10 @@ namespace PotatoGame
         [Header("OUTPUT OBJECT")] 
         [SerializeField] protected GameObject outputPrefab;
         
+        //Event
+        public delegate void ProcessFinishedAction();
+        public static event ProcessFinishedAction OnProcessFinished;
+
         protected void Update()
         {
             if (isProcessing && processingTimer < processingTime)
@@ -34,6 +69,17 @@ namespace PotatoGame
             //TEST 
             if(Input.GetKeyDown(KeyCode.K))
                 EjectPotato();
+        }
+
+        //SUBSCRIBE OUR EVENT TO EJECT
+        protected void OnEnable()
+        {
+            OnProcessFinished += EjectPotato;
+        }
+
+        protected void OnDisable()
+        {
+            OnProcessFinished -= EjectPotato;
         }
 
         public override void Interact()
@@ -54,14 +100,11 @@ namespace PotatoGame
             return seedPotato;
         }
 
-        protected void EjectPotato()
+        public void EjectPotato()
         {
-            // find the direction of ejection 
-            var direction = output.forward;
-            // instantiate
-            GameObject outputObj = Instantiate(outputPrefab, output.position, Random.rotation);
-            // eject with force
-            outputObj.ThrowObject(direction, ejectionForce);
+            var direction = output.forward; // find the direction of ejection 
+            GameObject outputObj = Instantiate(outputPrefab, output.position, Random.rotation); // instantiate
+            outputObj.ThrowObject(direction, ejectionForce); // eject with force
         }
 
         protected void OnDrawGizmos()
