@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 7178054810660379476}
   - component: {fileID: 3453454292911004909}
   m_Layer: 0
-  m_Name: Potato
+  m_Name: Potato_Seed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,7 +124,7 @@ Transform:
   m_GameObject: {fileID: 2595752278288454030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.2944489, y: 0.17, z: 3.699707}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children:
   - {fileID: 8053822424749547979}
   - {fileID: 6426147998878630204}
@@ -157,7 +157,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f941eef174a4fa94ab4f388d38fe6a82, type: 2}
+  - {fileID: 2100000, guid: 19c0e3b97bbc48244a533c316c779d61, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

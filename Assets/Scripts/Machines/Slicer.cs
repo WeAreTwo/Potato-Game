@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -26,7 +27,7 @@ namespace PotatoGame
 
         public void Update()
         {
-            if (isProcessing && processingTimer < processingTime)
+            if (isProcessing && processingTimer <= processingTime)
             {
                 processingTimer += Time.deltaTime;
             }
@@ -47,40 +48,22 @@ namespace PotatoGame
         [SerializeField] protected float ejectionForce = 3.0f;
 
         [Header("OUTPUT OBJECT")] 
+        [SerializeField] protected GameObject feederPrefab;
         [SerializeField] protected GameObject outputPrefab;
         
-        //Event
-        public delegate void ProcessFinishedAction();
-        public static event ProcessFinishedAction OnProcessFinished;
-
+        public Dictionary<SlicerProcessingTask, GameObject> processingQueue = new Dictionary<SlicerProcessingTask, GameObject>();
+        
         protected void Update()
         {
-            if (isProcessing && processingTimer < processingTime)
-            {
-                processingTimer += Time.deltaTime;
-            }
 
-            if (isProcessing && processingTimer >= processingTime)
-            {
-                EjectPotato();
-                isProcessing = false;
-            }
-            
             //TEST 
+            CheckQueue();
+            if(Input.GetKeyDown(KeyCode.J))
+                InsertPotato();
             if(Input.GetKeyDown(KeyCode.K))
                 EjectPotato();
         }
-
-        //SUBSCRIBE OUR EVENT TO EJECT
-        protected void OnEnable()
-        {
-            OnProcessFinished += EjectPotato;
-        }
-
-        protected void OnDisable()
-        {
-            OnProcessFinished -= EjectPotato;
-        }
+        
 
         public override void Interact()
         {
@@ -100,8 +83,30 @@ namespace PotatoGame
             return seedPotato;
         }
 
+        protected void CheckQueue()
+        {
+            foreach (var item in processingQueue.Keys.ToList())
+            {
+                item.Update();
+
+                if (!item.IsProcessing)
+                {
+                    Destroy(processingQueue[item]);
+                    processingQueue.Remove(item);
+                }
+            }
+        }
+
+        public void InsertPotato()
+        {
+            var direction = feeder.forward; // find the direction of ejection 
+            GameObject outputObj = Instantiate(feederPrefab, feeder.position, Random.rotation); // instantiate
+            processingQueue.Add(new SlicerProcessingTask(this), outputObj );
+        }
+
         public void EjectPotato()
         {
+            //TODO NEED TO INIT FSM ON THOSE NEW POTATOES
             var direction = output.forward; // find the direction of ejection 
             GameObject outputObj = Instantiate(outputPrefab, output.position, Random.rotation); // instantiate
             outputObj.ThrowObject(direction, ejectionForce); // eject with force
