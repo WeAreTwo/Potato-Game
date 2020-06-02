@@ -23179,6 +23179,7 @@ GameObject:
   - component: {fileID: 1510360458}
   - component: {fileID: 1510360457}
   - component: {fileID: 1510360456}
+  - component: {fileID: 1510360461}
   m_Layer: 0
   m_Name: Potato Container
   m_TagString: Untagged
@@ -24309,8 +24310,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1510360455}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.91, y: 1.6, z: -11.7}
+  m_LocalRotation: {x: -0, y: -0.49999917, z: -0, w: 0.8660259}
+  m_LocalPosition: {x: 3.91, y: 1.6, z: -11.45}
   m_LocalScale: {x: 0.57181, y: 0.52026135, z: 0.57181}
   m_Children:
   - {fileID: 145426090}
@@ -24320,9 +24321,33 @@ Transform:
   - {fileID: 615324341}
   - {fileID: 457215266}
   - {fileID: 1822143336}
+  - {fileID: 1697763778}
+  - {fileID: 1550718669}
   m_Father: {fileID: 0}
   m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -60.000004, z: 0}
+--- !u!114 &1510360461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510360455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca9454efc2dc88748afc4eec2f87208e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isProcessing: 0
+  processingTime: 3
+  processingTimer: 0
+  feeder: {fileID: 1697763778}
+  output: {fileID: 1550718669}
+  ejectionForce: 3
+  feederPrefab: {fileID: 2595752278288454030, guid: 658354659a72c794da6c44edfb21383f,
+    type: 3}
+  outputPrefab: {fileID: 2595752278288454030, guid: e3afdba6b8b81b54aba3fd542a398bae,
+    type: 3}
 --- !u!4 &1524099075 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3793102435927230443, guid: a705d1e86ceeb5b4e8d048ff5286e4ee,
@@ -24335,6 +24360,36 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 192174824}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1550718668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1550718669}
+  m_Layer: 0
+  m_Name: Output
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1550718669
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1550718668}
+  m_LocalRotation: {x: -0.70604414, y: -0.6772308, z: 0.13200976, w: -0.15947948}
+  m_LocalPosition: {x: 2.59, y: 0.47, z: -7.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1510360460}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 23.829, y: -181.85399, z: 91.995}
 --- !u!4 &1578762380 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3793102435927230443, guid: a705d1e86ceeb5b4e8d048ff5286e4ee,
@@ -25218,6 +25273,36 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!1 &1697763777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1697763778}
+  m_Layer: 0
+  m_Name: Feeder
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1697763778
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697763777}
+  m_LocalRotation: {x: 0.63591623, y: 0.20100845, z: -0.21310115, w: 0.7139987}
+  m_LocalPosition: {x: 3.1, y: 5.39, z: -3.36}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1510360460}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 83.594, y: 8.251, z: -25.858002}
 --- !u!4 &1719929075 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3793102435927230443, guid: a705d1e86ceeb5b4e8d048ff5286e4ee,
