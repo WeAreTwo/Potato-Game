@@ -141,7 +141,7 @@
             }
             ENDHLSL
         }
-        
+        /*
         Pass
         {
             Name "ShadowCaster"
@@ -205,6 +205,7 @@
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
             ENDHLSL
         }
+        */
     }
     FallBack "Unlit"
 }
