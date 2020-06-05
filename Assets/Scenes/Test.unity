@@ -18136,7 +18136,7 @@ MonoBehaviour:
   cameraController: {fileID: 1687258583}
   plantsController: {fileID: 1735320715}
   shaderController: {fileID: 1424371876}
-  varietyPool: {fileID: 1027374304}
+  varietyPoolController: {fileID: 1027374304}
 --- !u!4 &705285277
 Transform:
   m_ObjectHideFlags: 0
