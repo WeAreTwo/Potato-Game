@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
 
-    public class VarietyPool : MonoBehaviour
+    public class VarietyPoolController : MonoBehaviour
     {
         [SerializeField] protected List<PotatoCharacteristicObject> potatoVariety = new List<PotatoCharacteristicObject>();
 
