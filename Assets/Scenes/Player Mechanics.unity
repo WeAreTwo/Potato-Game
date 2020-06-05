@@ -22275,6 +22275,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bluenoise: {fileID: 2800000, guid: af7c6ac9be678304eb0f61d3f92699f9, type: 3}
+  colorProfiles: []
 --- !u!4 &1424371877
 Transform:
   m_ObjectHideFlags: 0
@@ -24173,7 +24174,7 @@ GameObject:
   - component: {fileID: 1642932968}
   - component: {fileID: 1642932967}
   - component: {fileID: 1642932966}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Terrain
   m_TagString: Ground
   m_Icon: {fileID: 0}
