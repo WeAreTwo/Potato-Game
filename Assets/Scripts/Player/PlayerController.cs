@@ -75,6 +75,7 @@ namespace PotatoGame
             // When we record input, move the controller
             if (move != Vector3.zero)
             {
+                move = Vector3.ClampMagnitude(move, 1);
                 _mController.Move(move * step);
                 _mLookRotation = Quaternion.LookRotation(move);
                 transform.rotation = Quaternion.Lerp(transform.rotation, _mLookRotation, m_rotationSpeed * Time.deltaTime);
