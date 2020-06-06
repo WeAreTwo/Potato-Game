@@ -696,7 +696,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ea4c28919f17c3444a4cc27864bcb76a, type: 2}
+  - {fileID: 2100000, guid: d592ecb55d68b1543adf7093993ce83c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -847,8 +847,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerController: {fileID: 1904704251}
+  ikController: {fileID: 0}
+  inventoryController: {fileID: 0}
   cameraController: {fileID: 1687258583}
   plantsController: {fileID: 1493351034}
+  shaderController: {fileID: 0}
+  varietyPoolController: {fileID: 0}
 --- !u!4 &705285277
 Transform:
   m_ObjectHideFlags: 0
@@ -1016,6 +1020,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_currentZoom: 0
   m_zoomSpeed: 300
+  m_rotateSpeed: 25
   m_target: {fileID: 1904704250}
   m_smoothSpeed: 0.125
   offset: {x: 8, y: 20, z: -14.19}
@@ -1190,7 +1195,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b259f8679de89f04aa7fba7059be871c, type: 2}
+  - {fileID: 2100000, guid: 6bf415fab64ce7c4ba32fac313762150, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1246,11 +1251,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_movementSpeed: 10
-  m_stepForce: 100
-  m_cameraIsNorth: 0
-  m_cameraIsWest: 0
-  m_cameraIsSouth: 0
-  m_cameraIsEast: 0
+  m_rotationSpeed: 5
+  m_groundOffset: 0.2
+  m_gravityForce: -9.81
+  m_ground:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!54 &1904704252
 Rigidbody:
   m_ObjectHideFlags: 0

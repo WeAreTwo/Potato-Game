@@ -14,6 +14,22 @@
         [LightStepThreshold] _LightStepThreshold("Light Step Threshold", float) = 0.5
         
         [TestParam] _TestParam("TestParam", float) = 0.5
+        
+        
+        
+        // Blending state
+        [HideInInspector] _Surface("__surface", Float) = 0.0
+        [HideInInspector] _Blend("__blend", Float) = 0.0
+        [HideInInspector] _AlphaClip("__clip", Float) = 0.0
+        [HideInInspector] _SrcBlend("__src", Float) = 1.0
+        [HideInInspector] _DstBlend("__dst", Float) = 0.0
+        [HideInInspector] _ZWrite("__zw", Float) = 1.0
+        [HideInInspector] _Cull("__cull", Float) = 2.0
+        
+        _ReceiveShadows("Receive Shadows", Float) = 1.0
+
+        // Editmode props
+        [HideInInspector] _QueueOffset("Queue offset", Float) = 0.0
     }
 
     SubShader
@@ -26,14 +42,59 @@
             Name "ForwardLit"
             Tags { "LightMode"="UniversalForward" }
             LOD 300
+            
+            Blend[_SrcBlend][_DstBlend]
+            ZWrite[_ZWrite]
+            Cull[_Cull]
 
             HLSLPROGRAM
+            
+            // Required to compile gles 2.0 with standard SRP library
+            // All shaders must be compiled with HLSLcc and currently only gles is not using HLSLcc by default
+            #pragma prefer_hlslcc gles
+            #pragma exclude_renderers d3d11_9x
+            #pragma target 2.0
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature _NORMALMAP
+            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature _ALPHAPREMULTIPLY_ON
+            #pragma shader_feature _EMISSION
+            #pragma shader_feature _METALLICSPECGLOSSMAP
+            #pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+            #pragma shader_feature _OCCLUSIONMAP
+
+            #pragma shader_feature _SPECULARHIGHLIGHTS_OFF
+            #pragma shader_feature _ENVIRONMENTREFLECTIONS_OFF
+            #pragma shader_feature _SPECULAR_SETUP
+            #pragma shader_feature _RECEIVE_SHADOWS_OFF
+
+            // -------------------------------------
+            // Universal Pipeline keywords
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile _ _SHADOWS_SOFT
+            #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+
+            // -------------------------------------
+            // Unity defined keywords
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ LIGHTMAP_ON
+            #pragma multi_compile_fog
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            
             #pragma vertex vert
             #pragma fragment frag
             
             #include "noise.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"            
             
             struct Attributes
             {
@@ -45,7 +106,7 @@
             struct Varyings
             {
                 float2 uv           : TEXCOORD0;
-                float  atten        : TEXCOORD1;
+                float4 shadowCoord  : TEXCOORD1; // compute shadow coord per-vertex for the main light
                 float3 worldNorm    : TEXCOORD2;
                 float4 positionHCS  : SV_POSITION;
             };
@@ -81,22 +142,18 @@
             Varyings vert(Attributes IN)
             {
                 Varyings OUT;
+                VertexPositionInputs vertexInput = GetVertexPositionInputs(IN.positionOS.xyz);
                 VertexNormalInputs vNormalInputs = GetVertexNormalInputs(IN.normal);
                 
-                //float noiseMask = clamp(cnoise(IN.uv / _NoiseScale), 0.4, 1.0);
-                //IN.positionOS.xyz *= noiseMask;
                 OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
-                //OUT.positionHCS *= noiseMask * 2;
                 OUT.uv = TRANSFORM_TEX(IN.uv, _BaseMap);
                 
-                Light mainLight = GetMainLight();
-                float3 lightDirection = mainLight.direction;                
-                
-                float attenuation;
-                //attenuation = dot( vNormalInputs.normalWS, lightDirection);
-                //attenuation = step(0.2 , attenuation);
-                
-                OUT.atten = attenuation;
+                // shadow coord for the main light is computed in vertex.
+                // If cascades are enabled, LWRP will resolve shadows in screen space
+                // and this coord will be the uv coord of the screen space shadow texture.
+                // Otherwise LWRP will resolve shadows in light space (no depth pre-pass and shadow collect pass)
+                // In this case shadowCoord will be the position in light space.
+                OUT.shadowCoord = GetShadowCoord(vertexInput);
                 OUT.worldNorm = vNormalInputs.normalWS;
                 return OUT;
             }
@@ -116,19 +173,29 @@
                 
                 //ABIENT COLOR (SHADOW COLOR)
                 //float4 ambientColor = float4(0.1,0.1,0.1,0.1);
-                float4 ambientColor = float4(0.1,0.1,0.1,0.1) + (_BaseColor * 0.05);
+                //float4 ambientColor = float4(0.1,0.1,0.1,0.1) + (_BaseColor * 0.05);
+                float4 ambientColor = (_BaseColor * 0.9);
                 float4 white = float4(1,1,1,1);
                 
-                Light mainLight = GetMainLight();
+                // Main light is the brightest directional light.
+                // It is shaded outside the light loop and it has a specific set of variables and shading path
+                // so we can be as fast as possible in the case when there's only a single directional light
+                // You can pass optionally a shadowCoord (computed per-vertex). If so, shadowAttenuation will be
+                // computed.
+                Light mainLight = GetMainLight(IN.shadowCoord);
+
                 float3 lightDirection = mainLight.direction;
                 float4 lightColor = float4(mainLight.color, 1);
+                half shadowAtten = mainLight.shadowAttenuation;
+                half distanceAttenuation = mainLight.distanceAttenuation;
                 
                 float attenuation = dot( IN.worldNorm, lightDirection);
                 //attenuation = smoothstep( blueNoiseTex, _LightStepThreshold , attenuation);
-                attenuation = step( blueNoiseTex - _LightStepThreshold , attenuation);
+                //attenuation = step( blueNoiseTex - _LightStepThreshold , attenuation);
                 
                 float4 base = baseTex * _BaseColor * lightColor;
-                float4 baseWithDetails = lerp(base, ambientColor, details);
+                //float4 baseWithDetails = lerp(base, ambientColor, details);
+                float4 baseWithDetails = lerp(ambientColor, base, shadowAtten);
                 //float noiseMask = clamp(cnoise(IN.uv / _NoiseScale), 0.1, 1.2);
                 
                 output = lerp(ambientColor, baseWithDetails , attenuation);
@@ -136,76 +203,15 @@
                 
                 return output;
                 
-                //return baseTex * _BaseColor * attenuation * lightColor;
-                //return SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor * IN.atten;
             }
             ENDHLSL
         }
-        /*
-        Pass
-        {
-            Name "ShadowCaster"
-            Tags{"LightMode" = "ShadowCaster"}
+        
+        UsePass "Universal Render Pipeline/Lit/ShadowCaster"
+        UsePass "Universal Render Pipeline/Lit/DepthOnly"
+        UsePass "Universal Render Pipeline/Lit/Meta"
 
-            ZWrite On
-            ZTest LEqual
-            Cull[_Cull]
-
-            HLSLPROGRAM
-            // Required to compile gles 2.0 with standard srp library
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
-            #pragma target 2.0
-
-            // -------------------------------------
-            // Material Keywords
-            #pragma shader_feature _ALPHATEST_ON
-
-            //--------------------------------------
-            // GPU Instancing
-            #pragma multi_compile_instancing
-            #pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-
-            #pragma vertex ShadowPassVertex
-            #pragma fragment ShadowPassFragment
-
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
-            ENDHLSL
-        }
-
-        Pass
-        {
-            Name "DepthOnly"
-            Tags{"LightMode" = "DepthOnly"}
-
-            ZWrite On
-            ColorMask 0
-            Cull[_Cull]
-
-            HLSLPROGRAM
-            // Required to compile gles 2.0 with standard srp library
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
-            #pragma target 2.0
-
-            #pragma vertex DepthOnlyVertex
-            #pragma fragment DepthOnlyFragment
-
-            // -------------------------------------
-            // Material Keywords
-            #pragma shader_feature _ALPHATEST_ON
-            #pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-
-            //--------------------------------------
-            // GPU Instancing
-            #pragma multi_compile_instancing
-
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
-            ENDHLSL
-        }
-        */
+        
     }
     FallBack "Unlit"
 }

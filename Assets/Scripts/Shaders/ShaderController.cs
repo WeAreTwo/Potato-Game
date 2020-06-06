@@ -15,8 +15,11 @@ namespace PotatoGame
 
         public void OnValidate()
         {
-            ChangeName();
-            ChangeColor();
+            if (mat)
+            {
+                ChangeName();
+                ChangeColor();
+            }
         }
 
         protected void ChangeName()
@@ -51,8 +54,7 @@ namespace PotatoGame
         {
             foreach (var profile in colorProfiles)
             {
-                if (profile.mat)
-                    profile.OnValidate();
+                profile.OnValidate();
             }
         }
     }
