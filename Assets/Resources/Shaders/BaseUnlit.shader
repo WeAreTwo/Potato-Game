@@ -8,11 +8,9 @@
         //[BlueNoiseMap] _BlueNoiseMap("BlueNoiseMap", 2D) = "white" {}
         [BlueNoiseMapScale] _BlueNoiseMapScale("BlueNoiseMapScale", float) = 1
         //[DetailMap] _DetailMap("DetailMap", 2D) = "white" {}
-        [DetailAmount] _DetailAmount("DetailAmount", float) = 0.5
-        [DetailScale] _DetailScale("DetailScale", float) = 0.5
-        [NoiseScale] _NoiseScale("NoiseScale", float) = 0.5
-        [LightStepThreshold] _LightStepThreshold("Light Step Threshold", float) = 0.5
-        
+        //[DetailAmount] _DetailAmount("DetailAmount", float) = 0.5
+        //[DetailScale] _DetailScale("DetailScale", float) = 0.5
+        [NoiseScale] _NoiseScale("NoiseScale", float) = 0.5        
         [TestParam] _TestParam("TestParam", float) = 0.5
         
         
@@ -108,6 +106,11 @@
                 float2 uv           : TEXCOORD0;
                 float4 shadowCoord  : TEXCOORD1; // compute shadow coord per-vertex for the main light
                 float3 worldNorm    : TEXCOORD2;
+                float3 worldPos    : TEXCOORD3;
+                float3 viewPos    : TEXCOORD4;
+                float3 clipPos    : TEXCOORD5;
+                float3 ndcPos    : TEXCOORD6;
+                float3 normal           : NORMAL;
                 float4 positionHCS  : SV_POSITION;
             };
 
@@ -120,6 +123,9 @@
             
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST;
+            float4 _DetailMap_ST;
+            float4 _BlueNoiseMap_ST;
+            
             half4 _BaseColor;
             half4 _InsideColor;
             float _LightStepThreshold;
@@ -127,6 +133,7 @@
             float _DetailAmount;
             float _DetailScale;
             float _NoiseScale;
+            float _AttenStrength;
             
             float _TestParam;
             CBUFFER_END
@@ -154,19 +161,59 @@
                 // Otherwise LWRP will resolve shadows in light space (no depth pre-pass and shadow collect pass)
                 // In this case shadowCoord will be the position in light space.
                 OUT.shadowCoord = GetShadowCoord(vertexInput);
+                OUT.normal = IN.normal;
                 OUT.worldNorm = vNormalInputs.normalWS;
+                OUT.worldPos = vertexInput.positionWS;
+                OUT.viewPos = vertexInput.positionVS;
+                OUT.clipPos = vertexInput.positionCS;
+                OUT.ndcPos = vertexInput.positionNDC;
                 return OUT;
             }
 
             half4 frag(Varyings IN) : SV_Target
             {
                 float4 output;
+                
+                //TRIPLANAR
+                // GET TRIPLANAR UVS
+                float2 uv_noise = float2(cnoise(IN.uv), cnoise(IN.uv));
+                float2 uv_base = TRANSFORM_TEX(IN.worldPos.xy, _DetailMap);
+                float2 uv_front = TRANSFORM_TEX(IN.worldPos.xy, _DetailMap);
+                float2 uv_side = TRANSFORM_TEX(IN.worldPos.zy, _DetailMap);
+                float2 uv_top = TRANSFORM_TEX(IN.worldPos.xz, _DetailMap);
+                
+                // SAMPLE THE SAME TEX FROM 3 DIFF UV IN OBJECT SPACE 
+                //read texture at uv position of the three projections
+                float4 col_base = SAMPLE_TEXTURE2D(_DetailMap,sampler_DetailMap, uv_base/ _DetailScale);
+                float4 col_front = SAMPLE_TEXTURE2D(_DetailMap,sampler_DetailMap, uv_front/ _DetailScale);
+                float4 col_side = SAMPLE_TEXTURE2D(_DetailMap,sampler_DetailMap, uv_side/ _DetailScale);
+                float4 col_top = SAMPLE_TEXTURE2D(_DetailMap,sampler_DetailMap, uv_top/ _DetailScale);
+                
+                
+                //generate weights from world normals
+                float3 weights = IN.normal;
+                //show texture on both sides of the object (positive and negative)
+                weights = abs(weights);
+                weights = pow(weights, 64);                
+                weights = weights / (weights.x + weights.y + weights.z);
+                
+                //combine weights with projected colors
+                col_front *= weights.z;
+                col_side *= weights.x;
+                col_top *= weights.y;
+                
+                
+                //combine the projected colors
+                float col = (col_front + col_side + col_top).r;
+                //float4 col = (col_front + col_side + col_top) / 3;
+                //float4 col = col_base;
+                
                 //BASE TEXTURE
                 float baseTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).r;                
                 
                 //DETAIL TEXTURE
                 float detailTex = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap, IN.uv/_DetailScale).r;
-                float details = step(_DetailAmount, detailTex);
+                col = step(_DetailAmount, col);
                 
                 //BLUE NOISE MAP 
                 float blueNoiseTex = SAMPLE_TEXTURE2D(_BlueNoiseMap, sampler_BlueNoiseMap, IN.uv/ _BlueNoiseMapScale).r;
@@ -190,18 +237,28 @@
                 half distanceAttenuation = mainLight.distanceAttenuation;
                 
                 float attenuation = dot( IN.worldNorm, lightDirection);
+                float attenuationFromView = dot( IN.worldNorm, GetCameraPositionWS()) * _AttenStrength;
                 //attenuation = smoothstep( blueNoiseTex, _LightStepThreshold , attenuation);
-                //attenuation = step( blueNoiseTex - _LightStepThreshold , attenuation);
+                attenuation = step( 0.3 , attenuation); // TODO uniform global variable here needed 
                 
                 float4 base = baseTex * _BaseColor * lightColor;
+                //float4 baseWithDetails = lerp(base, 0, attenuationFromView);
                 //float4 baseWithDetails = lerp(base, ambientColor, details);
                 float4 baseWithDetails = lerp(ambientColor, base, shadowAtten);
                 //float noiseMask = clamp(cnoise(IN.uv / _NoiseScale), 0.1, 1.2);
                 
-                output = lerp(ambientColor, baseWithDetails , attenuation);
+                return output = lerp(baseWithDetails, ambientColor  ,  (normalize(col * attenuationFromView)));
+                //output = lerp(ambientColor, baseWithDetails , attenuation);
                 //output = lerp(output, _InsideColor, noiseMask);
                 
+                return lerp(output, float4(0,0,0,0), (normalize(col * attenuationFromView)));
+                return col * attenuationFromView;
+                return col;
+                return detailTex;
                 return output;
+                return float4(1,1,1,1) * attenuationFromView;
+                return float4(IN.worldNorm,1);
+                //return float4(uv_noise,1,1);
                 
             }
             ENDHLSL

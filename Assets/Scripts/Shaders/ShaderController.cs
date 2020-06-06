@@ -40,6 +40,10 @@ namespace PotatoGame
         [Header("GLOBAL PROPERTIES")]
         [SerializeField] protected Texture bluenoise;
 
+        [SerializeField] protected float detailScale = 1.0f;
+        [SerializeField] protected float detailAmount = 1.0f;
+        [SerializeField] protected float attenStrength = 1.0f;
+
         [Header("COLOR PALLETTE")]
         [SerializeField] protected List<ColorProfile> colorProfiles = new List<ColorProfile>();
         
@@ -47,6 +51,13 @@ namespace PotatoGame
         {
             Shader.SetGlobalTexture("_BlueNoiseMap", bluenoise);
             Shader.SetGlobalTexture("_DetailMap", bluenoise);
+        }
+
+        void Update()
+        {
+            Shader.SetGlobalFloat("_DetailScale", detailScale);
+            Shader.SetGlobalFloat("_DetailAmount", detailAmount);
+            Shader.SetGlobalFloat("_AttenStrength", attenStrength);
         }
 
         //when something changes in the inspector call this 

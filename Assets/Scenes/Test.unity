@@ -19759,6 +19759,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bluenoise: {fileID: 2800000, guid: af7c6ac9be678304eb0f61d3f92699f9, type: 3}
+  detailScale: 54.9
+  detailAmount: 0.099
+  attenStrength: -0.07
   colorProfiles:
   - name: Primary
     color: {r: 0.76470596, g: 0.72156864, b: 0.6392157, a: 1}
