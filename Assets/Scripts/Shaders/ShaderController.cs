@@ -13,7 +13,18 @@ namespace PotatoGame
         public Color color = Color.cyan;
         public Material mat;
 
-        public void ChangeColor()
+        public void OnValidate()
+        {
+            ChangeName();
+            ChangeColor();
+        }
+
+        protected void ChangeName()
+        {
+            this.name = mat.name;
+        }
+
+        protected void ChangeColor()
         {
             mat.SetColor("_BaseColor", this.color);
         }
@@ -40,8 +51,8 @@ namespace PotatoGame
         {
             foreach (var profile in colorProfiles)
             {
-                if(profile.mat)
-                    profile.ChangeColor();
+                if (profile.mat)
+                    profile.OnValidate();
             }
         }
     }

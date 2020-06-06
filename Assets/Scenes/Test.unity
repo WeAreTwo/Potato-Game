@@ -19759,7 +19759,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bluenoise: {fileID: 2800000, guid: af7c6ac9be678304eb0f61d3f92699f9, type: 3}
-  colorProfiles: []
+  colorProfiles:
+  - name: Primary
+    color: {r: 0, g: 1, b: 1, a: 1}
+    mat: {fileID: 2100000, guid: 635697f297715064fb5ca0a8cda396f7, type: 2}
+  - name: Primary
+    color: {r: 0, g: 1, b: 1, a: 1}
+    mat: {fileID: 2100000, guid: 0727734f3943a2b448e2c31e2d43833a, type: 2}
+  - name: Primary
+    color: {r: 0, g: 1, b: 1, a: 1}
+    mat: {fileID: 2100000, guid: 5415e6cb84eb0b44fabc9a6c4cd79a21, type: 2}
+  - name: Primary
+    color: {r: 0, g: 1, b: 1, a: 1}
+    mat: {fileID: 2100000, guid: 5c3f2adc89bb0df41b70c6652b4db010, type: 2}
+  - name: Primary
+    color: {r: 0, g: 1, b: 1, a: 1}
+    mat: {fileID: 2100000, guid: adfedfc6045804446980b08709057119, type: 2}
+  - name: Primary
+    color: {r: 0, g: 1, b: 1, a: 1}
+    mat: {fileID: 2100000, guid: d02ff5562e7b9c24f9d473235026b2e0, type: 2}
 --- !u!4 &1424371877
 Transform:
   m_ObjectHideFlags: 0
@@ -20949,6 +20967,7 @@ MonoBehaviour:
   isProcessing: 0
   processingTime: 3
   processingTimer: 0
+  processQueue: {fileID: 0}
   feeder: {fileID: 1697763778}
   output: {fileID: 1550718669}
   ejectionForce: 3
@@ -24094,11 +24113,23 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 3cbab3101e2cfe44a98a0d7648485008, type: 2}
+    - target: {fileID: 3064457621664104531, guid: b2ab34a64663a8b4592ea88d61e2570d,
+        type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000,
+        type: 0}
     - target: {fileID: 6460078239362077429, guid: b2ab34a64663a8b4592ea88d61e2570d,
         type: 3}
       propertyPath: m_Name
       value: 'DummyPotato '
       objectReference: {fileID: 0}
+    - target: {fileID: 7146729582143777636, guid: b2ab34a64663a8b4592ea88d61e2570d,
+        type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000,
+        type: 0}
     - target: {fileID: 8069772367280120038, guid: b2ab34a64663a8b4592ea88d61e2570d,
         type: 3}
       propertyPath: m_LocalPosition.x
