@@ -92,7 +92,9 @@
             
             #include "noise.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"            
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"      
+            
+            #define PI 3.14      
             
             struct Attributes
             {
@@ -143,6 +145,16 @@
             {
                 float facm = 1- fac;
                 return  1 - ((1 - colorOne) * (facm + fac * (1 - colorTwo)));
+            }
+            
+            float Shaping_Sharp(float x)
+            {
+                return 1.0 - pow(abs(sin(PI * x/2.0)), 0.5);
+            }
+            
+            float Shaping_Smooth(float x)
+            {
+                return pow(cos(PI * x / 2.0), 0.5);
             }
             
 
@@ -238,6 +250,9 @@
                 
                 float attenuation = dot( IN.worldNorm, lightDirection);
                 float attenuationFromView = dot( IN.worldNorm, GetCameraPositionWS()) * _AttenStrength;
+                float detailAtten = saturate(attenuationFromView * col);
+                detailAtten = Shaping_Smooth(detailAtten);
+                
                 //attenuation = smoothstep( blueNoiseTex, _LightStepThreshold , attenuation);
                 attenuation = step( 0.3 , attenuation); // TODO uniform global variable here needed 
                 
@@ -247,7 +262,7 @@
                 float4 baseWithDetails = lerp(ambientColor, base, shadowAtten);
                 //float noiseMask = clamp(cnoise(IN.uv / _NoiseScale), 0.1, 1.2);
                 
-                return output = lerp(baseWithDetails, ambientColor  ,  (normalize(col * attenuationFromView)));
+                return output = lerp(ambientColor * 0.1 ,  baseWithDetails, detailAtten  );
                 //output = lerp(ambientColor, baseWithDetails , attenuation);
                 //output = lerp(output, _InsideColor, noiseMask);
                 
