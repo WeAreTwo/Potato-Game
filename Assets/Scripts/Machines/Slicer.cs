@@ -13,6 +13,7 @@ namespace PotatoGame
     public class SlicerProcessingTask
     {
         protected Slicer component;
+        public GameObject slicedObject;
         [SerializeField] protected bool isProcessing;
         [SerializeField] protected float processingTime = 3.0f;
         [SerializeField] protected float processingTimer = 0;
@@ -37,12 +38,18 @@ namespace PotatoGame
                 isProcessing = false;
                 component.EjectPotato();
             }
+
+            if (!isProcessing && slicedObject)
+            {
+                GameObject.Destroy(slicedObject);
+            }
         }
     }
 
     public class Slicer : MachineBase
     {
         [Header("SLICER PARAMETERS")] 
+        [SerializeField] protected CoroutineQueue processQueue;
         [SerializeField] protected Transform feeder;
         [SerializeField] protected Transform output;
         [SerializeField] protected float ejectionForce = 3.0f;
@@ -52,7 +59,13 @@ namespace PotatoGame
         [SerializeField] protected GameObject outputPrefab;
         
         public Dictionary<SlicerProcessingTask, GameObject> processingQueue = new Dictionary<SlicerProcessingTask, GameObject>();
-        
+
+        protected void Start()
+        {
+            // processQueue = new CoroutineQueue(this);
+            // processQueue.StartLoop();
+        }
+
         protected void Update()
         {
 
@@ -60,6 +73,8 @@ namespace PotatoGame
             CheckQueue();
             if(Input.GetKeyDown(KeyCode.J))
                 InsertPotato();
+                // QueuePlant(new SlicerProcessingTask(this));
+            
             if(Input.GetKeyDown(KeyCode.K))
                 EjectPotato();
         }
@@ -85,6 +100,12 @@ namespace PotatoGame
 
         protected void CheckQueue()
         {
+            // if (processingQueue.Count > 0)
+            // {
+            //     var queue = processingQueue.Keys.ToList();
+            //     queue[0].Update();
+            //     processingQueue[0];
+            // }
             foreach (var item in processingQueue.Keys.ToList())
             {
                 item.Update();
@@ -95,6 +116,24 @@ namespace PotatoGame
                     processingQueue.Remove(item);
                 }
             }
+        }
+
+        public void QueuePlant(SlicerProcessingTask plant)
+        {
+            var direction = feeder.forward; // find the direction of ejection 
+            GameObject outputObj = Instantiate(feederPrefab, feeder.position, Random.rotation); // instantiate
+            plant.slicedObject = outputObj;
+            processQueue.EnqueueAction(ProcessPlant(plant));
+
+        }
+
+        IEnumerator ProcessPlant(SlicerProcessingTask task)
+        {
+            while (task.IsProcessing)
+            {
+                task.Update();
+            }
+            yield return null;
         }
 
         public void InsertPotato()
