@@ -8,12 +8,17 @@ public class MusicManager : MonoBehaviour
 {
     // public variables -------------------------
     [Title("Audio Source for the musics")] 
-    public AudioSource m_audio; // Instanc eof the audio source responsible for the music player
+    public AudioSource m_musicAudio; // Instance of the audio source responsible for the music player
+    public AudioSource m_ambientAudio; // Instance of the audio source responsible for ambient player
     [Title("Music Tracks")]
     public AudioClip m_mainTheme; // Main theme to play when no other actions in progress
 
-    [Title("Active Track")] [ReadOnly] 
-    public AudioClip m_activeTrack; // Track currently playing
+    [Title("Ambient Tracks")] 
+    public AudioClip m_field; // Default field ambient track
+
+    [Title("Active Tracks")] 
+    [ReadOnly] public AudioClip m_activeMusicTrack; // Music track currently playing
+    [ReadOnly] public AudioClip m_activeAmbientTrack; // Ambient track currently playing
 
 
     // private variables ------------------------
@@ -24,8 +29,9 @@ public class MusicManager : MonoBehaviour
     // ------------------------------------------
     void Start()
     {
-        // Play the default theme 
-        SelectTrack(m_mainTheme);
+        // Play the default theme and ambient
+        SelectMusicTrack(m_mainTheme);
+        SelectAmbientTrack(m_field);
     }
 
     // ------------------------------------------
@@ -39,14 +45,25 @@ public class MusicManager : MonoBehaviour
     // ------------------------------------------
     // Methods
     // ------------------------------------------
-    // Select the next track to play -----------------------------------------------
-    private void SelectTrack(AudioClip nextTrack)
+    // Select the next music track to play -------------------------------------------
+    private void SelectMusicTrack(AudioClip nextTrack)
     {
         // Set the new active track
-        m_activeTrack = nextTrack;
+        m_activeMusicTrack = nextTrack;
         
         // Play the new track
-        m_audio.clip = m_activeTrack;
-        m_audio.Play();
+        m_musicAudio.clip = m_activeMusicTrack;
+        m_musicAudio.Play();
+    }
+    
+    // Select the next ambient track to play -----------------------------------------
+    private void SelectAmbientTrack(AudioClip nextTrack)
+    {
+        // Set the new active track
+        m_activeAmbientTrack = nextTrack;
+        
+        // Play the new track
+        m_ambientAudio.clip = m_activeAmbientTrack;
+        m_ambientAudio.Play();
     }
 }
