@@ -122,6 +122,7 @@ namespace PotatoGame
             var direction = feeder.forward; // find the direction of ejection 
             GameObject outputObj = Instantiate(feederPrefab, feeder.position, Random.rotation); // instantiate
             processingQueue.Add(new SlicerProcessingTask(this), outputObj );
+            InputSettings(ref outputObj);
         }
 
         public void EjectPotato()
@@ -130,6 +131,41 @@ namespace PotatoGame
             var direction = output.forward; // find the direction of ejection 
             GameObject outputObj = Instantiate(outputPrefab, output.position, Random.rotation); // instantiate
             outputObj.ThrowObject(direction, ejectionForce); // eject with force
+            OutputSettings(ref outputObj);
+        }
+
+        // handles the scripts specific input when inserted
+        protected void InputSettings(ref GameObject obj)
+        {
+            if(obj.TryGetComponent<Plant>(out Plant plant))
+            {
+                //do something for plants 
+                plant.PickedUp = false;
+                plant.Planted = false;
+            }
+
+            if(obj.TryGetComponent<Potato>(out Potato potato))
+            {
+                potato.PickedUp = false;
+                potato.Planted = false;
+            }
+        }
+
+        //handles the scripts specific output when instantiated
+        protected void OutputSettings(ref GameObject obj)
+        {
+            if(obj.TryGetComponent<Plant>(out Plant plant))
+            {
+                //do something for plants 
+                plant.PickedUp = false;
+                plant.Planted = false;
+            }
+
+            if(obj.TryGetComponent<Potato>(out Potato potato))
+            {
+                potato.PickedUp = false;
+                potato.Planted = false;
+            }
         }
 
         protected void OnDrawGizmos()

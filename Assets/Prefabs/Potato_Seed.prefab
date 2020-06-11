@@ -222,7 +222,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickedUp: 0
   planting: 0
-  planted: 1
+  planted: 0
   plantingDepthRange: {x: 0, y: 0}
   health: 100
   growthParams:
