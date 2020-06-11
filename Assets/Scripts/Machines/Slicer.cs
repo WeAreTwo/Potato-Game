@@ -60,12 +60,6 @@ namespace PotatoGame
         
         public Dictionary<SlicerProcessingTask, GameObject> processingQueue = new Dictionary<SlicerProcessingTask, GameObject>();
 
-        protected void Start()
-        {
-            // processQueue = new CoroutineQueue(this);
-            // processQueue.StartLoop();
-        }
-
         protected void Update()
         {
 
@@ -82,7 +76,6 @@ namespace PotatoGame
 
         public override void Interact()
         {
-            isProcessing = true;
         }
 
         public void SlicePotato(Potato potato)
@@ -90,41 +83,29 @@ namespace PotatoGame
             int yield = potato.GrowthParams.harvestYield;
         }
 
-        Potato outputPotato()
-        {
-            Potato seedPotato = new Potato();
-            // set init state to seed
+        // Potato outputPotato()
+        // {
+        //     Potato seedPotato = new Potato();
+        //     // set init state to seed
     
-            return seedPotato;
-        }
+        //     return seedPotato;
+        // }
 
         protected void CheckQueue()
         {
-            // if (processingQueue.Count > 0)
-            // {
-            //     var queue = processingQueue.Keys.ToList();
-            //     queue[0].Update();
-            //     processingQueue[0];
-            // }
-            foreach (var item in processingQueue.Keys.ToList())
-            {
-                item.Update();
+            var queue = processingQueue.Keys.ToList();
 
-                if (!item.IsProcessing)
+            if(processingQueue.Count > 0)
+            {
+
+                queue[0].Update();
+
+                if (!queue[0].IsProcessing)
                 {
-                    Destroy(processingQueue[item]);
-                    processingQueue.Remove(item);
+                    Destroy(processingQueue[queue[0]]);
+                    processingQueue.Remove(queue[0]);
                 }
             }
-        }
-
-        public void QueuePlant(SlicerProcessingTask plant)
-        {
-            var direction = feeder.forward; // find the direction of ejection 
-            GameObject outputObj = Instantiate(feederPrefab, feeder.position, Random.rotation); // instantiate
-            plant.slicedObject = outputObj;
-            processQueue.EnqueueAction(ProcessPlant(plant));
-
         }
 
         IEnumerator ProcessPlant(SlicerProcessingTask task)
