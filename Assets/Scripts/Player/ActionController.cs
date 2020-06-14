@@ -97,7 +97,10 @@ namespace PotatoGame
         {
             if (_interactStationary)
             {
-                // m_proximityStationaryObject
+                if (m_proximityStationaryObject.TryGetComponent(out InteractableStationary interactable))
+                {
+                    interactable.Interact();
+                }
             }
             // Check if the action button is triggered ----------
             else if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
@@ -114,8 +117,15 @@ namespace PotatoGame
         
         void DefaultActions()
         {
+            if (_interactStationary)
+            {
+                if (m_proximityStationaryObject.TryGetComponent(out InteractableStationary interactable))
+                {
+                    interactable.Interact();
+                }
+            }
             // Check if the action button is triggered ----------
-            if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
+            else if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
             {
                 if (!_mHolding)
                 {
