@@ -49,7 +49,6 @@ namespace PotatoGame
     public class Slicer : MachineBase
     {
         [Header("SLICER PARAMETERS")] 
-        [SerializeField] protected CoroutineQueue processQueue;
         [SerializeField] protected Transform feeder;
         [SerializeField] protected Transform output;
         [SerializeField] protected float ejectionForce = 3.0f;
@@ -62,20 +61,21 @@ namespace PotatoGame
 
         protected void Update()
         {
+            CheckQueue();
 
             //TEST 
-            CheckQueue();
             if(Input.GetKeyDown(KeyCode.J))
                 InsertPotato();
                 // QueuePlant(new SlicerProcessingTask(this));
             
-            if(Input.GetKeyDown(KeyCode.K))
-                EjectPotato();
+            // if(Input.GetKeyDown(KeyCode.K))
+            //     EjectPotato();
         }
         
 
         public override void Interact()
         {
+            InsertPotato();
         }
 
         public void SlicePotato(Potato potato)
@@ -97,7 +97,7 @@ namespace PotatoGame
 
             if(processingQueue.Count > 0)
             {
-
+                isProcessing = true;
                 queue[0].Update();
 
                 if (!queue[0].IsProcessing)
@@ -105,6 +105,10 @@ namespace PotatoGame
                     Destroy(processingQueue[queue[0]]);
                     processingQueue.Remove(queue[0]);
                 }
+            }
+            else
+            {
+                isProcessing = false;
             }
         }
 
@@ -143,12 +147,7 @@ namespace PotatoGame
                 plant.PickedUp = false;
                 plant.Planted = false;
             }
-
-            if(obj.TryGetComponent<Potato>(out Potato potato))
-            {
-                potato.PickedUp = false;
-                potato.Planted = false;
-            }
+            
         }
 
         //handles the scripts specific output when instantiated
@@ -160,12 +159,7 @@ namespace PotatoGame
                 plant.PickedUp = false;
                 plant.Planted = false;
             }
-
-            if(obj.TryGetComponent<Potato>(out Potato potato))
-            {
-                potato.PickedUp = false;
-                potato.Planted = false;
-            }
+            
         }
 
         protected void OnDrawGizmos()

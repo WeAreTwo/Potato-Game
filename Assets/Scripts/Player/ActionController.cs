@@ -13,14 +13,16 @@ namespace PotatoGame
     {
         // public variables -------------------------
         public GameObject m_proximityObject; // Target caught by a trigger
+        public GameObject m_proximityStationaryObject; // Target caught by a trigger
         public GameObject m_planterObject;
         public float m_throwForce = 2.5f; // Force when an object is trow after holding
         public float m_raycastOffsetX = 2f; // Offset on the x axis for raycasts
         public float m_raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
 
         // private variables ------------------------
-        private BoxCollider _mInteractionBoxCol; // Collider with the trigger
         private bool _mHolding; // Is an object in hand?
+        private bool _interactStationary; // Is an object in hand?
+        private BoxCollider _mInteractionBoxCol; // Collider with the trigger
         private Vector3 _mRightOrigin; // Use for right hand raycast starting point
         private Vector3 _mLeftOrigin; // Use for left hand raycast starting point
 
@@ -57,15 +59,27 @@ namespace PotatoGame
 
         private void CheckForNearbyPickableObject(Collider col)
         {
+            if (col.IsType<InteractableStationary>())
+            {
+                Debug.Log(col.gameObject.name + "is near");
+                _interactStationary = true;
+                m_proximityStationaryObject = col.gameObject;
+            }
+                
             if(col.IsType<InteractableObject>() && !_mHolding)
-                m_proximityObject = col.gameObject;
+                m_proximityObject = col.gameObject; 
+                           
         }
 
         private void ResetProximityObject(Collider col)
         {
-            // col.gameObject.IsType<>()
+            if (col.IsType<InteractableStationary>())
+            {
+                _interactStationary = false;
+                m_proximityStationaryObject = null;
+            }
             if(col.IsType<InteractableObject>() && !_mHolding)
-                m_proximityObject = null;
+                m_proximityObject = null;            
         }
 
         #endregion
@@ -81,8 +95,12 @@ namespace PotatoGame
 
         void HoldingActions()
         {
+            if (_interactStationary)
+            {
+                // m_proximityStationaryObject
+            }
             // Check if the action button is triggered ----------
-            if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
+            else if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
             {
                 // If player is holding an object, trow it
                 if (_mHolding)

@@ -228,7 +228,6 @@
                     float4 outline = edge * _OutlineColor;
                     
                     return lerp(Color, _OutlineColor, edge);
-                    return Color * s;        
                 }
             ENDHLSL
         }
