@@ -188,6 +188,7 @@
                     float edgeColor = sqrt(dot(colorFiniteDifference0, colorFiniteDifference0) + dot(colorFiniteDifference1, colorFiniteDifference1));
                     edgeColor = edgeColor > (1/ColorSensitivity) ? 1 : 0;
                 
+                    return max(edgeDepth, edgeNormal);
                     return max(edgeDepth, max(edgeNormal, edgeColor));
                     float edge = max(edgeDepth, max(edgeNormal, edgeColor));
                 
@@ -226,15 +227,6 @@
                     float edge = Outline_float(screenPos,  _OutlineThickness,  _DepthSensitivity,  _NormalsSensitivity,  _ColorSensitivity, _OutlineColor, Color);
                     float4 outline = edge * _OutlineColor;
                     
-                    //SOBEL operation
-                    float s = pow(1 - saturate(sobel(screenPos)), 50);
-                    s = step(1/_OutlineThreshold,s);
-                    //s = step(0.1, s);
-                    //return float4(1,0,0,0);
-                    //return rawDepth;
-                    //return sceneCameraSpaceDepth;
-                    //return half4(s.xxx, 1);
-    
                     return lerp(Color, _OutlineColor, edge);
                     return Color * s;        
                 }

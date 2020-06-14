@@ -290,7 +290,7 @@
                 //float4 ambientColor = float4(0.1,0.1,0.1,0.1) + (_BaseColor * 0.05);
                 //float4 ambientColor = (_BaseColor * 0.9);
                 float4 ambientColor = float4(rgb_to_hsv_no_clip(_BaseColor),1);
-                ambientColor.r = InvertNormalized(ambientColor.r);
+                ambientColor.r = InvertNormalized(ambientColor.r) ;
                 ambientColor = float4(hsv_to_rgb(ambientColor), 1);
                 float4 white = float4(1,1,1,1);
                 
