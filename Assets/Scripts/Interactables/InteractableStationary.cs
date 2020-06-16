@@ -15,7 +15,7 @@ namespace PotatoGame
         {
             col = this.GetComponent<MeshCollider>();
             rb = this.GetComponent<Rigidbody>();
-            rb.isKinematic = false;
+            // rb.isKinematic = false;
             rb.DeActivatePhysics();
         }
 
