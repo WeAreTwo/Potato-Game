@@ -12,6 +12,7 @@ namespace PotatoGame
     public class ActionController : MonoBehaviour
     {
         // public variables -------------------------
+        public GameObject m_pickedObject; // Target caught by a trigger
         public GameObject m_proximityObject; // Target caught by a trigger
         public GameObject m_proximityStationaryObject; // Target caught by a trigger
         public GameObject m_planterObject;
@@ -49,12 +50,14 @@ namespace PotatoGame
         // Scan an object when colliding with it ---------------------------------------
         private void OnTriggerEnter(Collider col)
         {
-            CheckForNearbyPickableObject(col);
+            // if(!_mHolding)
+                CheckForNearbyPickableObject(col);
         }
         
         private void OnTriggerExit(Collider col)
         {
-            ResetProximityObject(col);
+            // if(!_mHolding)
+                ResetProximityObject(col);
         }
 
         private void CheckForNearbyPickableObject(Collider col)
@@ -95,39 +98,44 @@ namespace PotatoGame
 
         void HoldingActions()
         {
-            if (_interactStationary)
+            if (_mHolding && m_pickedObject)
             {
-                if (m_proximityStationaryObject.TryGetComponent(out InteractableStationary interactable))
+                //NOTE while holding the collider for pickup cant be triggered
+                if (Input.GetMouseButtonDown(0) && _interactStationary)
                 {
-                    interactable.Interact();
+                    if (m_proximityStationaryObject.TryGetComponent(out MachineBase machine))
+                    {
+                        ResetHandWeight();
+                        machine.InsertPlant(m_pickedObject.GetComponent<Plant>());
+                        Debug.Log("inserted");
+                        ResetInteraction();
+                    }
                 }
-            }
-            // Check if the action button is triggered ----------
-            else if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
-            {
-                // If player is holding an object, trow it
-                if (_mHolding)
+                // Check if the action button is triggered ----------
+                else if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
+                {
                     Throw();
+                }
+
+                // If you can plant an object ----------------------
+                if (Input.GetAxisRaw("Plant") != 0)
+                    InstantPlant();
             }
-            
-            // If you can plant an object ----------------------
-            if (Input.GetAxisRaw("Plant") != 0 && _mHolding)
-                InstantPlant();
         }        
         
         void DefaultActions()
         {
-            if (_interactStationary)
+            if (!_mHolding && !m_pickedObject)
             {
-                if (m_proximityStationaryObject.TryGetComponent(out InteractableStationary interactable))
-                {
-                    interactable.Interact();
-                }
-            }
-            // Check if the action button is triggered ----------
-            else if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
-            {
-                if (!_mHolding)
+                // if (Input.GetMouseButtonDown(0) && _interactStationary)
+                // {
+                //     if (m_proximityStationaryObject.TryGetComponent(out MachineBase machine))
+                //     {
+                //         machine.Interact();
+                //     }
+                // }
+                // Check if the action button is triggered ----------
+                if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
                 {
                     // Scan for the correct type of object
                     if (m_proximityObject.TryGetComponent(out InteractableObject interactable))
@@ -172,8 +180,9 @@ namespace PotatoGame
         
         private void Hold()
         {
+            m_pickedObject = m_proximityObject;
             m_proximityObject.HoldObject(this.transform); //hold the object 
-            _mInteractionBoxCol.SetColliderTrigger(false); // Bring back the trigger box as a collider
+            // _mInteractionBoxCol.SetColliderTrigger(false); // Bring back the trigger box as a collider
             SetHandTargets(); // Put hands on the object
             StartCoroutine(PickUp(0.3f, m_proximityObject)); // Start to pick up
         }
@@ -257,11 +266,14 @@ namespace PotatoGame
             m_proximityObject.transform.parent = null;
             m_proximityObject = null;
 
+            m_pickedObject.transform.parent = null;
+            m_pickedObject = null;
+
             // Clear hold
             _mHolding = false;
 
             // Set the trigger back
-            _mInteractionBoxCol.SetColliderTrigger(true); //TODO this wont work with potatoes and rigidbody movement
+            // _mInteractionBoxCol.SetColliderTrigger(true); //TODO this wont work with potatoes and rigidbody movement
         }
         #endregion
 
