@@ -69,7 +69,7 @@ namespace PotatoGame
                 m_proximityStationaryObject = col.gameObject;
             }
                 
-            if(col.IsType<InteractableObject>() && !_mHolding)
+            if(col.IsType<InteractableObject>() && !_mHolding && col.gameObject != m_pickedObject)
                 m_proximityObject = col.gameObject; 
                            
         }
@@ -81,7 +81,7 @@ namespace PotatoGame
                 _interactStationary = false;
                 m_proximityStationaryObject = null;
             }
-            if(col.IsType<InteractableObject>() && !_mHolding)
+            if(col.IsType<InteractableObject>() && !_mHolding && col.gameObject != m_pickedObject)
                 m_proximityObject = null;            
         }
 
@@ -112,7 +112,7 @@ namespace PotatoGame
                     }
                 }
                 // Check if the action button is triggered ----------
-                else if (Input.GetAxisRaw("Action") != 0 && m_proximityObject != null)
+                else if (Input.GetAxisRaw("Action") != 0)
                 {
                     Throw();
                 }
@@ -162,17 +162,17 @@ namespace PotatoGame
             if (_mHolding)
             {
                 // Pick up an object
-                if (m_proximityObject.transform.position.y < transform.position.y)
+                if (m_pickedObject.transform.position.y < transform.position.y)
                 {
                     // Make the object move up to the current position
-                    Vector3 currentPos = m_proximityObject.transform.position;
+                    Vector3 currentPos = m_pickedObject.transform.position;
                     currentPos = Vector3.MoveTowards(currentPos, transform.position, 4f * Time.deltaTime);
-                    m_proximityObject.transform.position = currentPos;
+                    m_pickedObject.transform.position = currentPos;
                 }
                 else
                 {
                     // Keep the object stick on its original point and follow collisions
-                    m_proximityObject.transform.position = transform.position;
+                    m_pickedObject.transform.position = transform.position;
                 }
             }
             
@@ -181,10 +181,12 @@ namespace PotatoGame
         private void Hold()
         {
             m_pickedObject = m_proximityObject;
-            m_proximityObject.HoldObject(this.transform); //hold the object 
+            m_proximityObject = null;
+            
+            m_pickedObject.HoldObject(this.transform); //hold the object 
             // _mInteractionBoxCol.SetColliderTrigger(false); // Bring back the trigger box as a collider
             SetHandTargets(); // Put hands on the object
-            StartCoroutine(PickUp(0.3f, m_proximityObject)); // Start to pick up
+            StartCoroutine(PickUp(0.3f, m_pickedObject)); // Start to pick up
         }
         
         // Trowing a dynamic object ----------------------------------------------------
@@ -192,7 +194,7 @@ namespace PotatoGame
         {
             ResetHandWeight();
             
-            if (m_proximityObject.TryGetComponent(out InteractableObject interactable))
+            if (m_pickedObject.TryGetComponent(out InteractableObject interactable))
                 interactable.Throw(transform.forward, m_throwForce);
             
             ResetInteraction();
@@ -206,7 +208,8 @@ namespace PotatoGame
             yield return new WaitForSeconds(delay);
             // Make sure the player did not target another object
             _mHolding = true;
-            m_proximityObject = pickUpObject;
+            // m_proximityObject = pickUpObject;
+            m_pickedObject = pickUpObject;
 
         }
         
@@ -242,10 +245,10 @@ namespace PotatoGame
         //Instant plant
         private void InstantPlant()
         {
-            if (m_proximityObject.TryGetComponent(out Plant plant))
+            if (m_pickedObject.TryGetComponent(out Plant plant))
             {
                 ResetHandWeight();
-                m_proximityObject.layer = 0;
+                m_pickedObject.layer = 0;
     
                     var layerMask = LayerMask.GetMask("Ground");
                     if (Physics.Raycast(m_planterObject.transform.position, Vector3.down, out RaycastHit plantingPosition, 10.0f, layerMask))
@@ -263,8 +266,8 @@ namespace PotatoGame
         private void ResetInteraction()
         {
             // Get rid of the object
-            m_proximityObject.transform.parent = null;
-            m_proximityObject = null;
+            // m_proximityObject.transform.parent = null;
+            // m_proximityObject = null;
 
             m_pickedObject.transform.parent = null;
             m_pickedObject = null;
@@ -288,12 +291,12 @@ namespace PotatoGame
          */
         private void SetHandTargets()
         {
-            var objectPos = m_proximityObject.transform.position;
+            var objectPos = m_pickedObject.transform.position;
             var layerMask = LayerMask.GetMask("InHand");
             _ik.ActivateWeight = true;
 
             // Capture current layer and change it
-            m_proximityObject.layer = LayerMask.NameToLayer("InHand");
+            m_pickedObject.layer = LayerMask.NameToLayer("InHand");
 
             // Set origins of the raycasts + offsets
             Vector3 objectPositionOffset = objectPos - transform.position;
@@ -311,7 +314,7 @@ namespace PotatoGame
             RaycastHit leftEdge;
             if (Physics.Raycast(_mLeftOrigin, leftDirectionToObject, out leftEdge, m_raycastOffsetX + 10.0f, layerMask))
             {
-                _ik.LeftHandTarget.parent = m_proximityObject.transform;
+                _ik.LeftHandTarget.parent = m_pickedObject.transform;
                 _ik.LeftHandTarget.position = leftEdge.point;
                 _ik.LeftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
             }
@@ -320,7 +323,7 @@ namespace PotatoGame
             RaycastHit rightEdge;
             if (Physics.Raycast(_mRightOrigin, rightDirectionToObject, out rightEdge, m_raycastOffsetX + 10.0f, layerMask))
             {
-                _ik.RightHandTarget.parent = m_proximityObject.transform;
+                _ik.RightHandTarget.parent = m_pickedObject.transform;
                 _ik.RightHandTarget.position = rightEdge.point;
                 _ik.RightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);
             }
