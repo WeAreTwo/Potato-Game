@@ -21,15 +21,15 @@ namespace PotatoGame
         public float _raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
 
         // private variables ------------------------
-        private bool _holding; // Is an object in hand?
-        private bool _interactStationary; // Is an object in hand?
-        private BoxCollider _interactionBoxCol; // Collider with the trigger
-        private Vector3 _rightOrigin; // Use for right hand raycast starting point
-        private Vector3 _leftOrigin; // Use for left hand raycast starting point
+        [SerializeField] protected bool _holding; // Is an object in hand?
+        [SerializeField] protected bool _interactStationary; // Is an object in hand?
+        protected BoxCollider _interactionBoxCol; // Collider with the trigger
+        protected Vector3 _rightOrigin; // Use for right hand raycast starting point
+        protected Vector3 _leftOrigin; // Use for left hand raycast starting point
 
-        private Vector3 _leftDirectionToObject;
-        private Vector3 _rightDirectionToObject;
-        private IKController _ik;
+        protected Vector3 _leftDirectionToObject;
+        protected Vector3 _rightDirectionToObject;
+        protected IKController _ik;
 
         #region Call Methods
 
@@ -95,8 +95,8 @@ namespace PotatoGame
         // Check for inputs to trigger an action ---------------------------------------
         protected void CheckInputs()
         {
-            HoldingActions();
             DefaultActions();
+            HoldingActions();
         }
 
         protected void HoldingActions()
@@ -106,13 +106,7 @@ namespace PotatoGame
                 //NOTE while holding the collider for pickup cant be triggered
                 if (Input.GetMouseButtonDown(0) && _interactStationary)
                 {
-                    if (_proximityStationaryObject.TryGetComponent(out MachineBase machine))
-                    {
-                        ResetHandWeight();
-                        machine.InsertPlant(_pickedObject.GetComponent<Plant>());
-                        Debug.Log("inserted");
-                        ResetInteraction();
-                    }
+                    InsertIntoMachine();
                 }
                 // Check if the action button is triggered ----------
                 else if (Input.GetAxisRaw("Action") != 0)
@@ -173,9 +167,21 @@ namespace PotatoGame
             }
             
         }
+
+        protected void InsertIntoMachine()
+        {
+            if (_proximityStationaryObject.TryGetComponent(out MachineBase machine))
+            {
+                ResetHandWeight();
+                machine.InsertPlant(_pickedObject.GetComponent<Plant>());
+                Debug.Log("inserted");
+                ResetInteraction();
+            }
+        }
         
         protected void Hold()
         {
+            Debug.Log("Hold");
             _pickedObject = _proximityObject;
             _proximityObject = null;
             

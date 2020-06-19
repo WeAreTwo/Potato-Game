@@ -337,7 +337,7 @@
             ENDHLSL
         }
         
-        UsePass "Universal Render Pipeline/Lit/ShadowCaster"
+        //UsePass "Universal Render Pipeline/Lit/ShadowCaster"
         UsePass "Universal Render Pipeline/Lit/DepthOnly"
         UsePass "Universal Render Pipeline/Lit/Meta"
 

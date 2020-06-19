@@ -2602,6 +2602,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a705d1e86ceeb5b4e8d048ff5286e4ee, type: 3}
+--- !u!1 &446783067 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7146729582143777636, guid: b2ab34a64663a8b4592ea88d61e2570d,
+    type: 3}
+  m_PrefabInstance: {fileID: 3064457622601011082}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &457215261
 GameObject:
   m_ObjectHideFlags: 0
@@ -29022,6 +29028,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 3cbab3101e2cfe44a98a0d7648485008, type: 2}
+    - target: {fileID: 3064457621664104529, guid: b2ab34a64663a8b4592ea88d61e2570d,
+        type: 3}
+      propertyPath: _planterObject
+      value: 
+      objectReference: {fileID: 446783067}
     - target: {fileID: 3064457621664104531, guid: b2ab34a64663a8b4592ea88d61e2570d,
         type: 3}
       propertyPath: m_Icon
