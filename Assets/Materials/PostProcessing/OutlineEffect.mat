@@ -70,17 +70,17 @@ Material:
     - _Cutoff: 0.5
     - _Delta: 3.74
     - _DepthDistance: 48.4
-    - _DepthSensitivity: 0.13
+    - _DepthSensitivity: 0.6
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NormalsSensitivity: 0.4
+    - _NormalsSensitivity: 2.28
     - _OcclusionStrength: 1
-    - _OutlineThickness: 0.39
-    - _OutlineThreshold: 1.05
+    - _OutlineThickness: 0.6
+    - _OutlineThreshold: 1.45
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
@@ -94,5 +94,5 @@ Material:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 0}
+    - _OutlineColor: {r: 0.13207549, g: 0.12622021, b: 0.11899254, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
