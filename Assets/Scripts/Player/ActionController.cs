@@ -11,18 +11,24 @@ namespace PotatoGame
     [RequireComponent(typeof(IKController))]
     public class ActionController : MonoBehaviour
     {
+        [Header("INTERACTIVE STATES")]
+        [SerializeField] protected bool _holding; // Is an object in hand?
+        [SerializeField] protected bool _interactStationary; // Is an object in hand?
+        
+        [Header("INTERACTABLE OBJECTS")]
         // public variables -------------------------
         public GameObject _pickedObject; // Target caught by a trigger
         public GameObject _proximityObject; // Target caught by a trigger
         public GameObject _proximityStationaryObject; // Target caught by a trigger
         public GameObject _planterObject;
+        
+        [Header("THROWING/RAYCASTING")]
         public float _throwForce = 2.5f; // Force when an object is trow after holding
         public float _raycastOffsetX = 2f; // Offset on the x axis for raycasts
         public float _raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
 
+        
         // private variables ------------------------
-        [SerializeField] protected bool _holding; // Is an object in hand?
-        [SerializeField] protected bool _interactStationary; // Is an object in hand?
         protected BoxCollider _interactionBoxCol; // Collider with the trigger
         protected Vector3 _rightOrigin; // Use for right hand raycast starting point
         protected Vector3 _leftOrigin; // Use for left hand raycast starting point
@@ -255,6 +261,7 @@ namespace PotatoGame
                         if (CanPlant(plantingPosition.point, plant.GrowthCharacteristics.growthRadius))
                         {
                             plant.PlantObject(plantingPosition.point);
+                            ParticleController.Instance.EmitAt(plantingPosition.point);
                             ResetHandWeight();
                             ResetInteraction();
                         }

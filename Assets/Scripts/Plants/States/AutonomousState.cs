@@ -51,6 +51,9 @@ namespace PotatoGame
             // pop out of the ground 
             component.transform.position += new Vector3(0, component.GrowthCharacteristics.growthRadius * 2, 0);
             component.transform.rotation = Random.rotation;
+            
+            //particles
+            ParticleController.Instance.EmitAt(component.transform.position);
     
             // Activate gravity and defreeze all
             component.Rb.ActivatePhysics();

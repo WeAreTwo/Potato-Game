@@ -104,6 +104,7 @@ namespace PotatoGame
             GameObject outputObj = Instantiate(outputPrefab, output.position, Random.rotation); // instantiate
             outputObj.ThrowObject(direction, ejectionForce); // eject with force
             OutputSettings(ref outputObj);
+            ParticleController.Instance.EmitAt(output.position);
         }
         
         
