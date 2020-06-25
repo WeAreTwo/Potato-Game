@@ -252,7 +252,7 @@ namespace PotatoGame
                     if (Physics.Raycast(_planterObject.transform.position, Vector3.down,
                         out RaycastHit plantingPosition, 10.0f, layerMask))
                     {
-                        if (CanPlant(plantingPosition.point, plant.GrowthParams.growthRadius))
+                        if (CanPlant(plantingPosition.point, plant.GrowthCharacteristics.growthRadius))
                         {
                             plant.PlantObject(plantingPosition.point);
                             ResetHandWeight();

@@ -49,7 +49,7 @@ namespace PotatoGame
             component.Planted = false;
 
             // pop out of the ground 
-            component.transform.position += new Vector3(0, component.GrowthParams.growthRadius * 2, 0);
+            component.transform.position += new Vector3(0, component.GrowthCharacteristics.growthRadius * 2, 0);
             component.transform.rotation = Random.rotation;
     
             // Activate gravity and defreeze all

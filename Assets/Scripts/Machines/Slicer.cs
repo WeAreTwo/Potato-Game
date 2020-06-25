@@ -39,7 +39,7 @@ namespace PotatoGame
 
         public void SlicePotato(Potato potato)
         {
-            int yield = potato.GrowthParams.harvestYield;
+            int yield = potato.GrowthCharacteristics.harvestYield;
         }
 
         // Potato outputPotato()

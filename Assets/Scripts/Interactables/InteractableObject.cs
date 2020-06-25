@@ -8,7 +8,9 @@ namespace PotatoGame
     [RequireComponent(typeof(MeshCollider))]       
     public class InteractableObject : MonoBehaviour, IPickUp
     {
+        [Header("INTERACTION STATE")]
         [SerializeField] protected bool pickedUp;
+        
         protected Rigidbody rb;
 
         public bool PickedUp { get => pickedUp; set => pickedUp = value; }

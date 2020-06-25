@@ -7,7 +7,7 @@ namespace PotatoGame
 { 
     
     [System.Serializable]
-    public class GrowthParams
+    public class GrowthCharacteristics
     {
         //SEED PARAM
         [Header("SEED")] 
@@ -21,7 +21,6 @@ namespace PotatoGame
         public float growthSize = 1.0f;                    
         
         public float growthTime = 0.0f;           //growth counter   
-        public float growthStartTime;             //time from when it was planted and growing
         public float growthCompletionTime = 12.0f;      //time where it finished growing
         
         //HARVEST PARAMS 
@@ -37,19 +36,17 @@ namespace PotatoGame
         //Finite State Machine
         protected StateMachine fsm;
         
-        [SerializeField] protected bool planting;
-        [SerializeField] protected bool planted;
-        [SerializeField] protected Vector2 plantingDepthRange; // Range for the depth of the potato when planted
-        
-        [Header("HEALTH")] 
+        [Header("GENERAL")]
         [SerializeField] protected float health = 100.0f;
-        [SerializeField] protected GrowthParams growthParams;
+        [SerializeField] protected bool planted;
+        
+        [Header("GROWTH CHARACTERISTICS")]
+        [SerializeField] protected GrowthCharacteristics growthCharacteristics;
 
         //Properties
         public float Health { get => health; set => health = value; }
-        public bool Planting { get => planting; set => planting = value; }
         public bool Planted { get => planted; set => planted = value; }
-        public GrowthParams GrowthParams { get => growthParams; set => growthParams = value; }
+        public GrowthCharacteristics GrowthCharacteristics { get => growthCharacteristics; set => growthCharacteristics = value; }
         public StateMachine FSM => fsm;
 
         protected virtual void Start()
@@ -79,14 +76,6 @@ namespace PotatoGame
 
         protected virtual void OnCollisionEnter(Collision col)
         {
-            // bool condition = fsm.Current.GetType() != typeof(AutonomousState<>) && 
-            //                  fsm.Current.GetType() != typeof(Move<>) && 
-            //                  fsm.Current.GetType() != typeof(Idle<>) && 
-            //                  fsm.Current.GetType() != typeof(Eat<>);
-            // // Plant when in contact with the ground
-            // if (col.gameObject.tag == ProjectTags.Ground && planting)
-            //     PlantObject();
-            //
             if(!pickedUp) fsm.OnCollisionEnter(col);
         }
 
@@ -131,7 +120,6 @@ namespace PotatoGame
             this.transform.position = plantingPosition;
 
             // The potato is now planted!
-            planting = false;
             planted = true;
             pickedUp = false;
         }

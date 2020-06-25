@@ -47,7 +47,7 @@ namespace PotatoGame
             component.Planted = false;
 
             // pop out of the ground 
-            component.transform.position += new Vector3(0, component.GrowthParams.growthRadius * 2, 0);
+            component.transform.position += new Vector3(0, component.GrowthCharacteristics.growthRadius * 2, 0);
             component.transform.rotation = Random.rotation;
     
             // Activate gravity and defreeze all
@@ -67,7 +67,7 @@ namespace PotatoGame
             else
             {
                 Vector3 targetPosition = component.victim.transform.position;
-                if (Vector3.Distance(component.transform.position, targetPosition) < 2.5f * component.GrowthParams.growthRadius)
+                if (Vector3.Distance(component.transform.position, targetPosition) < 2.5f * component.GrowthCharacteristics.growthRadius)
                 {
                     eatTimer += Time.deltaTime;
                     if (eatTimer >= eatTime)
@@ -104,7 +104,7 @@ namespace PotatoGame
                 {
                     if (component == plant) continue; //ignore self by skipping it 
 
-                    if (Vector3.Distance(component.transform.position, plant.transform.position) < component.GrowthParams.growthRadius + plant.GrowthParams.growthRadius)
+                    if (Vector3.Distance(component.transform.position, plant.transform.position) < component.GrowthCharacteristics.growthRadius + plant.GrowthCharacteristics.growthRadius)
                         component.victim = plant;
                 }
             }
@@ -138,7 +138,7 @@ namespace PotatoGame
             base.DrawGizmos();
             
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthParams.growthRadius);
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthCharacteristics.growthRadius);
     
             if (component.victim != null)
             {

@@ -80,12 +80,12 @@ namespace PotatoGame
         {
             
             //growth period 
-            if (component.GrowthParams.growthTime <= component.GrowthParams.growthCompletionTime && !growthCompleted)
+            if (component.GrowthCharacteristics.growthTime <= component.GrowthCharacteristics.growthCompletionTime && !growthCompleted)
             {
-                component.GrowthParams.growthTime += Time.deltaTime;
+                component.GrowthCharacteristics.growthTime += Time.deltaTime;
                 growing = true;
             }
-            else if (component.GrowthParams.growthTime >= component.GrowthParams.growthCompletionTime)
+            else if (component.GrowthCharacteristics.growthTime >= component.GrowthCharacteristics.growthCompletionTime)
             {
                 growthCompleted = true;
                 growing = false;
@@ -97,7 +97,7 @@ namespace PotatoGame
         {
             if (growing && !growthCompleted)
             {
-                float dt = component.GrowthParams.growthTime / component.GrowthParams.growthCompletionTime;
+                float dt = component.GrowthCharacteristics.growthTime / component.GrowthCharacteristics.growthCompletionTime;
                 // this.component.transform.localScale = Vector3.Lerp(
                 //     Vector3.one * component.GrowthParams.seedSize,
                 //     Vector3.one * component.GrowthParams.growthSize,
@@ -105,19 +105,19 @@ namespace PotatoGame
                 //     );
                 //
                 // this.component.transform.localScale *= component.GrowthParams.growthPace;
-                component.GrowthParams.growthRadius *= component.GrowthParams.growthPace;
+                component.GrowthCharacteristics.growthRadius *= component.GrowthCharacteristics.growthPace;
             }
         }
 
         protected void SetGrowthAxis()
         {
-            component.GrowthParams.growingAxis.x = Random.Range(-0.50f, 0.50f);
-            component.GrowthParams.growingAxis.z = Random.Range(-0.50f, 0.50f);
+            component.GrowthCharacteristics.growingAxis.x = Random.Range(-0.50f, 0.50f);
+            component.GrowthCharacteristics.growingAxis.z = Random.Range(-0.50f, 0.50f);
         }
 
         protected void GrowAlongAxis()
         {
-            this.component.transform.position += component.GrowthParams.growingAxis * 0.001f;
+            this.component.transform.position += component.GrowthCharacteristics.growingAxis * 0.001f;
         }
 
         //GIZMOS
@@ -126,12 +126,12 @@ namespace PotatoGame
             //GROWTH RADIUS
             if (!growthCompleted) Gizmos.color = Color.magenta;
             else Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(this.component.transform.position, component.GrowthParams.growthRadius);
+            Gizmos.DrawWireSphere(this.component.transform.position, component.GrowthCharacteristics.growthRadius);
 
             //GROWTH AXIS 
             Gizmos.color = Color.black;
             Gizmos.DrawLine(this.component.transform.position,
-                this.component.transform.position + component.GrowthParams.growingAxis * 3.0f);
+                this.component.transform.position + component.GrowthCharacteristics.growingAxis * 3.0f);
 
         }
 

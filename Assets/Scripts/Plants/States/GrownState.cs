@@ -30,12 +30,12 @@ namespace PotatoGame
         protected void Harvest()
         {
             //harvest period
-            if (component.GrowthParams.harvestTime <= component.GrowthParams.harvestPeriod && !harvestPeriodCompleted)
+            if (component.GrowthCharacteristics.harvestTime <= component.GrowthCharacteristics.harvestPeriod && !harvestPeriodCompleted)
             {
-                component.GrowthParams.harvestTime += Time.deltaTime;
+                component.GrowthCharacteristics.harvestTime += Time.deltaTime;
                 harvestable = true;
             }
-            else if (component.GrowthParams.harvestTime >= component.GrowthParams.harvestPeriod)
+            else if (component.GrowthCharacteristics.harvestTime >= component.GrowthCharacteristics.harvestPeriod)
             {
                 harvestPeriodCompleted = true;
                 harvestable = false;
@@ -50,7 +50,7 @@ namespace PotatoGame
             if (harvestable)
             {
                 Gizmos.color = Color.cyan;
-                Gizmos.DrawSphere(this.component.transform.position + Vector3.up * component.GrowthParams.growthRadius, 0.2f);
+                Gizmos.DrawSphere(this.component.transform.position + Vector3.up * component.GrowthCharacteristics.growthRadius, 0.2f);
             }
         }
 
