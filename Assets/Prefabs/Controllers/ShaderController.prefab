@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &325838841117369507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 325838841117369509}
+  - component: {fileID: 325838841117369508}
+  m_Layer: 0
+  m_Name: ShaderController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &325838841117369509
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325838841117369507}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &325838841117369508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325838841117369507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2225c6605f6dec94c868870d58fa935e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bluenoise: {fileID: 2800000, guid: af7c6ac9be678304eb0f61d3f92699f9, type: 3}
+  detailScale: 54.9
+  detailAmount: 0.41
+  attenStrength: 0.12
+  colorProfiles:
+  - name: Primary
+    color: {r: 0.76470596, g: 0.72156864, b: 0.6392157, a: 1}
+    mat: {fileID: 2100000, guid: 635697f297715064fb5ca0a8cda396f7, type: 2}
+  - name: Secondary
+    color: {r: 0.41960788, g: 0.41960788, b: 0.41960788, a: 1}
+    mat: {fileID: 2100000, guid: 0727734f3943a2b448e2c31e2d43833a, type: 2}
+  - name: Tertiary_One
+    color: {r: 1, g: 0.8431373, b: 0.47058827, a: 1}
+    mat: {fileID: 2100000, guid: 5415e6cb84eb0b44fabc9a6c4cd79a21, type: 2}
+  - name: Tertiary_Two
+    color: {r: 0.5294118, g: 0.37647063, b: 0.16470589, a: 1}
+    mat: {fileID: 2100000, guid: 5c3f2adc89bb0df41b70c6652b4db010, type: 2}
+  - name: Tertiary_Three
+    color: {r: 0.75294125, g: 0.65882355, b: 0.56078434, a: 1}
+    mat: {fileID: 2100000, guid: adfedfc6045804446980b08709057119, type: 2}
+  - name: Tertiary_Four
+    color: {r: 0.38431376, g: 0.30588236, b: 0.1764706, a: 1}
+    mat: {fileID: 2100000, guid: d02ff5562e7b9c24f9d473235026b2e0, type: 2}

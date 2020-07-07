@@ -221,22 +221,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pickedUp: 0
-  planting: 0
-  planted: 1
-  plantingDepthRange: {x: 0, y: 0}
   health: 100
-  growthParams:
+  planted: 0
+  growthCharacteristics:
     seedSize: 0.25
     growingAxis: {x: 0, y: 1, z: 0}
     growthRadius: 1
     growthPace: 1.0005
     growthSize: 1
     growthTime: 0
-    growthStartTime: 0
     growthCompletionTime: 12
     harvestTime: 0
     harvestPeriod: 15
     harvestYield: 2
+    currentColor: {r: 0, g: 0, b: 0, a: 0}
+    seedColor: {r: 0, g: 0, b: 0, a: 0}
+    grownColor: {r: 0, g: 0, b: 0, a: 0}
   potatoEyes: {fileID: 4872308936933172648}
   eatingEffect: {fileID: 6426147998878630201}
   victim: {fileID: 0}

@@ -29,6 +29,30 @@ namespace PotatoGame
         public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
         public int harvestYield = 2; //how many seeds your gonna get out of this 
 
+        [Header("VISUAL")] 
+        [SerializeField] protected Color currentColor;
+        public Color seedColor;
+        public Color grownColor;
+
+
+        public void Update()
+        {
+            
+        }
+        
+        public void ShiftSize(ref Component component)
+        {
+            float dt = 1;
+            // component.transform.localPosition = Vector3.Lerp();
+        }
+        
+        public void ShiftColor()
+        {
+            float dt = growthTime/growthCompletionTime;
+            currentColor = Color.Lerp(seedColor, grownColor, dt);
+        }
+
+
     }
     
     public abstract class Plant : InteractableObject, IPlantable

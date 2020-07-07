@@ -508,7 +508,7 @@ GameObject:
   m_Layer: 0
   m_Name: 'PickUp '
   m_TagString: Player
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -551,11 +551,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 224a80179db8b9841b4560a5b0600657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_proximityObject: {fileID: 0}
-  m_planterObject: {fileID: 7146729582143777636}
-  m_throwForce: 2.5
-  m_raycastOffsetX: 2
-  m_raycastOffsetZ: -0.1
+  _holding: 0
+  _interactStationary: 0
+  _pickedObject: {fileID: 0}
+  _proximityObject: {fileID: 0}
+  _proximityStationaryObject: {fileID: 0}
+  _planterObject: {fileID: 7146729582143777636}
+  _throwForce: 2.5
+  _raycastOffsetX: 2
+  _raycastOffsetZ: -0.2
 --- !u!1 &3064457623437008840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1341,7 +1345,7 @@ GameObject:
   - component: {fileID: 386519607}
   - component: {fileID: 386519608}
   m_Layer: 0
-  m_Name: 'DummyPotato '
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2081,7 +2085,7 @@ GameObject:
   m_Layer: 0
   m_Name: Planter
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -2427,7 +2431,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6276846335709149076, guid: f884d11c041b4c945beeb43927820509, type: 3}
+  - {fileID: 2100000, guid: cc66ad4ca281d45478ace65c8227ca83, type: 2}
   - {fileID: 2100000, guid: 3cbab3101e2cfe44a98a0d7648485008, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
