@@ -47,7 +47,7 @@ namespace PotatoGame
             fsm.Add(PlantStates.Move, new Move<Potato>(this));
             fsm.Add(PlantStates.Eat, new Eat<Potato>(this));
             
-            fsm.Initialize(PlantStates.Seed);
+            fsm.Initialize(initState);
         }
         
     }

@@ -5,6 +5,7 @@ using PotatoGame;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
@@ -130,8 +131,24 @@ namespace PotatoGame
         {
             if (!_holding && !_pickedObject)
             {
+                
                 // Check if the action button is triggered ----------
-                if (Input.GetAxisRaw("Action") != 0 && _proximityObject != null)
+                // if (Input.GetAxisRaw("Action") != 0 && _proximityObject != null)
+                // {
+                //     // Scan for the correct type of object
+                //     if (_proximityObject.TryGetComponent(out InteractableObject interactable))
+                //     {
+                //         interactable.PickUp();
+                //         Hold();
+                //     }
+                //     else if (_proximityObject.TryGetComponent(out Plant plant))
+                //     {
+                //         plant.Harvest(); //call interface method
+                //         Harvest();
+                //     }
+                // }                
+                // Check if the action button is triggered ----------
+                if (Input.GetMouseButtonDown(0) && _proximityObject)
                 {
                     // Scan for the correct type of object
                     if (_proximityObject.TryGetComponent(out InteractableObject interactable))
@@ -139,12 +156,17 @@ namespace PotatoGame
                         interactable.PickUp();
                         Hold();
                     }
-                    else if (_proximityObject.TryGetComponent(out Plant plant))
+                }
+
+                if (Input.GetMouseButtonDown(2) && _proximityObject)
+                {
+                    if (_proximityObject.TryGetComponent(out Plant plant))
                     {
                         plant.Harvest(); //call interface method
                         Harvest();
                     }
                 }
+                
             }
         }
         
@@ -224,9 +246,20 @@ namespace PotatoGame
         // For harvesting potatoes when they are ready ---------------------------------
         protected void Harvest()
         {
+            //NOTE: Inventory commented out since its not being used now 
             // Add count to inventory
-            var inventoryController = GameManager.Instance.inventoryController;
-            inventoryController.InventoryCount(1);
+            // var inventoryController = GameManager.Instance.inventoryController;
+            // inventoryController.InventoryCount(1);
+
+            if (_proximityObject.TryGetComponent(out Plant plant))
+            {
+                for (int i = 0; i < plant.GrowthCharacteristics.harvestYield; i++)
+                {
+                    ParticleController.Instance.EmitAt(_proximityObject.transform.position);
+                    GameObject seed = Instantiate(_proximityObject, _proximityObject.transform.position + Vector3.up, Quaternion.identity) as GameObject;
+                    seed.GetComponent<Plant>().HarvestInit();
+                }
+            }
             
             // Destroy the object
             Destroy(_proximityObject);

@@ -58,8 +58,10 @@ namespace PotatoGame
     public abstract class Plant : InteractableObject, IPlantable
     {
         //Finite State Machine
+        [Header("FSM PARAMS")]
         protected StateMachine fsm;
-        
+        [SerializeField] protected PlantStates initState = PlantStates.Seed;
+
         [Header("GENERAL")]
         [SerializeField] protected float health = 100.0f;
         [SerializeField] protected bool planted;
@@ -68,10 +70,11 @@ namespace PotatoGame
         [SerializeField] protected GrowthCharacteristics growthCharacteristics;
 
         //Properties
+        public StateMachine FSM => fsm;
+        public PlantStates InitState { get => initState; set => initState = value; }
         public float Health { get => health; set => health = value; }
         public bool Planted { get => planted; set => planted = value; }
         public GrowthCharacteristics GrowthCharacteristics { get => growthCharacteristics; set => growthCharacteristics = value; }
-        public StateMachine FSM => fsm;
 
         protected virtual void Start()
         {
@@ -79,7 +82,7 @@ namespace PotatoGame
             fsm.Add(PlantStates.Seed, new SeedState<Plant>(this));
             fsm.Add(PlantStates.Grown, new GrownState<Plant>(this));
 
-            fsm.Initialize(PlantStates.Seed);
+            fsm.Initialize(initState);
         }
 
         // Update is called once per frame
