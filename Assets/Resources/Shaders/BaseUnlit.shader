@@ -256,7 +256,6 @@
                 float4 col_side = SAMPLE_TEXTURE2D(_DetailMap,sampler_DetailMap, uv_side/ _DetailScale);
                 float4 col_top = SAMPLE_TEXTURE2D(_DetailMap,sampler_DetailMap, uv_top/ _DetailScale);
                 
-                
                 //generate weights from world normals
                 float3 weights = IN.normal;
                 //show texture on both sides of the object (positive and negative)
@@ -269,11 +268,8 @@
                 col_side *= weights.x;
                 col_top *= weights.y;
                 
-                
                 //combine the projected colors
                 float col = (col_front + col_side + col_top).r;
-                //float4 col = (col_front + col_side + col_top) / 3;
-                //float4 col = col_base;
                 
                 //BASE TEXTURE
                 float baseTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).r;                
@@ -286,11 +282,8 @@
                 float blueNoiseTex = SAMPLE_TEXTURE2D(_BlueNoiseMap, sampler_BlueNoiseMap, IN.uv/ _BlueNoiseMapScale).r;
                 
                 //ABIENT COLOR (SHADOW COLOR)
-                //float4 ambientColor = float4(0.1,0.1,0.1,0.1);
-                //float4 ambientColor = float4(0.1,0.1,0.1,0.1) + (_BaseColor * 0.05);
-                //float4 ambientColor = (_BaseColor * 0.9);
                 float4 ambientColor = float4(rgb_to_hsv_no_clip(_BaseColor),1);
-                ambientColor.r = InvertNormalized(ambientColor.r) ;
+                //ambientColor.r = InvertNormalized(ambientColor.r) ;
                 ambientColor = float4(hsv_to_rgb(ambientColor), 1);
                 float4 white = float4(1,1,1,1);
                 
@@ -308,22 +301,18 @@
                 
                 float attenuation = dot( IN.worldNorm, lightDirection);
                 float attenuationFromView = dot( IN.worldNorm, GetCameraPositionWS()) * _AttenStrength;
-                float detailAtten = saturate(attenuationFromView * col);
+                float detailAtten = saturate(attenuationFromView);
                 detailAtten = Shaping_Smooth(detailAtten);
                 
-                //attenuation = smoothstep( blueNoiseTex, _LightStepThreshold , attenuation);
                 attenuation = step( 0.3 , attenuation); // TODO uniform global variable here needed 
                 
-                float4 base = baseTex * _BaseColor * lightColor;
-                //float4 baseWithDetails = lerp(base, 0, attenuationFromView);
-                //float4 baseWithDetails = lerp(base, ambientColor, details);
+                //float4 base = baseTex * _BaseColor * lightColor;
+                float4 base = _BaseColor * lightColor;
                 float4 baseWithDetails = lerp(ambientColor, base, shadowAtten);
-                //float noiseMask = clamp(cnoise(IN.uv / _NoiseScale), 0.1, 1.2);
                 
-                return output = lerp(ambientColor ,  baseWithDetails, detailAtten  );
-                //output = lerp(ambientColor, baseWithDetails , attenuation);
-                //output = lerp(output, _InsideColor, noiseMask);
+                return output = lerp(ambientColor ,  baseWithDetails, attenuation  );
                 
+                return lerp(output, float4(0,0,0,0), (normalize(attenuationFromView)));
                 return lerp(output, float4(0,0,0,0), (normalize(col * attenuationFromView)));
                 return col * attenuationFromView;
                 return col;
@@ -331,7 +320,6 @@
                 return output;
                 return float4(1,1,1,1) * attenuationFromView;
                 return float4(IN.worldNorm,1);
-                //return float4(uv_noise,1,1);
                 
             }
             ENDHLSL
