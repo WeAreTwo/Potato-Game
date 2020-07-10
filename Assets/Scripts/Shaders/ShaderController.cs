@@ -43,6 +43,8 @@ namespace PotatoGame
         [SerializeField] protected float detailScale = 1.0f;
         [SerializeField] protected float detailAmount = 1.0f;
         [SerializeField] protected float attenStrength = 1.0f;
+        [SerializeField] protected float dirtDistance = 1.0f;
+        [SerializeField] protected float dirtCutOff = 1.0f;
 
         [Header("COLOR PALLETTE")]
         [SerializeField] protected List<ColorProfile> colorProfiles = new List<ColorProfile>();
@@ -58,6 +60,8 @@ namespace PotatoGame
             Shader.SetGlobalFloat("_DetailScale", detailScale);
             Shader.SetGlobalFloat("_DetailAmount", detailAmount);
             Shader.SetGlobalFloat("_AttenStrength", attenStrength);
+            Shader.SetGlobalFloat("_DirtDistance", dirtDistance);
+            Shader.SetGlobalFloat("_DirtCutOff", dirtCutOff);
         }
 
         //when something changes in the inspector call this 

@@ -112,6 +112,7 @@
                 float3 viewPos    : TEXCOORD4;
                 float3 clipPos    : TEXCOORD5;
                 float3 ndcPos    : TEXCOORD6;
+                float4 screenPosition : TEXCOORD7;
                 float3 normal           : NORMAL;
                 float4 positionHCS  : SV_POSITION;
             };
@@ -122,6 +123,8 @@
             SAMPLER(sampler_DetailMap);            
             TEXTURE2D(_BlueNoiseMap);
             SAMPLER(sampler_BlueNoiseMap);
+            TEXTURE2D(_CameraDepthTexture);
+            SAMPLER(sampler_CameraDepthTexture);
             
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST;
@@ -136,6 +139,9 @@
             float _DetailScale;
             float _NoiseScale;
             float _AttenStrength;
+            
+            float _DirtDistance;
+            float _DirtCutOff;
             
             float _TestParam;
             CBUFFER_END
@@ -219,7 +225,7 @@
                 VertexPositionInputs vertexInput = GetVertexPositionInputs(IN.positionOS.xyz);
                 VertexNormalInputs vNormalInputs = GetVertexNormalInputs(IN.normal);
                 
-                OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
+                OUT.positionHCS = TransformObjectToHClip(IN.positionOS);
                 OUT.uv = TRANSFORM_TEX(IN.uv, _BaseMap);
                 
                 // shadow coord for the main light is computed in vertex.
@@ -227,6 +233,7 @@
                 // and this coord will be the uv coord of the screen space shadow texture.
                 // Otherwise LWRP will resolve shadows in light space (no depth pre-pass and shadow collect pass)
                 // In this case shadowCoord will be the position in light space.
+                OUT.screenPosition = ComputeScreenPos(OUT.positionHCS);
                 OUT.shadowCoord = GetShadowCoord(vertexInput);
                 OUT.normal = IN.normal;
                 OUT.worldNorm = vNormalInputs.normalWS;
@@ -240,6 +247,19 @@
             half4 frag(Varyings IN) : SV_Target
             {
                 float4 output;
+                
+                //depth Handling
+                //float existingDepth01 = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, IN.screenPosition).r;
+                float existingDepth01 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, IN.screenPosition.xy / IN.screenPosition.w).r ;
+                float existingDepthLinear = LinearEyeDepth(existingDepth01, _ZBufferParams);
+                float depthDifference = existingDepthLinear - IN.screenPosition.w;
+                // Add in the fragment shader, above the existing surfaceNoise declaration.
+                float foamDepthDifference01 = saturate(depthDifference / _DirtDistance);
+                //float foamDepthDifference01 = saturate(depthDifference);
+                float surfaceNoiseCutoff = foamDepthDifference01 * _DirtCutOff;
+                
+              
+                float surfaceNoise = cnoise(IN.uv) > surfaceNoiseCutoff ? 1 : 0;
                 
                 //TRIPLANAR
                 // GET TRIPLANAR UVS
@@ -310,7 +330,9 @@
                 float4 base = _BaseColor * lightColor;
                 float4 baseWithDetails = lerp(ambientColor, base, shadowAtten);
                 
+                //return surfaceNoiseCutoff;
                 return output = lerp(ambientColor ,  baseWithDetails, attenuation  );
+                return output = lerp(ambientColor ,  baseWithDetails, attenuation  ) + surfaceNoise * half4(0,1,0,0);
                 
                 return lerp(output, float4(0,0,0,0), (normalize(attenuationFromView)));
                 return lerp(output, float4(0,0,0,0), (normalize(col * attenuationFromView)));
