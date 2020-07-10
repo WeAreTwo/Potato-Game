@@ -225,20 +225,20 @@ MonoBehaviour:
   health: 100
   planted: 0
   growthSettings:
-    seedSize: 0.25
+    seedSize: 0.2
     growingAxis: {x: 0, y: 1, z: 0}
     growthRadius: 1
     growthPace: 1.0005
-    growthSize: 1
+    growthSize: 0.3
     growthTime: 0
-    growthCompletionTime: 12
+    growthCompletionTime: 3
     harvestTime: 0
     harvestPeriod: 15
     harvestYield: 2
     currentColor: {r: 0, g: 0, b: 0, a: 0}
     seedColor: {r: 0.2924528, g: 0.23572883, b: 0.16140084, a: 0}
     grownColor: {r: 1, g: 0.77254903, b: 0.4745098, a: 0}
-  autonomousForm: {fileID: 152371154211809760, guid: 5323c2e1f0cdd4547b35471b2a9970ab,
+  autonomousForm: {fileID: 6460078239362077429, guid: b2ab34a64663a8b4592ea88d61e2570d,
     type: 3}
   growing: 0
   growthCompleted: 0

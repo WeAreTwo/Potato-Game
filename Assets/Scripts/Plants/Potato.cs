@@ -30,16 +30,12 @@ namespace PotatoGame
         [SerializeField] protected Color currentColor;
         public Color seedColor = Color.grey;
         public Color grownColor = Color.yellow;
-
-
-        public void Update()
-        {
-        }
         
-        public void ShiftSize(ref Component component)
+        
+        public Vector3 ShiftSize()
         {
-            float dt = 1;
-            // component.transform.localPosition = Vector3.Lerp();
+            float dt = growthTime/growthCompletionTime;
+            return Vector3.Lerp(Vector3.one * seedSize, Vector3.one * growthSize, dt );
         }
         
         public Color ShiftColor()
@@ -75,6 +71,7 @@ namespace PotatoGame
 
         public virtual void Update()
         {
+            this.transform.localScale = growthSettings.ShiftSize();
             mat.SetColor("_BaseColor", growthSettings.ShiftColor());
             if (Planted)
             {
