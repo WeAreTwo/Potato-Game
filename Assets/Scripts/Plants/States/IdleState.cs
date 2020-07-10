@@ -6,7 +6,7 @@ namespace PotatoGame
 {
 
     [System.Serializable]
-    public class Idle<T> : State where T : Potato
+    public class Idle<T> : State where T : PotatoFSM
     {
         protected T component;
 
@@ -49,7 +49,7 @@ namespace PotatoGame
             component.Planted = false;
 
             // pop out of the ground 
-            component.transform.position += new Vector3(0, component.GrowthCharacteristics.growthRadius * 2, 0);
+            component.transform.position += new Vector3(0, component.GrowthSettings.growthRadius * 2, 0);
             component.transform.rotation = Random.rotation;
     
             // Activate gravity and defreeze all
@@ -76,7 +76,7 @@ namespace PotatoGame
         public override void DrawGizmos()
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthCharacteristics.growthRadius);
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthSettings.growthRadius);
         }
     }
 

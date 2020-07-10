@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
    [System.Serializable]
-    public class SeedState<T> : State where T : Plant
+    public class SeedState<T> : State where T : PlantFSM
     {
         //MEMBERS
         protected T component;
@@ -50,7 +50,7 @@ namespace PotatoGame
 
         public override void OnCollisionEnter(Collision col)
         {
-            var plantComponent = col.gameObject.GetComponent<Plant>();
+            var plantComponent = col.gameObject.GetComponent<PlantFSM>();
             //if its also in the same state (this is what get type does)
             // if (plantComponent != null && plantComponent.States.Current.Name == name)
             // {
@@ -80,12 +80,12 @@ namespace PotatoGame
         {
             
             //growth period 
-            if (component.GrowthCharacteristics.growthTime <= component.GrowthCharacteristics.growthCompletionTime && !growthCompleted)
+            if (component.GrowthSettings.growthTime <= component.GrowthSettings.growthCompletionTime && !growthCompleted)
             {
-                component.GrowthCharacteristics.growthTime += Time.deltaTime;
+                component.GrowthSettings.growthTime += Time.deltaTime;
                 growing = true;
             }
-            else if (component.GrowthCharacteristics.growthTime >= component.GrowthCharacteristics.growthCompletionTime)
+            else if (component.GrowthSettings.growthTime >= component.GrowthSettings.growthCompletionTime)
             {
                 growthCompleted = true;
                 growing = false;
@@ -97,7 +97,7 @@ namespace PotatoGame
         {
             if (growing && !growthCompleted)
             {
-                float dt = component.GrowthCharacteristics.growthTime / component.GrowthCharacteristics.growthCompletionTime;
+                float dt = component.GrowthSettings.growthTime / component.GrowthSettings.growthCompletionTime;
                 // this.component.transform.localScale = Vector3.Lerp(
                 //     Vector3.one * component.GrowthParams.seedSize,
                 //     Vector3.one * component.GrowthParams.growthSize,
@@ -105,19 +105,19 @@ namespace PotatoGame
                 //     );
                 //
                 // this.component.transform.localScale *= component.GrowthParams.growthPace;
-                component.GrowthCharacteristics.growthRadius *= component.GrowthCharacteristics.growthPace;
+                component.GrowthSettings.growthRadius *= component.GrowthSettings.growthPace;
             }
         }
 
         protected void SetGrowthAxis()
         {
-            component.GrowthCharacteristics.growingAxis.x = Random.Range(-0.50f, 0.50f);
-            component.GrowthCharacteristics.growingAxis.z = Random.Range(-0.50f, 0.50f);
+            component.GrowthSettings.growingAxis.x = Random.Range(-0.50f, 0.50f);
+            component.GrowthSettings.growingAxis.z = Random.Range(-0.50f, 0.50f);
         }
 
         protected void GrowAlongAxis()
         {
-            this.component.transform.position += component.GrowthCharacteristics.growingAxis * 0.001f;
+            this.component.transform.position += component.GrowthSettings.growingAxis * 0.001f;
         }
 
         //GIZMOS
@@ -126,12 +126,12 @@ namespace PotatoGame
             //GROWTH RADIUS
             if (!growthCompleted) Gizmos.color = Color.magenta;
             else Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(this.component.transform.position, component.GrowthCharacteristics.growthRadius);
+            Gizmos.DrawWireSphere(this.component.transform.position, component.GrowthSettings.growthRadius);
 
             //GROWTH AXIS 
             Gizmos.color = Color.black;
             Gizmos.DrawLine(this.component.transform.position,
-                this.component.transform.position + component.GrowthCharacteristics.growingAxis * 3.0f);
+                this.component.transform.position + component.GrowthSettings.growingAxis * 3.0f);
 
         }
 

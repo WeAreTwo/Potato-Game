@@ -201,7 +201,7 @@ namespace PotatoGame
             if (_proximityStationaryObject.TryGetComponent(out MachineBase machine))
             {
                 ResetHandWeight();
-                machine.InsertPlant(_pickedObject.GetComponent<Plant>());
+                // machine.InsertPlant(_pickedObject.GetComponent<Plant>());
                 Debug.Log("inserted");
                 ResetInteraction();
             }
@@ -253,7 +253,7 @@ namespace PotatoGame
 
             if (_proximityObject.TryGetComponent(out Plant plant))
             {
-                for (int i = 0; i < plant.GrowthCharacteristics.harvestYield; i++)
+                for (int i = 0; i < plant.GrowthSettings.harvestYield; i++)
                 {
                     ParticleController.Instance.EmitAt(_proximityObject.transform.position);
                     GameObject seed = Instantiate(_proximityObject, _proximityObject.transform.position + Vector3.up, Quaternion.identity) as GameObject;
@@ -291,7 +291,7 @@ namespace PotatoGame
                     if (Physics.Raycast(_planterObject.transform.position, Vector3.down,
                         out RaycastHit plantingPosition, 10.0f, layerMask))
                     {
-                        if (CanPlant(plantingPosition.point, plant.GrowthCharacteristics.growthRadius))
+                        if (CanPlant(plantingPosition.point, plant.GrowthSettings.growthRadius))
                         {
                             plant.PlantObject(plantingPosition.point);
                             ParticleController.Instance.EmitAt(plantingPosition.point);

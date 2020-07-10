@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
    [System.Serializable]
-    public class AutonomousState<T> : State where T : Potato
+    public class AutonomousState<T> : State where T : PotatoFSM
     {
         protected T component;
         protected Vector3 seekPosition;
@@ -49,7 +49,7 @@ namespace PotatoGame
             component.Planted = false;
 
             // pop out of the ground 
-            component.transform.position += new Vector3(0, component.GrowthCharacteristics.growthRadius * 2, 0);
+            component.transform.position += new Vector3(0, component.GrowthSettings.growthRadius * 2, 0);
             component.transform.rotation = Random.rotation;
             
             //particles

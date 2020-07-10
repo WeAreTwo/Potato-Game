@@ -1,56 +1,176 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 namespace PotatoGame
 {
     
     [System.Serializable]
-    public enum PlantStates
+    public class GrowthSettings
     {
-        Seed,
-        Grown,
-        Autonomous,
-        Idle,
-        Move,
-        Eat
-    }
-
-    [System.Serializable]
-    public class PotatoCharacteristics
-    {
-        public Color color = Color.yellow;
-        public float size = 1.0f;
-        public float growthTime = 10.0f;
-        public float longevity = 20.0f;
-    }
-
-
-    public class Potato : Plant
-    {
-        [Header("POTATO PARTS")] 
-        public GameObject potatoEyes;
-        public GameObject eatingEffect;
+        //SEED PARAM
+        [Header("SEED")] 
+        public float seedSize = 0.25f;
         
-        [Header("AUTONOMOUS AGENT")] 
-        public Plant victim;
-        public float seekRange = 5.0f;
-        public float seekForce = 5.0f;
+        //PLANTED/GROWTH PARAMS
+        [Header("GROWTH")]
+        public Vector3 growingAxis = Vector3.up;
+        public float growthRadius = 1.0f;  
+        public float growthPace = 1.0005f;
+        public float growthSize = 1.0f;
+        public float growthTime = 0.0f;
+        public float growthCompletionTime = 12.0f;      //time where it finished growing
         
-        protected override void Start()
+        //HARVEST PARAMS 
+        [Header("HARVEST")]
+        public float harvestTime = 0.0f; 
+        public float harvestPeriod = 15.0f; //second (amount of time before it before you cant harvest it anymore)
+        public int harvestYield = 2; //how many seeds your gonna get out of this 
+
+        [Header("VISUAL")] 
+        [SerializeField] protected Color currentColor;
+        public Color seedColor;
+        public Color grownColor;
+
+
+        public void Update()
         {
-            fsm = new StateMachine();
-            fsm.Add(PlantStates.Seed, new SeedState<Potato>(this));
-            fsm.Add(PlantStates.Grown, new GrownState<Potato>(this));
-            fsm.Add(PlantStates.Autonomous, new AutonomousState<Potato>(this));
-            fsm.Add(PlantStates.Idle, new Idle<Potato>(this));
-            fsm.Add(PlantStates.Move, new Move<Potato>(this));
-            fsm.Add(PlantStates.Eat, new Eat<Potato>(this));
             
-            fsm.Initialize(initState);
         }
         
+        public void ShiftSize(ref Component component)
+        {
+            float dt = 1;
+            // component.transform.localPosition = Vector3.Lerp();
+        }
+        
+        public void ShiftColor()
+        {
+            float dt = growthTime/growthCompletionTime;
+            currentColor = Color.Lerp(seedColor, grownColor, dt);
+        }
     }
+    
+    public class Potato : Plant
+    {
+        protected const string name = "Seed";
+
+        [SerializeField] protected GameObject autonomousForm;
+
+        [SerializeField] protected bool growing;
+        [SerializeField] protected bool growthCompleted;
+        
+
+        //CONSTRUCTOR
+        public Potato()
+        {
+        }
+
+        //CALL METHODS 
+        public virtual void Start()
+        {
+            // component.transform.localScale *= component.GrowthParams.seedSize;
+        }
+
+        public virtual void Update()
+        {
+
+            if (Planted)
+            {
+                // PlantedSettings();
+                Grow();
+                UpdateGrowthRadius();
+            }
+            else
+            {
+                // UprootedSettings();
+            }
+        }
+        
+        public virtual void OnCollisionEnter(Collision col)
+        {
+            var plantComponent = col.gameObject.GetComponent<PlantFSM>();
+            if (plantComponent != null)
+            {
+                growthCompleted = true;
+            }
+        }
+        
+        public override void PlantObject()
+        {
+            this.gameObject.DeActivatePhysics();
+        }
 
 
+        protected virtual void Grow()
+        {
+            
+            //growth period 
+            if (growthSettings.growthTime <= growthSettings.growthCompletionTime && !growthCompleted)
+            {
+                growthSettings.growthTime += Time.deltaTime;
+                growing = true;
+            }
+            else if (growthSettings.growthTime >= growthSettings.growthCompletionTime)
+            {
+                growthCompleted = true;
+                growing = false;
+                
+                //Todo : This is where we poof into an autonomous potato 
+                // TriggerExit(PlantStates.Grown);
+                TransformToAutonomous();
+                
+            }
+        }
+
+        protected virtual void TransformToAutonomous()
+        {
+            //particles
+            ParticleController.Instance.EmitAt(this.transform.position);
+            GameObject obj = Instantiate(autonomousForm, this.transform.position + Vector3.up, Quaternion.identity);
+            
+            Destroy(this.gameObject);
+        }
+
+        protected virtual void UpdateGrowthRadius()
+        {
+            if (growing && !growthCompleted)
+            {
+                float dt = growthSettings.growthTime / growthSettings.growthCompletionTime;
+                // this.transform.localScale = Vector3.Lerp(
+                //     Vector3.one * GrowthParams.seedSize,
+                //     Vector3.one * GrowthParams.growthSize,
+                //     dt
+                //     );
+                //
+                // this.transform.localScale *= GrowthParams.growthPace;
+                growthSettings.growthRadius *= growthSettings.growthPace;
+            }
+        }
+
+        protected virtual void SetGrowthAxis()
+        {
+            growthSettings.growingAxis.x = UnityEngine.Random.Range(-0.50f, 0.50f);
+            growthSettings.growingAxis.z = UnityEngine.Random.Range(-0.50f, 0.50f);
+        }
+
+        protected virtual void GrowAlongAxis()
+        {
+            this.transform.position += growthSettings.growingAxis * 0.001f;
+        }
+
+        //GIZMOS
+        public virtual void OnDrawGizmos()
+        {
+            //GROWTH RADIUS
+            if (!growthCompleted) Gizmos.color = Color.magenta;
+            else Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(this.transform.position, growthSettings.growthRadius);
+
+            //GROWTH AXIS 
+            Gizmos.color = Color.black;
+            Gizmos.DrawLine(this.transform.position,
+                this.transform.position + growthSettings.growingAxis * 3.0f);
+
+        }
+    }
 }

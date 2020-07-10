@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
     [System.Serializable]
-    public class Move<T> : State where T : Potato
+    public class Move<T> : State where T : PotatoFSM
     {
         protected T component;
         
@@ -55,7 +55,7 @@ namespace PotatoGame
             component.Planted = false;
 
             // pop out of the ground 
-            component.transform.position += new Vector3(0, component.GrowthCharacteristics.growthRadius * 2, 0);
+            component.transform.position += new Vector3(0, component.GrowthSettings.growthRadius * 2, 0);
             component.transform.rotation = Random.rotation;
     
             // Activate gravity and defreeze all
@@ -85,7 +85,7 @@ namespace PotatoGame
             
             }
             //condition for completion 
-            if (Vector3.Distance(component.transform.position, seekPosition) < 1.5f * component.GrowthCharacteristics.growthRadius || moveTimer >= moveTime)
+            if (Vector3.Distance(component.transform.position, seekPosition) < 1.5f * component.GrowthSettings.growthRadius || moveTimer >= moveTime)
             {
                 moveTimer = 0;  // reset the timer 
                 MakeDecision(); // make new decision 
@@ -102,7 +102,7 @@ namespace PotatoGame
                 {
                     if (component == plant) continue; //ignore self by skipping it 
 
-                    if (Vector3.Distance(component.transform.position, plant.transform.position) < component.GrowthCharacteristics.growthRadius + plant.GrowthCharacteristics.growthRadius)
+                    if (Vector3.Distance(component.transform.position, plant.transform.position) < component.GrowthSettings.growthRadius + plant.GrowthSettings.growthRadius)
                         component.victim = plant;
                 }
             }
@@ -134,7 +134,7 @@ namespace PotatoGame
             Gizmos.DrawLine(component.transform.position, seekPosition);
     
             Gizmos.color = Color.magenta;
-            Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthCharacteristics.growthRadius);
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthSettings.growthRadius);
         }
     }
     

@@ -5,13 +5,21 @@ namespace PotatoGame
 {
     public static class PlantExtension
     {
-        public static void HarvestInit(this Plant plant)
+        public static void HarvestInit(this PlantFSM plantFsm)
         {
-            plant.gameObject.ActivatePhysics();
-            plant.Health = 100;
-            plant.PickedUp = false;
-            plant.Planted = false;
-            plant.InitState = PlantStates.Seed;
+            plantFsm.gameObject.ActivatePhysics();
+            plantFsm.Health = 100;
+            plantFsm.PickedUp = false;
+            plantFsm.Planted = false;
+            plantFsm.InitState = PlantStates.Seed;
+        }
+        public static void HarvestInit(this Plant plantFsm)
+        {
+            plantFsm.gameObject.ActivatePhysics();
+            plantFsm.Health = 100;
+            plantFsm.PickedUp = false;
+            plantFsm.Planted = false;
+            plantFsm.InitState = PlantStates.Seed;
         }
     }
 }

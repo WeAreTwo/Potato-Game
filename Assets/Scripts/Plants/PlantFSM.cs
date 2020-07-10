@@ -6,9 +6,11 @@ using UnityEngine;
 namespace PotatoGame
 {
 
-    public abstract class Plant : InteractableObject, IPlantable
+    public abstract class PlantFSM : InteractableObject, IPlantable
     {
         //Finite State Machine
+        [Header("FSM PARAMS")]
+        protected StateMachine fsm;
         [SerializeField] protected PlantStates initState = PlantStates.Seed;
 
         [Header("GENERAL")]
@@ -19,6 +21,7 @@ namespace PotatoGame
         [SerializeField] protected GrowthSettings growthSettings;
 
         //Properties
+        public StateMachine FSM => fsm;
         public PlantStates InitState { get => initState; set => initState = value; }
         public float Health { get => health; set => health = value; }
         public bool Planted { get => planted; set => planted = value; }
@@ -26,38 +29,47 @@ namespace PotatoGame
 
         protected virtual void Start()
         {
+            fsm = new StateMachine();
+            fsm.Add(PlantStates.Seed, new SeedState<PlantFSM>(this));
+            fsm.Add(PlantStates.Grown, new GrownState<PlantFSM>(this));
 
+            fsm.Initialize(initState);
         }
 
         // Update is called once per frame
         protected virtual void Update()
         {
+            if(!pickedUp) fsm.Update();
         }
 
         protected virtual void OnEnable()
         {
-            // if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Add(this);
+            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Add(this);
         }
 
         protected virtual void OnDisable()
         {
-            // if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Remove(this);
+            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Remove(this);
         }
 
         protected virtual void OnCollisionEnter(Collision col)
         {
+            if(!pickedUp) fsm.OnCollisionEnter(col);
         }
 
         protected virtual void OnCollisionStay(Collision col)
         {
+            if(!pickedUp) fsm.OnCollisionStay(col);
         }
 
         protected virtual void OnCollisionExit(Collision col)
         {
+            if(!pickedUp) fsm.OnCollisionExit(col);
         }
 
         protected virtual void OnDrawGizmosSelected()
         {
+            if(fsm != null) fsm.DrawGizmos();
         }
         
         public virtual void Kill()
@@ -75,8 +87,9 @@ namespace PotatoGame
             planted = false;
         }
 
-        public virtual void PlantObject()
+        public void PlantObject()
         {
+            throw new NotImplementedException();
         }
 
         public virtual void PlantObject(Vector3 plantingPosition)

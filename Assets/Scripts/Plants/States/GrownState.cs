@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
     [System.Serializable]
-    public class GrownState<T> : State where T : Plant
+    public class GrownState<T> : State where T : PlantFSM
     {
 
         //MEMBERS
@@ -30,12 +30,12 @@ namespace PotatoGame
         protected void Harvest()
         {
             //harvest period
-            if (component.GrowthCharacteristics.harvestTime <= component.GrowthCharacteristics.harvestPeriod && !harvestPeriodCompleted)
+            if (component.GrowthSettings.harvestTime <= component.GrowthSettings.harvestPeriod && !harvestPeriodCompleted)
             {
-                component.GrowthCharacteristics.harvestTime += Time.deltaTime;
+                component.GrowthSettings.harvestTime += Time.deltaTime;
                 harvestable = true;
             }
-            else if (component.GrowthCharacteristics.harvestTime >= component.GrowthCharacteristics.harvestPeriod)
+            else if (component.GrowthSettings.harvestTime >= component.GrowthSettings.harvestPeriod)
             {
                 harvestPeriodCompleted = true;
                 harvestable = false;
@@ -50,7 +50,7 @@ namespace PotatoGame
             if (harvestable)
             {
                 Gizmos.color = Color.cyan;
-                Gizmos.DrawSphere(this.component.transform.position + Vector3.up * component.GrowthCharacteristics.growthRadius, 0.2f);
+                Gizmos.DrawSphere(this.component.transform.position + Vector3.up * component.GrowthSettings.growthRadius, 0.2f);
             }
         }
 

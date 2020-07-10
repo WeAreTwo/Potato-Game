@@ -57,11 +57,11 @@ namespace PotatoGame
 
         }
 
-        public virtual void InsertPlant(Plant plant)
+        public virtual void InsertPlant(PlantFSM plantFsm)
         {
-            plant.transform.position = feeder.transform.position;
-            plant.transform.rotation = Random.rotation;
-            plant.gameObject.ActivatePhysics();
+            plantFsm.transform.position = feeder.transform.position;
+            plantFsm.transform.rotation = Random.rotation;
+            plantFsm.gameObject.ActivatePhysics();
         }
         
         public virtual void InsertPlant()
@@ -80,7 +80,7 @@ namespace PotatoGame
         // handles the scripts specific input when inserted
         protected virtual void InputSettings(ref GameObject obj)
         {
-            if(obj.TryGetComponent<Plant>(out Plant plant))
+            if(obj.TryGetComponent<PlantFSM>(out PlantFSM plant))
             {
                 //do something for plants 
                 plant.PickedUp = false;
@@ -92,7 +92,7 @@ namespace PotatoGame
         //handles the scripts specific output when instantiated
         protected virtual void OutputSettings(ref GameObject obj)
         {
-            if(obj.TryGetComponent<Plant>(out Plant plant))
+            if(obj.TryGetComponent<PlantFSM>(out PlantFSM plant))
             {
                 //do something for plants 
                 plant.PickedUp = false;

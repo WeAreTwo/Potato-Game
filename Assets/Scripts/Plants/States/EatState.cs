@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
     [System.Serializable]
-    public class Eat<T> : State where T : Potato
+    public class Eat<T> : State where T : PotatoFSM
     {
         protected T component;
 
@@ -47,7 +47,7 @@ namespace PotatoGame
             component.Planted = false;
 
             // pop out of the ground 
-            component.transform.position += new Vector3(0, component.GrowthCharacteristics.growthRadius * 2, 0);
+            component.transform.position += new Vector3(0, component.GrowthSettings.growthRadius * 2, 0);
             component.transform.rotation = Random.rotation;
             
             //particles
@@ -70,7 +70,7 @@ namespace PotatoGame
             else
             {
                 Vector3 targetPosition = component.victim.transform.position;
-                if (Vector3.Distance(component.transform.position, targetPosition) < 2.5f * component.GrowthCharacteristics.growthRadius)
+                if (Vector3.Distance(component.transform.position, targetPosition) < 2.5f * component.GrowthSettings.growthRadius)
                 {
                     eatTimer += Time.deltaTime;
                     if (eatTimer >= eatTime)
@@ -107,7 +107,7 @@ namespace PotatoGame
                 {
                     if (component == plant) continue; //ignore self by skipping it 
 
-                    if (Vector3.Distance(component.transform.position, plant.transform.position) < component.GrowthCharacteristics.growthRadius + plant.GrowthCharacteristics.growthRadius)
+                    if (Vector3.Distance(component.transform.position, plant.transform.position) < component.GrowthSettings.growthRadius + plant.GrowthSettings.growthRadius)
                         component.victim = plant;
                 }
             }
@@ -141,7 +141,7 @@ namespace PotatoGame
             base.DrawGizmos();
             
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthCharacteristics.growthRadius);
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one * component.GrowthSettings.growthRadius);
     
             if (component.victim != null)
             {

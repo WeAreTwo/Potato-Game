@@ -37,9 +37,9 @@ namespace PotatoGame
             InsertPlant();
         }
 
-        public void SlicePotato(Potato potato)
+        public void SlicePotato(PotatoFSM potatoFsm)
         {
-            int yield = potato.GrowthCharacteristics.harvestYield;
+            int yield = potatoFsm.GrowthSettings.harvestYield;
         }
 
         // Potato outputPotato()
@@ -81,12 +81,12 @@ namespace PotatoGame
             yield return null;
         }
         
-        public override void InsertPlant(Plant plant)
+        public override void InsertPlant(PlantFSM plantFsm)
         {
-            plant.transform.position = feeder.transform.position;
-            plant.transform.rotation = Random.rotation;
-            plant.gameObject.ActivatePhysics();
-            processingQueue.Add(new SlicerProcessingTask(this), plant.gameObject);
+            plantFsm.transform.position = feeder.transform.position;
+            plantFsm.transform.rotation = Random.rotation;
+            plantFsm.gameObject.ActivatePhysics();
+            processingQueue.Add(new SlicerProcessingTask(this), plantFsm.gameObject);
         }
 
         public override void InsertPlant()
