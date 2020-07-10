@@ -28,13 +28,12 @@ namespace PotatoGame
 
         [Header("VISUAL")] 
         [SerializeField] protected Color currentColor;
-        public Color seedColor;
-        public Color grownColor;
+        public Color seedColor = Color.grey;
+        public Color grownColor = Color.yellow;
 
 
         public void Update()
         {
-            
         }
         
         public void ShiftSize(ref Component component)
@@ -43,10 +42,11 @@ namespace PotatoGame
             // component.transform.localPosition = Vector3.Lerp();
         }
         
-        public void ShiftColor()
+        public Color ShiftColor()
         {
             float dt = growthTime/growthCompletionTime;
             currentColor = Color.Lerp(seedColor, grownColor, dt);
+            return currentColor;
         }
     }
     
@@ -58,8 +58,9 @@ namespace PotatoGame
 
         [SerializeField] protected bool growing;
         [SerializeField] protected bool growthCompleted;
-        
 
+        protected Material mat;
+        
         //CONSTRUCTOR
         public Potato()
         {
@@ -69,11 +70,12 @@ namespace PotatoGame
         public virtual void Start()
         {
             // component.transform.localScale *= component.GrowthParams.seedSize;
+            mat = GetComponent<Renderer>().material;
         }
 
         public virtual void Update()
         {
-
+            mat.SetColor("_BaseColor", growthSettings.ShiftColor());
             if (Planted)
             {
                 // PlantedSettings();

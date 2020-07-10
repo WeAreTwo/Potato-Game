@@ -236,8 +236,8 @@ MonoBehaviour:
     harvestPeriod: 15
     harvestYield: 2
     currentColor: {r: 0, g: 0, b: 0, a: 0}
-    seedColor: {r: 0, g: 0, b: 0, a: 0}
-    grownColor: {r: 0, g: 0, b: 0, a: 0}
+    seedColor: {r: 0.2924528, g: 0.23572883, b: 0.16140084, a: 0}
+    grownColor: {r: 1, g: 0.77254903, b: 0.4745098, a: 0}
   autonomousForm: {fileID: 152371154211809760, guid: 5323c2e1f0cdd4547b35471b2a9970ab,
     type: 3}
   growing: 0
