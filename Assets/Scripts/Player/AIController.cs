@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace PotatoGame
 {
-    public class PlayerController : MovementBase
+    public class AIController : MovementBase
     {
 
         protected override void Update()
@@ -28,10 +28,6 @@ namespace PotatoGame
             // Step between each movement
             var step = m_movementSpeed * Time.deltaTime;
             
-            // Take player's inputs
-            _mHeading.x = Input.GetAxis("Horizontal");
-            _mHeading.z = Input.GetAxis("Vertical");
-
             // Catch the inputs in a vector3
             // (make sure inputs makes sense with camera view)
             var move = _mHeading;
@@ -59,5 +55,6 @@ namespace PotatoGame
             _mVelocity.y += m_gravityForce * Time.deltaTime;
             _mController.Move(_mVelocity * Time.deltaTime);
         }
+        
     }
 }

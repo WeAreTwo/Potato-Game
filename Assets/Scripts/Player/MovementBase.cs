@@ -26,6 +26,7 @@ namespace PotatoGame
         protected CharacterController _mController;       // Instance of the character controller
         protected Animator _mAnim;                        // Instance of the animator linked to the player
         protected Transform _mGroundCheck;                // Instance of the ground check position
+        protected Vector3 _mHeading = Vector3.zero;
         protected Vector3 _mVelocity;                     // Velocity to apply to the player
         protected bool _mIsGrounded;                      // Check if the controller is in contact with the ground
         protected Quaternion _mLookRotation;              // Rotation that need to be look at
@@ -55,6 +56,9 @@ namespace PotatoGame
                 Gizmos.color = Color.green;
                 Gizmos.DrawWireSphere(_mGroundCheck.position, m_groundOffset);
             }
+            
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(this.transform.position, this.transform.position + _mHeading);
         }
     }
 
