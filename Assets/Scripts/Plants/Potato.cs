@@ -141,7 +141,6 @@ namespace PotatoGame
                 //     dt
                 //     );
                 //
-                // this.transform.localScale *= GrowthParams.growthPace;
                 growthSettings.growthRadius *= growthSettings.growthPace;
             }
         }
