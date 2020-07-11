@@ -6,50 +6,16 @@ using UnityEngine.Serialization;
 
 namespace PotatoGame
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MovementBase
     {
-        // public variables -------------------------
-        [Title("Controls")]
-        public float m_movementSpeed = 10f;             // Movement speed of the player
-        public float m_rotationSpeed = 5f;              // Movement speed for rotation
-        [Title("Physics")]
-        public float m_groundOffset = 0.2f;             // Where does the ground stands in relation to the player
-        public float m_gravityForce = -9.81f;           // Gravity that is applied
-        public LayerMask m_ground;                      // Ground layer (physics)
-        
-        // private variables ------------------------
-        private CharacterController _mController;       // Instance of the character controller
-        private Animator _mAnim;                        // Instance of the animator linked to the player
-        private Transform _mGroundCheck;                // Instance of the ground check position
-        private Vector3 _mVelocity;                     // Velocity to apply to the player
-        private bool _mIsGrounded;                      // Check if the controller is in contact with the ground
-        private Quaternion _mLookRotation;              // Rotation that need to be look at
-        
 
-        // ------------------------------------------
-        // Start is called before update
-        // ------------------------------------------
-        void Start()
+        protected override void Update()
         {
-            // Get the components
-            _mController = GetComponent<CharacterController>();
-            _mAnim = GetComponent<Animator>();
-            _mGroundCheck = transform.GetChild(0).transform;
-        }
-
-        // ------------------------------------------
-        // Update is called once per frame
-        // ------------------------------------------
-        private void Update()
-        {
+            base.Update();
             // Make the player able to move
             CheckInput();
         }
-
-
-        // ------------------------------------------
-        // Methods
-        // ------------------------------------------
+        
         // Check user's input ------------------------------------------------------
         private void CheckInput()
         {

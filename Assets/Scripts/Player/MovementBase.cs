@@ -7,8 +7,9 @@ using Sirenix.OdinInspector;
 namespace PotatoGame
 {
 
-    [RequireComponent(typeof(CharacterController))]
-    [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(CharacterController))]    //basic controller for movement
+    [RequireComponent(typeof(Animator))]                //for animation
+    [RequireComponent(typeof(IKController))]            //to enabled use of IK
     public class MovementBase : MonoBehaviour
     {
         
@@ -34,6 +35,7 @@ namespace PotatoGame
         {
             _mController = this.GetComponent<CharacterController>();
             _mAnim = this.GetComponent<Animator>();
+            _mGroundCheck = transform.GetChild(0).transform; //Todo eliminate this dependancy (maybe using a vector3 inside script?)
         }
 
         protected virtual void Start()
@@ -48,7 +50,11 @@ namespace PotatoGame
 
         protected virtual void OnDrawGizmos()
         {
-            
+            if (_mGroundCheck)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(_mGroundCheck.position, m_groundOffset);
+            }
         }
     }
 

@@ -5,7 +5,7 @@ using RootMotion.FinalIK;
 
 namespace PotatoGame
 {
-    [RequireComponent(typeof(FullBodyBipedIK))]
+    [RequireComponent(typeof(FullBodyBipedIK))] //this script relies on this componenet 
     public class IKController : MonoBehaviour
     {
         // public variables -------------------------
