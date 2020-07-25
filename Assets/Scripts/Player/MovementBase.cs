@@ -26,7 +26,7 @@ namespace PotatoGame
         protected CharacterController _mController;       // Instance of the character controller
         protected Animator _mAnim;                        // Instance of the animator linked to the player
         protected Transform _mGroundCheck;                // Instance of the ground check position
-        protected Vector3 _mHeading = Vector3.zero;
+        [SerializeField] protected Vector3 _mHeading = Vector3.zero;
         protected Vector3 _movementDirection;
         protected Vector3 _mVelocity;                     // Velocity to apply to the player
         protected float _movementStep;
