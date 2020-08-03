@@ -2,7 +2,10 @@ fileFormatVersion: 2
 guid: ee172ccec9d2ef948bd63d34da53e594
 ModelImporter:
   serializedVersion: 19300
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      74: -3454574283341898091
+    second: PotatoArmatureE|Idle
   externalObjects: {}
   materials:
     materialImportMode: 1
