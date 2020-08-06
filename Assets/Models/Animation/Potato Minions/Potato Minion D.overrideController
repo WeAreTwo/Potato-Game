@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Potato Minion D
+  m_Controller: {fileID: 9100000, guid: 4bc182962332b824d92025e376aebc83, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -3100369314251171874, guid: c661c3f04196391408abe423d96b6673,
+      type: 3}
+    m_OverrideClip: {fileID: -3100369314251171874, guid: 57b4becb01fcaa64892e8f54e5a6be66,
+      type: 3}
+  - m_OriginalClip: {fileID: 379707814753986133, guid: c661c3f04196391408abe423d96b6673,
+      type: 3}
+    m_OverrideClip: {fileID: 3227985196266485118, guid: 57b4becb01fcaa64892e8f54e5a6be66,
+      type: 3}
