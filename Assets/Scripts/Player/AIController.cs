@@ -29,15 +29,19 @@ namespace PotatoGame
             // Catch the inputs in a vector3
             // (make sure inputs makes sense with camera view)
             float distToDest = Vector3.Distance(mouseTest, this.transform.position);
-            if (distToDest < 1.0f)
-            {
-                _mHeading = Vector3.zero;
-            }
-            else
-            {
-                _mHeading = (mouseTest - this.transform.position).normalized;
-            }
-            _mHeading.y = 0;
+            // if (distToDest < 1.0f)
+            // {
+            //     _mHeading = Vector3.zero;
+            // }
+            // else
+            // {
+            //     _mHeading = (mouseTest - this.transform.position).normalized;
+            // }
+
+            _mHeading.x = Mathf.Sin(Time.deltaTime * 10.0f) * 2.0f;
+            _mHeading.z = Mathf.Sin(Time.deltaTime * 10.0f) * 2.0f;
+            
+            // _mHeading.y = 0;
             
             _movementDirection = _mHeading;
             _movementDirection = Camera.main.transform.TransformDirection(_movementDirection);
