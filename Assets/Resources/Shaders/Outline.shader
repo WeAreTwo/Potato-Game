@@ -188,6 +188,7 @@
                     float edgeColor = sqrt(dot(colorFiniteDifference0, colorFiniteDifference0) + dot(colorFiniteDifference1, colorFiniteDifference1));
                     edgeColor = edgeColor > (1/ColorSensitivity) ? 1 : 0;
                 
+                    return max(edgeDepth, edgeColor);
                     return max(edgeDepth, edgeNormal);
                     return max(edgeDepth, max(edgeNormal, edgeColor));
                     float edge = max(edgeDepth, max(edgeNormal, edgeColor));

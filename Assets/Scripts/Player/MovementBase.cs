@@ -119,7 +119,7 @@ namespace PotatoGame
                 Gizmos.DrawWireSphere(_mGroundCheck.position, m_groundOffset);
             }
             
-            Gizmos.color = Color.magenta;
+            Gizmos.color = Color.red;
             Gizmos.DrawLine(this.transform.position, this.transform.position + _mHeading);
         }
     }
