@@ -14,7 +14,7 @@ namespace PotatoGame
         {
             base.Update();
             // CheckInput();    
-            MoveToMousePosition();
+            // MoveToMousePosition();
         }
         
         // Check user's input ------------------------------------------------------
@@ -64,8 +64,8 @@ namespace PotatoGame
         protected override void OnDrawGizmos()
         {
             base.OnDrawGizmos();
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(mouseTest, 0.5f);
+            // Gizmos.color = Color.red;
+            // Gizmos.DrawWireSphere(mouseTest, 0.5f);
         }
     }
 }
