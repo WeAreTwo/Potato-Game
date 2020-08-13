@@ -34,6 +34,12 @@ namespace PotatoGame
         protected Quaternion _mLookRotation;              // Rotation that need to be look at
 
 
+        #region Properties
+        public Vector3 Heading { get => _mHeading; set => _mHeading = value; }
+
+        #endregion
+        
+        
         protected virtual void Awake()
         {
             _mController = this.GetComponent<CharacterController>();

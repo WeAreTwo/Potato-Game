@@ -20,8 +20,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: OutlineEffect
-  m_Shader: {fileID: 4800000, guid: 868bbf1b32f9a614caf9d6d1025a02c2, type: 3}
+  m_Name: PixelationEffect
+  m_Shader: {fileID: -6465566751694194690, guid: 751c4dd00f0772a4eb8af0721e4a478c,
+    type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -61,6 +62,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_2339747F: 512
+    - Vector1_A44D06CD: 720
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -79,7 +82,7 @@ Material:
     - _Metallic: 0
     - _NormalsSensitivity: 2.13
     - _OcclusionStrength: 1
-    - _OutlineThickness: 1.8
+    - _OutlineThickness: 1.06
     - _OutlineThreshold: 1.45
     - _QueueOffset: 0
     - _ReceiveShadows: 1

@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   m_AdvancedMode: 0
   threshold:
     m_OverrideState: 1
-    m_Value: 0.61
+    m_Value: 0.91
     min: 0
   intensity:
     m_OverrideState: 1
@@ -96,7 +96,6 @@ MonoBehaviour:
   m_Name: SampleSceneProfile
   m_EditorClassIdentifier: 
   components:
-  - {fileID: 6433999522402843463}
   - {fileID: 849379129802519247}
   - {fileID: -7893295128165547882}
   - {fileID: -7011558710299706105}
@@ -135,26 +134,26 @@ MonoBehaviour:
   m_AdvancedMode: 0
   postExposure:
     m_OverrideState: 1
-    m_Value: -0.54
+    m_Value: -0.86
   contrast:
-    m_OverrideState: 1
-    m_Value: 37
+    m_OverrideState: 0
+    m_Value: 100
     min: -100
     max: 100
   colorFilter:
     m_OverrideState: 0
-    m_Value: {r: 1.3055437, g: 1.5157166, b: 1.1367874, a: 1}
+    m_Value: {r: 2.0236006, g: 2.0236006, b: 2.0236006, a: 1}
     hdr: 1
     showAlpha: 0
     showEyeDropper: 1
   hueShift:
-    m_OverrideState: 0
-    m_Value: 119
+    m_OverrideState: 1
+    m_Value: -27
     min: -180
     max: 180
   saturation:
     m_OverrideState: 1
-    m_Value: -25
+    m_Value: -39
     min: -100
     max: 100
 --- !u!114 &6217556476801696069
@@ -176,31 +175,14 @@ MonoBehaviour:
     m_Value: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0.465
+    m_Value: 0.558
     min: 0
     max: 1
   response:
     m_OverrideState: 1
-    m_Value: 0.845
+    m_Value: 0.771
     min: 0
     max: 1
   texture:
     m_OverrideState: 0
     m_Value: {fileID: 0}
---- !u!114 &6433999522402843463
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e320ca7097504019b1b21b7736564fcc, type: 3}
-  m_Name: Outline
-  m_EditorClassIdentifier: 
-  active: 0
-  m_AdvancedMode: 0
-  delta:
-    m_OverrideState: 1
-    m_Value: 0.43

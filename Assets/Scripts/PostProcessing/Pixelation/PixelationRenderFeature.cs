@@ -5,13 +5,13 @@ using UnityEngine.Rendering.Universal;
 namespace PotatoGame
 {
 
-    public class OutlineFeature : ScriptableRendererFeature
+    public class PixelationRenderFeature : ScriptableRendererFeature
     {
-        class OutlinePass : ScriptableRenderPass
+        class PixelationPass : ScriptableRenderPass
         {
             private RenderTargetIdentifier source { get; set; }
             private RenderTargetHandle destination { get; set; }
-            public Material outlineMaterial = null;
+            public Material pixelationMaterial = null;
             RenderTargetHandle temporaryColorTexture;
 
             public void Setup(RenderTargetIdentifier source, RenderTargetHandle destination)
@@ -20,9 +20,9 @@ namespace PotatoGame
                 this.destination = destination;
             }
 
-            public OutlinePass(Material outlineMaterial)
+            public PixelationPass(Material pixelationMaterial)
             {
-                this.outlineMaterial = outlineMaterial;
+                this.pixelationMaterial = pixelationMaterial;
             }
 
 
@@ -51,11 +51,11 @@ namespace PotatoGame
                 if (destination == RenderTargetHandle.CameraTarget)
                 {
                     cmd.GetTemporaryRT(temporaryColorTexture.id, opaqueDescriptor, FilterMode.Point);
-                    Blit(cmd, source, temporaryColorTexture.Identifier(), outlineMaterial, 0);
+                    Blit(cmd, source, temporaryColorTexture.Identifier(), pixelationMaterial, 0);
                     Blit(cmd, temporaryColorTexture.Identifier(), source);
 
                 }
-                else Blit(cmd, source, destination.Identifier(), outlineMaterial, 0);
+                else Blit(cmd, source, destination.Identifier(), pixelationMaterial, 0);
 
                 context.ExecuteCommandBuffer(cmd);
                 CommandBufferPool.Release(cmd);
@@ -71,20 +71,20 @@ namespace PotatoGame
         }
 
         [System.Serializable]
-        public class OutlineSettings
+        public class PixelationSettings
         {
             public Material outlineMaterial = null;
         }
 
-        public OutlineSettings settings = new OutlineSettings();
-        OutlinePass outlinePass;
-        RenderTargetHandle outlineTexture;
+        public PixelationSettings settings = new PixelationSettings();
+        PixelationPass m_pixelationPass;
+        RenderTargetHandle pixelationTexture;
 
         public override void Create()
         {
-            outlinePass = new OutlinePass(settings.outlineMaterial);
-            outlinePass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
-            outlineTexture.Init("_OutlineTexture");
+            m_pixelationPass = new PixelationPass(settings.outlineMaterial);
+            m_pixelationPass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
+            pixelationTexture.Init("_PixelationTexture");
         }
 
         // Here you can inject one or multiple render passes in the renderer.
@@ -97,8 +97,8 @@ namespace PotatoGame
                 return;
             }
 
-            outlinePass.Setup(renderer.cameraColorTarget, RenderTargetHandle.CameraTarget);
-            renderer.EnqueuePass(outlinePass);
+            m_pixelationPass.Setup(renderer.cameraColorTarget, RenderTargetHandle.CameraTarget);
+            renderer.EnqueuePass(m_pixelationPass);
         }
     }
 
