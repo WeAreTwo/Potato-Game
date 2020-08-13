@@ -238,7 +238,7 @@ MonoBehaviour:
     currentColor: {r: 0, g: 0, b: 0, a: 0}
     seedColor: {r: 0.2924528, g: 0.23572883, b: 0.16140084, a: 0}
     grownColor: {r: 1, g: 0.77254903, b: 0.4745098, a: 0}
-  autonomousForm: {fileID: 152371154211809760, guid: 5323c2e1f0cdd4547b35471b2a9970ab,
+  autonomousForm: {fileID: 3605017580964831447, guid: 54dae3847fb6700479e1fd5c8d2d28e9,
     type: 3}
   growing: 0
   growthCompleted: 0
