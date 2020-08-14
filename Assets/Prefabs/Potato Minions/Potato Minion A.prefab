@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 3341206105541509332}
   - component: {fileID: 8876649521125101765}
   - component: {fileID: 2487484620830071601}
-  - component: {fileID: 2492166282679194408}
+  - component: {fileID: -1368420276030783358}
   m_Layer: 0
   m_Name: Potato Minion A
   m_TagString: Untagged
@@ -722,7 +722,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_leftHandTarget: {fileID: 0}
   m_rightHandTarget: {fileID: 0}
---- !u!114 &2492166282679194408
+--- !u!114 &-1368420276030783358
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -731,10 +731,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3605017580964831447}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 854baa28f1a7dbd44a7d2ed443c8e6a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 63fc1f06264a91f4bb028bf95725f6a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_movementSpeed: 10
+  m_movementSpeed: 1
   m_rotationSpeed: 5
   m_groundOffset: 0.2
   m_gravityForce: -9.81
@@ -742,6 +742,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   _mHeading: {x: 0, y: 0, z: 0}
+  bellPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &3671461411425521168
 GameObject:
   m_ObjectHideFlags: 0

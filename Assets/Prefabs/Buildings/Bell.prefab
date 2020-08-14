@@ -9,9 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4528909376767674889}
+  - component: {fileID: 7482505085725119802}
   m_Layer: 0
-  m_Name: bell
-  m_TagString: Untagged
+  m_Name: Bell
+  m_TagString: Bell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -39,6 +40,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7482505085725119802
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613249096332523546}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.9
+  m_Height: 6.03
+  m_Direction: 1
+  m_Center: {x: 0, y: 2.6, z: 0}
 --- !u!1 &1170357403840164715
 GameObject:
   m_ObjectHideFlags: 0
@@ -578,8 +593,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 3349481329647215731, guid: 278a116e8d6508f4db4f203948253a9e, type: 3}
-  - {fileID: 2100000, guid: d9e1b5e313eeb254d80d743eed280176, type: 2}
+  - {fileID: 2100000, guid: 10d0a66bdd1ec3b4db3e6d639a86d86d, type: 2}
+  - {fileID: 2100000, guid: 10d0a66bdd1ec3b4db3e6d639a86d86d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

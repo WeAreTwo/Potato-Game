@@ -733,7 +733,7 @@ GameObject:
   - component: {fileID: -3046782155863329261}
   - component: {fileID: 2461935524895282430}
   - component: {fileID: -41396818205901623}
-  - component: {fileID: -778376657735974212}
+  - component: {fileID: -7607024579384192805}
   m_Layer: 0
   m_Name: Potato Minion E
   m_TagString: Untagged
@@ -812,11 +812,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   references:
-    root: {fileID: 0}
-    pelvis: {fileID: 0}
-    leftThigh: {fileID: 0}
-    leftCalf: {fileID: 0}
-    leftFoot: {fileID: 0}
+    root: {fileID: 1973263997706657273}
+    pelvis: {fileID: 2920796430352071360}
+    leftThigh: {fileID: 1610411177153750123}
+    leftCalf: {fileID: 8424397668931161269}
+    leftFoot: {fileID: 4686860946135396946}
     rightThigh: {fileID: 0}
     rightCalf: {fileID: 0}
     rightFoot: {fileID: 0}
@@ -826,7 +826,7 @@ MonoBehaviour:
     rightUpperArm: {fileID: 0}
     rightForearm: {fileID: 0}
     rightHand: {fileID: 0}
-    head: {fileID: 0}
+    head: {fileID: 5307946008998430020}
     spine: []
     eyes: []
   solver:
@@ -865,7 +865,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_leftHandTarget: {fileID: 0}
   m_rightHandTarget: {fileID: 0}
---- !u!114 &-778376657735974212
+--- !u!114 &-7607024579384192805
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -874,10 +874,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3258680877853028330}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 854baa28f1a7dbd44a7d2ed443c8e6a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 63fc1f06264a91f4bb028bf95725f6a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_movementSpeed: 10
+  m_movementSpeed: 1
   m_rotationSpeed: 5
   m_groundOffset: 0.2
   m_gravityForce: -9.81
@@ -885,6 +885,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   _mHeading: {x: 0, y: 0, z: 0}
+  bellPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &3300318489027887405
 GameObject:
   m_ObjectHideFlags: 0

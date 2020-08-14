@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
@@ -34,7 +36,16 @@ namespace PotatoGame
             // CheckInput();    
             // MoveToMousePosition();
         }
-        
+
+        //Adding to list
+        protected virtual void OnEnable()
+        {
+        }
+
+        protected virtual void OnDisable()
+        {
+        }
+
         // Check user's input ------------------------------------------------------
         protected override void CheckInput()
         {
@@ -236,5 +247,15 @@ namespace PotatoGame
         }
     }
 
+
+    // [System.Serializable]
+    // public class MoveToBell<T> : MoveAI<T> where T: AIController
+    // {
+    //     protected T component;
+    //     public MoveToBell(T component)
+    //     {
+    //         this.component = component;
+    //     }
+    // }
 
 }

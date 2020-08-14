@@ -13,6 +13,7 @@ namespace PotatoGame
         Autonomous,
         Idle,
         Move,
+        MoveToBell,
         Eat
     }
 
