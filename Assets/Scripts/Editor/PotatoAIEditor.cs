@@ -13,13 +13,13 @@ namespace PotatoGame
         {
             PotatoAI potato = (PotatoAI) target;
 
-            if (potato.Fsm.CurrentStateKey != null)
-            {
-                Handles.color = Color.red;
-                Handles.Label(potato.transform.position + Vector3.up * 2,
-                    potato.transform.position.ToString() + "\nState: " +
-                    potato.Fsm.CurrentStateKey.ToString());
-            }
+            // if (potato.Fsm.CurrentStateKey != null)
+            // {
+                // Handles.color = Color.red;
+                // Handles.Label(potato.transform.position + Vector3.up * 2,
+                //     potato.transform.position.ToString() + "\nState: " +
+                //     potato.Fsm.CurrentStateKey.ToString());
+            // }
         }
     }
 

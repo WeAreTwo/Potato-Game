@@ -29,6 +29,7 @@ namespace PotatoGame
 
         protected void Update()
         {
+
             if (Input.GetKeyDown(KeyCode.B))
             {
                 foreach (var potato in autonomousPotatoes)
@@ -36,6 +37,21 @@ namespace PotatoGame
                     potato.Fsm.Current.TriggerExit(PotatoStates.MoveToBell);
                 }
             }
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                foreach (var potato in autonomousPotatoes)
+                {
+                    potato.Fsm.Current.TriggerExit(PotatoStates.Idle);
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                foreach (var potato in autonomousPotatoes)
+                {
+                    potato.Fsm.Current.TriggerExit(PotatoStates.Follow);
+                }
+            }
+
         }
 
         /* TO DO:
