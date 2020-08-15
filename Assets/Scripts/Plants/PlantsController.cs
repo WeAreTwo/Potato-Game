@@ -33,7 +33,7 @@ namespace PotatoGame
             {
                 foreach (var potato in autonomousPotatoes)
                 {
-                    potato.Fsm.Current.TriggerExit(PlantStates.MoveToBell);
+                    potato.Fsm.Current.TriggerExit(PotatoStates.MoveToBell);
                 }
             }
         }

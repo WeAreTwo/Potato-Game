@@ -909,6 +909,8 @@ MonoBehaviour:
     m_Bits: 0
   _mHeading: {x: 0, y: 0, z: 0}
   navAgentSettings: {fileID: 11400000, guid: f89e21232f1b6944bbb8b74c5c520528, type: 2}
+  hunger: 100
+  hungerDecreaseFactor: 3
   bellPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &3300318489027887405
 GameObject:
