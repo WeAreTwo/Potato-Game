@@ -21,12 +21,12 @@ namespace PotatoGame
 
         protected override void Start()
         {
-            // base.Start();
             fsm = new StateMachine();
             fsm.Add(PlantStates.Idle, new IdleAI<PotatoAI>(this));
             fsm.Add(PlantStates.Move, new MoveAI<PotatoAI>(this));
             fsm.Add(PlantStates.MoveToBell, new MoveToBell<PotatoAI>(this));
             fsm.Initialize(PlantStates.Idle);
+            // navAgent.destination = Vector3.zero;
         }
 
 
@@ -67,14 +67,16 @@ namespace PotatoGame
 
         protected override void MoveToPosition()
         {
+            component.NavMesh.destination = component.BellPosition;
             // component.BellPosition.y = component.transform.position.y;
-            component.Heading = (component.BellPosition - component.transform.position).normalized;
-            
-            //condition for completion 
-            if (Vector3.Distance(component.transform.position, component.BellPosition) < 1.5f)
-            {
-                MakeDecision(); // make new decision 
-            }
+        
+            // component.Heading = (component.BellPosition - component.transform.position).normalized;
+            //
+            // //condition for completion 
+            // if (Vector3.Distance(component.transform.position, component.BellPosition) < 1.5f)
+            // {
+            //     MakeDecision(); // make new decision 
+            // }
             
         }
 

@@ -1008,7 +1008,8 @@ GameObject:
   - component: {fileID: 609730501616728284}
   - component: {fileID: 3400236404013853316}
   - component: {fileID: 8762184542164519801}
-  - component: {fileID: -1134091750836463305}
+  - component: {fileID: -7170232906525776805}
+  - component: {fileID: 4688468544212473386}
   m_Layer: 0
   m_Name: Potato Minion C
   m_TagString: Untagged
@@ -1140,7 +1141,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_leftHandTarget: {fileID: 0}
   m_rightHandTarget: {fileID: 0}
---- !u!114 &-1134091750836463305
+--- !u!195 &-7170232906525776805
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5986552758418032153}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 1
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0.05
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &4688468544212473386
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1160,6 +1183,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   _mHeading: {x: 0, y: 0, z: 0}
+  navAgentSettings: {fileID: 11400000, guid: f89e21232f1b6944bbb8b74c5c520528, type: 2}
   bellPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &6044038320030525662
 GameObject:

@@ -2,22 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class AIController : MovementBase
     {
+        [SerializeField] protected NavSettings navAgentSettings;
+        
+        protected NavMeshAgent navAgent;
         protected StateMachine fsm;
         protected PlantStates initState = PlantStates.Idle;
         
         protected Vector3 mouseTest = Vector3.zero;
 
         #region Properties
+        public NavSettings NavAgentSettings { get => navAgentSettings; set => navAgentSettings = value; }
+        public NavMeshAgent NavMesh { get => navAgent; set => navAgent = value; }
         public StateMachine Fsm { get => fsm; set => fsm = value; }
         #endregion
+
+        protected override void Awake()
+        {
+            base.Awake();
+            navAgent = this.GetComponent<NavMeshAgent>();
+        }
 
         protected override void Start()
         {
@@ -44,6 +57,19 @@ namespace PotatoGame
 
         protected virtual void OnDisable()
         {
+        }
+
+        protected void OnValidate()
+        {
+            if (navAgent)
+            {
+                navAgent.SetNavSetting(navAgentSettings);
+            }
+            else
+            {
+                navAgent = this.GetComponent<NavMeshAgent>();
+                navAgent.SetNavSetting(navAgentSettings);
+            }
         }
 
         // Check user's input ------------------------------------------------------
@@ -78,6 +104,18 @@ namespace PotatoGame
             _movementDirection = _mHeading;
             // _movementDirection = Camera.main.transform.TransformDirection(_movementDirection);
             _movementDirection.y = 0f;
+        }
+
+        protected override void CheckAnim()
+        {
+            if (navAgent.hasPath == false)
+            {
+                _mAnim.SetBool("walking", false);
+            }
+            else
+            {
+                _mAnim.SetBool("walking", true);
+            }
         }
 
         protected virtual void MoveToMousePosition()
