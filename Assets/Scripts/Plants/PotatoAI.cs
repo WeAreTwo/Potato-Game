@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace PotatoGame
 {
@@ -41,14 +42,15 @@ namespace PotatoGame
             fsm.Add(PotatoStates.Idle, new IdleAI<PotatoAI>(this));
             fsm.Add(PotatoStates.Move, new MoveAI<PotatoAI>(this));
             fsm.Add(PotatoStates.MoveToBell, new MoveToBell<PotatoAI>(this));
+            fsm.Add(PotatoStates.Follow, new Follow<PotatoAI>(this));
             fsm.Initialize(PotatoStates.Idle);
-            // navAgent.destination = Vector3.zero;
         }
 
 
         protected override void Update()
         {
             base.Update();
+            
             fsm.Update();
             CheckHunger();
         }
@@ -103,7 +105,7 @@ namespace PotatoGame
                     BinaryBranching(PotatoStates.Idle, PotatoStates.Look);
                     break;                
                 case PotatoStates.MoveToBell:
-                    SingleBranch(PotatoStates.Eat);
+                    SingleBranch(PotatoStates.Follow);
                     break;                
                 case PotatoStates.Eat:
                     SingleBranch(PotatoStates.Move);
@@ -158,8 +160,6 @@ namespace PotatoGame
     [System.Serializable]
     public class MoveToBell<T> : MoveAI<T> where T : PotatoAI
     {
-        // protected T component;
-        
         public MoveToBell(T component) : base(component)
         {
             this.component = component;
@@ -174,18 +174,51 @@ namespace PotatoGame
         protected override void MoveToPosition()
         {
             component.NavMesh.destination = component.BellPosition;
-            // component.BellPosition.y = component.transform.position.y;
-        
-            // component.Heading = (component.BellPosition - component.transform.position).normalized;
-            //
-            // //condition for completion 
-            // if (Vector3.Distance(component.transform.position, component.BellPosition) < 1.5f)
-            // {
-            //     MakeDecision(); // make new decision 
-            // }
-            
+            if (component.NavMesh.remainingDistance < 1.5f)
+            {
+                // component.NavMesh.isStopped = true;
+                MakeDecision();
+            }
         }
         
+        // protected override void MoveToPosition()
+        // {
+        //     component.Heading = (component.BellPosition - component.transform.position).normalized;
+        //     //condition for completion 
+        //     if (Vector3.Distance(component.transform.position, component.BellPosition) < 1.5f)
+        //     {
+        //         MakeDecision(); // make new decision 
+        //     }
+        // }
+        
+    }
+    
+    [System.Serializable]
+    public class Follow<T> : MoveAI<T> where T : PotatoAI
+    {
+        protected Vector3 playerPosition;
+        
+        public Follow(T component) : base(component)
+        {
+            this.component = component;
+        }
+
+        public override void OnStateStart()
+        {
+            base.OnStateStart();
+            playerPosition = GameObject.FindWithTag(ProjectTags.Player).transform.position;
+        }
+
+        public override void OnStateUpdate()
+        {
+            base.OnStateUpdate();
+            MoveToPosition();
+        }
+
+        protected override void MoveToPosition()
+        {
+            component.NavMesh.destination = playerPosition;
+        }
     }
 
     
