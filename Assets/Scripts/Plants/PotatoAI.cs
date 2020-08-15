@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEditor;
 
 namespace PotatoGame
 {
@@ -19,12 +20,13 @@ namespace PotatoGame
 
     public class PotatoAI : AIController
     {
-
+        [SerializeField] protected GameObject player;
         [SerializeField] protected float hunger = 100.0f;
         [SerializeField] protected float hungerDecreaseFactor = 3.0f;
         [SerializeField] protected Vector3 bellPosition;
 
         #region Properties
+        public GameObject Player { get => player; set => player = value; }
         public float Hunger { get => hunger; set => hunger = value; }
         public float HungerDecreaseFactor { get => hungerDecreaseFactor; set => hungerDecreaseFactor = value; }
         public Vector3 BellPosition { get => bellPosition; set => bellPosition = value; }
@@ -33,6 +35,7 @@ namespace PotatoGame
         protected override void Awake()
         {
             base.Awake();
+            player = GameObject.FindWithTag(ProjectTags.Player);
             bellPosition = GameObject.FindWithTag(ProjectTags.Bell).transform.position;
         }
 
@@ -54,7 +57,7 @@ namespace PotatoGame
             fsm.Update();
             CheckHunger();
         }
-        
+
         //Adding to list
         protected virtual void OnEnable()
         {
@@ -79,6 +82,31 @@ namespace PotatoGame
             {
                 if(ParticleController.Instance) ParticleController.Instance.EmitAt(this.transform.position);
                 Destroy(this.gameObject);
+            }
+        }
+
+        protected override void CheckAnim()
+        {
+            if (navAgent.isStopped)
+            {
+                _mAnim.SetBool("walking", false);
+            }
+            else
+            {
+                _mAnim.SetBool("walking", true);
+            }
+        }
+
+        protected override void OnDrawGizmos()
+        {
+            base.OnDrawGizmos();
+            if (fsm != null && fsm.CurrentStateKey != null)
+            {
+                Handles.color = Color.red;
+                Handles.Label(
+                    transform.position + Vector3.up * 2, 
+                    "\nState: " +
+                    Fsm.CurrentStateKey.ToString());
             }
         }
     }
@@ -173,8 +201,9 @@ namespace PotatoGame
 
         protected override void MoveToPosition()
         {
-            component.NavMesh.destination = component.BellPosition;
-            if (component.NavMesh.remainingDistance < 1.5f)
+            // component.NavMesh.destination = component.BellPosition;
+            component.NavMesh.SetDestination(component.BellPosition);
+            if (component.NavMesh.isStopped)
             {
                 // component.NavMesh.isStopped = true;
                 MakeDecision();
@@ -196,7 +225,6 @@ namespace PotatoGame
     [System.Serializable]
     public class Follow<T> : MoveAI<T> where T : PotatoAI
     {
-        protected Vector3 playerPosition;
         
         public Follow(T component) : base(component)
         {
@@ -206,7 +234,6 @@ namespace PotatoGame
         public override void OnStateStart()
         {
             base.OnStateStart();
-            playerPosition = GameObject.FindWithTag(ProjectTags.Player).transform.position;
         }
 
         public override void OnStateUpdate()
@@ -217,7 +244,8 @@ namespace PotatoGame
 
         protected override void MoveToPosition()
         {
-            component.NavMesh.destination = playerPosition;
+            // component.NavMesh.destination = playerPosition;
+            component.NavMesh.SetDestination(component.Player.transform.position);
         }
     }
 
