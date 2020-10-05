@@ -374,6 +374,8 @@ namespace PotatoGame
             else
             {
                 component.Heading = Vector3.zero;
+                component.NavMesh.Stop();  //will stop its current destination
+                component.NavMesh.ResetPath(); 
             }
         }
 
