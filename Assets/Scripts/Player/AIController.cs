@@ -1,38 +1,88 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class AIController : MovementBase
     {
+        [SerializeField] protected NavSettings navAgentSettings;
+        
+        protected NavMeshAgent navAgent;
         protected StateMachine fsm;
         protected PlantStates initState = PlantStates.Idle;
         
         protected Vector3 mouseTest = Vector3.zero;
+        
+        //navmesh velocity difference (for animation)
+        protected float velocityTimer = 0;
+        protected float velocityRecordDelay = 0.1f;
+        protected Vector3 lastFrameVelocity;
+        protected float speedDifference;
+        protected float speedAnimThreshold = 0.009f;
 
         #region Properties
+        public NavSettings NavAgentSettings { get => navAgentSettings; set => navAgentSettings = value; }
+        public NavMeshAgent NavMesh { get => navAgent; set => navAgent = value; }
         public StateMachine Fsm { get => fsm; set => fsm = value; }
         #endregion
+
+        protected override void Awake()
+        {
+            base.Awake();
+            navAgent = this.GetComponent<NavMeshAgent>();
+        }
 
         protected override void Start()
         {
             base.Start();
-            fsm = new StateMachine();
-            fsm.Add(PlantStates.Idle, new IdleAI<AIController>(this));
-            fsm.Add(PlantStates.Move, new MoveAI<AIController>(this));
-            
-            fsm.Initialize(initState);
         }
 
         protected override void Update()
         {
             base.Update();
-            fsm.Update();
-            // CheckInput();    
-            // MoveToMousePosition();
+            CheckLastFrameVelocity();
+        }
+
+        //Adding to list
+        protected virtual void OnEnable()
+        {
+        }
+
+        protected virtual void OnDisable()
+        {
+        }
+
+        protected void OnValidate()
+        {
+            if (navAgent)
+            {
+                navAgent.SetNavSetting(navAgentSettings);
+            }
+            else
+            {
+                navAgent = this.GetComponent<NavMeshAgent>();
+                navAgent.SetNavSetting(navAgentSettings);
+            }
+        }
+
+        protected virtual void CheckLastFrameVelocity()
+        {
+            velocityTimer += Time.deltaTime;
+            if (velocityTimer > velocityRecordDelay)
+            {
+                velocityTimer = 0;
+                speedDifference = Vector3.Distance(navAgent.velocity, lastFrameVelocity);
+                // Debug.Log(speedDifference);
+                // Debug.Log("Velocity Timer!");
+            }
+            lastFrameVelocity = navAgent.velocity;
         }
         
         // Check user's input ------------------------------------------------------
@@ -69,6 +119,19 @@ namespace PotatoGame
             _movementDirection.y = 0f;
         }
 
+        protected override void CheckAnim()
+        {
+            // if (navAgent.hasPath == false)
+            if (speedDifference > speedAnimThreshold)
+            {
+                _mAnim.SetBool("walking", true);
+            }
+            else
+            {
+                _mAnim.SetBool("walking", false);
+            }
+        }
+
         protected virtual void MoveToMousePosition()
         {
             if (Input.GetMouseButtonDown(0))
@@ -90,151 +153,5 @@ namespace PotatoGame
         }
     }
     
-    // AI CONTROLLER STATES
-    [System.Serializable]
-    public class IdleAI<T>: State where T: AIController
-    {
-        protected T component;
-
-        protected float idleTimer = 0.0f;
-        protected float idleTime = 5.0f;
-        
-        protected float popOutTimer = 0.0f;
-        protected float popOutTime = 3.0f;
-
-        public IdleAI(T component)
-        {
-            this.component = component;
-        }
-
-        //Everyframe while ur in this state
-        public override void OnStateUpdate()
-        {
-            base.OnStateUpdate();
-            Wait();
-        }
-
-        //ACTIONS 
-        protected virtual void Wait()
-        {
-            idleTimer += Time.deltaTime;
-            //condition for completion
-            if (idleTimer >= idleTime)
-            {
-                idleTimer = 0;
-                TriggerExit(PlantStates.Move);
-            }
-            else
-            {
-                component.Heading = Vector3.zero;
-            }
-        }
-
-        public override void DrawGizmos()
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(component.transform.position, Vector3.one);
-        }
-
-    }
-    
-    [System.Serializable]
-    public class MoveAI<T>: State where T: AIController
-    {
-        protected T component;
-        
-        protected Vector3 seekPosition;
-        protected float seekRange = 10.0f;
-        protected float moveTimer = 0.0f;
-        protected float moveTime = 5.0f;
-        
-        protected float popOutTimer = 0.0f;
-        protected float popOutTime = 3.0f;
-
-        public MoveAI(T component)
-        {
-            this.component = component;
-        }
-    
-        //When you first switch into this state
-        public override void OnStateStart()
-        {
-            base.OnStateStart();
-            PickRandomPosition();
-        }
-    
-        //Everyframe while ur in this state
-        public override void OnStateUpdate()
-        {
-            base.OnStateUpdate();
-            MoveToPosition();
-        }
-
-        protected void PopOut()
-        {
-            if (popOutTimer < popOutTime)
-            {
-                popOutTimer += Time.deltaTime;
-            }
-            else
-            {
-                popOutTimer = 0;
-            }
-        }
-        
-        protected virtual void PickRandomPosition()
-        {
-            float randX = Random.Range(-1.0f, 1.0f);
-            float randY = Random.Range(-1.0f, 1.0f);
-            Vector3 randomPos = new Vector3(randX,0,randY);
-            Vector3 currentPosXZ = new Vector3(component.transform.position.x,0,component.transform.position.z);
-            seekPosition = currentPosXZ + (randomPos * seekRange);
-        }
-        
-        protected virtual void MoveToPosition()
-        {
-            if (moveTimer <= moveTime)
-            {
-                moveTimer += Time.deltaTime;
-                seekPosition.y = component.transform.position.y;
-                component.Heading = (seekPosition - component.transform.position).normalized;
-            }
-            //condition for completion 
-            if (Vector3.Distance(component.transform.position, seekPosition) < 1.5f || moveTimer >= moveTime)
-            {
-                moveTimer = 0;  // reset the timer 
-                MakeDecision(); // make new decision 
-            }
-        }
-
-        protected virtual void MakeDecision()
-        {
-            //if there is a victim, go to eating mode 
-            float roll = Random.value;
-            if (roll < 0.45f)
-                TriggerExit(PlantStates.Idle);
-            else
-                PickRandomPosition();
-
-        }
-    
-        public override void DrawGizmos()
-        {
-            base.DrawGizmos();
-            //draw the seek range 
-            Gizmos.color = Color.black;
-            Gizmos.DrawWireSphere(component.transform.position, seekRange);
-            //draw the target 
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(seekPosition, 0.2f);
-            //draw a line to target
-            Gizmos.color = Color.black;
-            Gizmos.DrawLine(component.transform.position, seekPosition);
-    
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireCube(component.transform.position, Vector3.one );
-        }
-    }
-
 
 }

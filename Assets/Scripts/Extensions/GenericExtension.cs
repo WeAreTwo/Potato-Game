@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace PotatoGame
 {
@@ -96,6 +97,20 @@ namespace PotatoGame
                 rb.DeActivatePhysics();
             }
             obj.SetAllColliderTriggers(true);
+        }
+        
+        //NAV MESH EXTENSION METHODS
+        public static void SetNavSetting(this NavMeshAgent agent, NavSettings settings)
+        {
+            agent.baseOffset = settings.baseOffset;
+            agent.speed = settings.speed;
+            agent.angularSpeed = settings.angularSpeed;
+            agent.acceleration = settings.acceleration;
+            agent.stoppingDistance = settings.stoppingDistance;
+            agent.autoBraking = settings.autoBraking;
+            agent.radius = settings.radius;
+            agent.height = settings.height;
+            agent.avoidancePriority = settings.priority;
         }
     }
 }
