@@ -85,17 +85,17 @@ namespace PotatoGame
             }
         }
 
-        protected override void CheckAnim()
-        {
-            if (navAgent.isStopped)
-            {
-                _mAnim.SetBool("walking", false);
-            }
-            else
-            {
-                _mAnim.SetBool("walking", true);
-            }
-        }
+        // protected override void CheckAnim()
+        // {
+        //     if (navAgent.isStopped)
+        //     {
+        //         _mAnim.SetBool("walking", false);
+        //     }
+        //     else
+        //     {
+        //         _mAnim.SetBool("walking", true);
+        //     }
+        // }
 
         protected override void OnDrawGizmos()
         {

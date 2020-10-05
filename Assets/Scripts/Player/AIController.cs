@@ -19,6 +19,13 @@ namespace PotatoGame
         protected PlantStates initState = PlantStates.Idle;
         
         protected Vector3 mouseTest = Vector3.zero;
+        
+        //navmesh velocity difference (for animation)
+        protected float velocityTimer = 0;
+        protected float velocityRecordDelay = 0.1f;
+        protected Vector3 lastFrameVelocity;
+        protected float speedDifference;
+        protected float speedAnimThreshold = 0.009f;
 
         #region Properties
         public NavSettings NavAgentSettings { get => navAgentSettings; set => navAgentSettings = value; }
@@ -40,6 +47,7 @@ namespace PotatoGame
         protected override void Update()
         {
             base.Update();
+            CheckLastFrameVelocity();
         }
 
         //Adding to list
@@ -64,6 +72,19 @@ namespace PotatoGame
             }
         }
 
+        protected virtual void CheckLastFrameVelocity()
+        {
+            velocityTimer += Time.deltaTime;
+            if (velocityTimer > velocityRecordDelay)
+            {
+                velocityTimer = 0;
+                speedDifference = Vector3.Distance(navAgent.velocity, lastFrameVelocity);
+                // Debug.Log(speedDifference);
+                // Debug.Log("Velocity Timer!");
+            }
+            lastFrameVelocity = navAgent.velocity;
+        }
+        
         // Check user's input ------------------------------------------------------
         protected override void CheckInput()
         {
@@ -100,13 +121,14 @@ namespace PotatoGame
 
         protected override void CheckAnim()
         {
-            if (navAgent.hasPath == false)
+            // if (navAgent.hasPath == false)
+            if (speedDifference > speedAnimThreshold)
             {
-                _mAnim.SetBool("walking", false);
+                _mAnim.SetBool("walking", true);
             }
             else
             {
-                _mAnim.SetBool("walking", true);
+                _mAnim.SetBool("walking", false);
             }
         }
 
