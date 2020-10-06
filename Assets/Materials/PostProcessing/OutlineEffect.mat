@@ -65,12 +65,12 @@ Material:
     - _Blend: 0
     - _BumpScale: 1
     - _ColorFilterSensitivity: 0.5
-    - _ColorSensitivity: 10
+    - _ColorSensitivity: 1.57
     - _Cull: 2
     - _Cutoff: 0.5
     - _Delta: 3.74
     - _DepthDistance: 48.4
-    - _DepthSensitivity: 0.05
+    - _DepthSensitivity: 0.09
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
