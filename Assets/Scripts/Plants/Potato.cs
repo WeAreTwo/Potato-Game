@@ -125,7 +125,7 @@ namespace PotatoGame
         {
             //particles
             ParticleController.Instance.EmitAt(this.transform.position);
-            GameObject obj = Instantiate(autonomousForm, this.transform.position + Vector3.up, Quaternion.identity);
+            GameObject obj = Instantiate(autonomousForm, this.transform.position + Vector3.up * 2.0f, Quaternion.identity);
             
             Destroy(this.gameObject);
         }

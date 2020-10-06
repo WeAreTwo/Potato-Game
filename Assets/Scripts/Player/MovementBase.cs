@@ -3,13 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.AI;
 
 namespace PotatoGame
 {
-
-    [RequireComponent(typeof(CharacterController))]    //basic controller for movement
+    //todo delete all character controller related variables if navmesh based movement is way to go
     [RequireComponent(typeof(Animator))]                //for animation
-    [RequireComponent(typeof(IKController))]            //to enabled use of IK
     public class MovementBase : MonoBehaviour
     {
         
@@ -42,9 +41,9 @@ namespace PotatoGame
         
         protected virtual void Awake()
         {
-            _mController = this.GetComponent<CharacterController>();
             _mAnim = this.GetComponent<Animator>();
-            _mGroundCheck = transform.GetChild(0).transform; //Todo eliminate this dependancy (maybe using a vector3 inside script?)
+            // _mController = this.GetComponent<CharacterController>();
+            // _mGroundCheck = transform.GetChild(0).transform; //Todo eliminate this dependancy (maybe using a vector3 inside script?)
         }
 
         protected virtual void Start()
@@ -55,9 +54,10 @@ namespace PotatoGame
         protected virtual void Update()
         {
             CheckInput();
-            CheckGround();
+            // CheckGround();
             CheckAnim();
-            Movement();
+            // Movement();
+            NavMeshMovement();
         }
 
         protected virtual void CheckInput()
@@ -77,6 +77,37 @@ namespace PotatoGame
             _movementDirection = _mHeading;
             _movementDirection = Camera.main.transform.TransformDirection(_movementDirection);
             _movementDirection.y = 0f;
+        }
+        
+        protected virtual void NavMeshMovement()
+        {
+            //refL https://www.youtube.com/watch?v=bH33Qvhvl40 Ciro from unity
+            float inputMagnitude = _mHeading.sqrMagnitude;
+            if (inputMagnitude >= .01f)
+            {
+                Vector3 newPosition = transform.position + _movementDirection * (m_movementSpeed * Time.deltaTime);
+                NavMeshHit hit;
+                bool isValid = NavMesh.SamplePosition(newPosition, out hit, .3f, NavMesh.AllAreas);
+                if (isValid)
+                {
+                    if ((transform.position - hit.position).magnitude >= .02f)
+                    {
+                        transform.position = hit.position;
+                    }
+                    else
+                    {
+                        //movement stopped this frame
+                    }
+                }
+                else
+                {
+                    //no input from player
+                }
+                
+                _movementDirection = Vector3.ClampMagnitude(_movementDirection, 1);
+                _mLookRotation = Quaternion.LookRotation(_movementDirection);
+                transform.rotation = Quaternion.Lerp(transform.rotation, _mLookRotation, m_rotationSpeed * Time.deltaTime);
+            }
         }
 
         protected virtual void CheckGround()

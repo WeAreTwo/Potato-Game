@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.AI;
 using UnityEngine.Serialization;
 
 namespace PotatoGame
 {
+    [RequireComponent(typeof(CharacterController))]    //basic controller for movement
+    [RequireComponent(typeof(Animator))]                //for animation
+    [RequireComponent(typeof(IKController))]            //to enabled use of IK
+    [RequireComponent(typeof(NavMeshObstacle))]            //the player is an obstacle
     public class PlayerController : MovementBase
     {
 

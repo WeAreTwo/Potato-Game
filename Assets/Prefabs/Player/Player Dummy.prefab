@@ -1341,11 +1341,12 @@ GameObject:
   - component: {fileID: 3064457623205746666}
   - component: {fileID: 6960636026518744350}
   - component: {fileID: 3064457623205746645}
+  - component: {fileID: 8811146963234699438}
   - component: {fileID: 3064457623205746644}
   - component: {fileID: 386519607}
   - component: {fileID: 386519608}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player Dummy
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1868,6 +1869,22 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.02, z: 0}
+--- !u!208 &8811146963234699438
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6460078239362077429}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 1.095, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.03, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!114 &3064457623205746644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1887,6 +1904,7 @@ MonoBehaviour:
   m_ground:
     serializedVersion: 2
     m_Bits: 0
+  _mHeading: {x: 0, y: 0, z: 0}
 --- !u!114 &386519607
 MonoBehaviour:
   m_ObjectHideFlags: 0

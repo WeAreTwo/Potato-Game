@@ -302,6 +302,8 @@ namespace PotatoGame
             Vector3 randomPos = new Vector3(randX,0,randY);
             Vector3 currentPosXZ = new Vector3(component.transform.position.x,0,component.transform.position.z);
             seekPosition = currentPosXZ + (randomPos * seekRange);
+
+            component.NavMesh.destination = seekPosition;
         }
     
         protected virtual void MoveToPosition()
@@ -324,7 +326,7 @@ namespace PotatoGame
         {
             base.DrawGizmos();
             //draw the seek range 
-            Gizmos.color = Color.black;
+            Gizmos.color = Color.magenta;
             Gizmos.DrawWireSphere(component.transform.position, seekRange);
             //draw the target 
             Gizmos.color = Color.red;
@@ -369,7 +371,8 @@ namespace PotatoGame
             if (idleTimer >= idleTime)
             {
                 idleTimer = 0;
-                TriggerExit(PlantStates.Move);
+                // TriggerExit(PlantStates.Move);
+                MakeDecision();
             }
             else
             {
