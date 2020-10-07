@@ -88,11 +88,11 @@ namespace PotatoGame
         // Check user's input ------------------------------------------------------
         protected override void CheckInput()
         {
-            if (_mIsGrounded && _mVelocity.y < 0)
-                _mVelocity.y = 0f;
+            if (isGrounded && movementVelocity.y < 0)
+                movementVelocity.y = 0f;
 
             // Step between each movement
-            _movementStep = m_movementSpeed * Time.deltaTime;
+            movementStep = movementSpeed * Time.deltaTime;
             
             // Catch the inputs in a vector3
             // (make sure inputs makes sense with camera view)
@@ -110,13 +110,13 @@ namespace PotatoGame
             // _mHeading.z = Mathf.PerlinNoise(transform.position.x, Time.deltaTime) * 2.0f - 1.0f;
             
             // _mHeading.y = 0;
-            _mHeading *= m_movementSpeed;
-            _mHeading.x = Mathf.Clamp(_mHeading.x, -1.0f, 1.0f);
-            _mHeading.z = Mathf.Clamp(_mHeading.z, -1.0f, 1.0f);
+            heading *= movementSpeed;
+            heading.x = Mathf.Clamp(heading.x, -1.0f, 1.0f);
+            heading.z = Mathf.Clamp(heading.z, -1.0f, 1.0f);
             
-            _movementDirection = _mHeading;
+            movementDirection = heading;
             // _movementDirection = Camera.main.transform.TransformDirection(_movementDirection);
-            _movementDirection.y = 0f;
+            movementDirection.y = 0f;
         }
 
         protected override void CheckAnim()
@@ -124,11 +124,11 @@ namespace PotatoGame
             // if (navAgent.hasPath == false)
             if (speedDifference > speedAnimThreshold)
             {
-                _mAnim.SetBool("walking", true);
+                animComponent.SetBool("walking", true);
             }
             else
             {
-                _mAnim.SetBool("walking", false);
+                animComponent.SetBool("walking", false);
             }
         }
 

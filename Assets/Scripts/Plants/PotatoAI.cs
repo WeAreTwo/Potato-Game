@@ -303,7 +303,7 @@ namespace PotatoGame
             Vector3 currentPosXZ = new Vector3(component.transform.position.x,0,component.transform.position.z);
             seekPosition = currentPosXZ + (randomPos * seekRange);
 
-            component.NavMesh.destination = seekPosition;
+            component.NavMesh.SetDestination(seekPosition);
         }
     
         protected virtual void MoveToPosition()
@@ -312,7 +312,7 @@ namespace PotatoGame
             {
                 moveTimer += Time.deltaTime;
                 seekPosition.y = component.transform.position.y;
-                component.Heading = (seekPosition - component.transform.position).normalized;
+                // component.Heading = (seekPosition - component.transform.position).normalized;
             }
             //condition for completion 
             if (Vector3.Distance(component.transform.position, seekPosition) < 1.5f || moveTimer >= moveTime)
