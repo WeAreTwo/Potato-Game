@@ -21,17 +21,24 @@ namespace PotatoGame
     public class PotatoAI : AIController
     {
         [SerializeField] protected GameObject player;
+        [SerializeField] protected Vector3 bellPosition;
+
+        [SerializeField] protected PotatoAI feedTarget;
+        [SerializeField] protected float feedDistance = 1.0f;
         [SerializeField] protected float hunger = 100.0f;
         [SerializeField] protected float hungerDecreaseFactor = 3.0f;
-        [SerializeField] protected Vector3 bellPosition;
 
         #region Properties
         public GameObject Player { get => player; set => player = value; }
+        public Vector3 BellPosition { get => bellPosition; set => bellPosition = value; }
+        public PotatoAI FeedTarget { get => feedTarget; set => feedTarget = value; }
+        public float FeedDistance { get => feedDistance; set => feedDistance = value; }
         public float Hunger { get => hunger; set => hunger = value; }
         public float HungerDecreaseFactor { get => hungerDecreaseFactor; set => hungerDecreaseFactor = value; }
-        public Vector3 BellPosition { get => bellPosition; set => bellPosition = value; }
         #endregion
 
+        #region Call Methods
+        
         protected override void Awake()
         {
             base.Awake();
@@ -46,6 +53,8 @@ namespace PotatoGame
             fsm.Add(PotatoStates.Move, new MoveAI<PotatoAI>(this));
             fsm.Add(PotatoStates.MoveToBell, new MoveToBell<PotatoAI>(this));
             fsm.Add(PotatoStates.Follow, new Follow<PotatoAI>(this));
+            fsm.Add(PotatoStates.Eat, new Feed<PotatoAI>(this));
+            fsm.Add(PotatoStates.Look, new Look<PotatoAI>(this));
             fsm.Initialize(PotatoStates.Idle);
         }
 
@@ -71,6 +80,8 @@ namespace PotatoGame
                 GameManager.Instance.plantsController.AutonomousPotatoes.Remove(this);
         }
         
+        #endregion
+
         //Potato general behaviour
         protected virtual void CheckHunger()
         {
@@ -110,6 +121,8 @@ namespace PotatoGame
             }
         }
     }
+
+    #region Base State
 
     //THIS IS GOING TO BE THE BRAIN OF THE DECISION MAKING 
     [System.Serializable]
@@ -184,7 +197,10 @@ namespace PotatoGame
         }
         
     }
+    
+    #endregion
 
+    #region Move TO Bell
     [System.Serializable]
     public class MoveToBell<T> : MoveAI<T> where T : PotatoAI
     {
@@ -221,7 +237,10 @@ namespace PotatoGame
         // }
         
     }
+    #endregion
     
+    #region Follow State
+
     [System.Serializable]
     public class Follow<T> : MoveAI<T> where T : PotatoAI
     {
@@ -249,7 +268,9 @@ namespace PotatoGame
         }
     }
 
-    
+    #endregion
+
+    #region Move State
     // AI CONTROLLER STATES
     [System.Serializable]
     public class MoveAI<T>: PotatoBaseState<T> where T: PotatoAI
@@ -339,6 +360,9 @@ namespace PotatoGame
             Gizmos.DrawWireCube(component.transform.position, Vector3.one );
         }
     }
+    #endregion
+
+    #region Idle State
 
     [System.Serializable]
     public class IdleAI<T>: PotatoBaseState<T> where T: PotatoAI
@@ -387,6 +411,135 @@ namespace PotatoGame
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(component.transform.position, Vector3.one);
         }
-
     }
+    #endregion
+
+    #region Feed State
+
+    [System.Serializable]
+    public class Feed<T>: PotatoBaseState<T> where T: PotatoAI
+    {
+        //will transition into feed state from look state 
+        
+        protected T component;
+        
+        protected float eatTimer = 0.0f;
+        protected float eatTime = 3.0f;
+
+        public Feed(T component) : base(component)
+        {
+            this.component = component;
+        }
+
+        public override void OnStateStart()
+        {
+            base.OnStateStart();
+        }
+
+        //Everyframe while ur in this state
+        public override void OnStateUpdate()
+        {
+            base.OnStateUpdate();
+            Eat();
+        }
+
+        //ACTIONS 
+        protected virtual void Eat()
+        {
+            //condition for completion
+            if (component.FeedTarget == null)
+            {
+                // component.eatingEffect.SetActive(false);
+                MakeDecision();
+            }
+            else
+            {
+                Vector3 targetPosition = component.FeedTarget.transform.position;
+                if (Vector3.Distance(component.transform.position, targetPosition) < component.FeedDistance)
+                {
+                    component.NavMesh.Stop();  //will stop its current destination
+                    component.NavMesh.ResetPath(); 
+                    
+                    //eatimer is for decreasing healthbar by tigs
+                    eatTimer += Time.deltaTime;
+                    if (eatTimer >= eatTime)
+                    {
+                        eatTimer = 0.0f;
+                        if (component.FeedTarget.Health - 25.0f <= 0)
+                        {
+                            component.Hunger += 10.0f;
+                            component.FeedTarget.Health -= 25.0f;
+                            component.FeedTarget.Die();
+                        }
+                        else
+                        {
+                            component.Hunger += 10.0f;
+                            component.FeedTarget.Health -= 25.0f;
+                        }
+                    }
+                }
+                else
+                {
+                    //set navmesh destintation to target 
+                    component.NavMesh.SetDestination(component.FeedTarget.transform.position);
+                }
+                
+            }
+        }
+
+        public override void DrawGizmos()
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one);
+        }
+    }
+
+    #endregion
+    
+    #region Feed State
+
+    [System.Serializable]
+    public class Look<T>: PotatoBaseState<T> where T: PotatoAI
+    {
+        //will transition into look after moving or idling
+        
+        protected T component;
+        
+        protected float lookTimer = 0.0f;
+        protected float lookTime = 3.0f;
+        
+
+        public Look(T component) : base(component)
+        {
+            this.component = component;
+        }
+
+        public override void OnStateStart()
+        {
+            base.OnStateStart();
+        }
+
+        //Everyframe while ur in this state
+        public override void OnStateUpdate()
+        {
+            base.OnStateUpdate();
+            LookAround();
+        }
+
+        //ACTIONS 
+        protected virtual void LookAround()
+        {
+            //check for surrounding AI
+            //check for food 
+            //check for whatever 
+        }
+
+        public override void DrawGizmos()
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(component.transform.position, Vector3.one);
+        }
+    }
+
+    #endregion
 }

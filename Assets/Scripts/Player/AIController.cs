@@ -18,7 +18,8 @@ namespace PotatoGame
         protected StateMachine fsm;
         protected PlantStates initState = PlantStates.Idle;
         
-        protected Vector3 mouseTest = Vector3.zero;
+        //base params
+        protected float health = 100.0f;
         
         //navmesh velocity difference (for animation)
         protected float velocityTimer = 0;
@@ -27,10 +28,14 @@ namespace PotatoGame
         protected float speedDifference;
         protected float speedAnimThreshold = 0.009f;
 
+        protected Vector3 mouseTest = Vector3.zero;
+
         #region Properties
         public NavSettings NavAgentSettings { get => navAgentSettings; set => navAgentSettings = value; }
         public NavMeshAgent NavMesh { get => navAgent; set => navAgent = value; }
         public StateMachine Fsm { get => fsm; set => fsm = value; }
+        public float Health { get => health; set => health = value; }
+
         #endregion
 
         protected override void Awake()
@@ -142,6 +147,15 @@ namespace PotatoGame
                 touchPos.z = dist;
                 mouseTest = Camera.main.ScreenToWorldPoint(touchPos);
                 mouseTest.y = 0;
+            }
+        }
+
+        public virtual void Die()
+        {
+            //if hunger depletes, die
+            if(health <= 0.0f)
+            {
+                Destroy(this.gameObject);
             }
         }
 
