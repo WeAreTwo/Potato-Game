@@ -15,7 +15,9 @@ namespace PotatoGame
         MoveToBell,
         Follow,
         Look,
-        Eat
+        Eat,
+        Dying,
+        PickedUp
     }
 
     public class PotatoAI : AIController
@@ -62,7 +64,6 @@ namespace PotatoGame
         protected override void Update()
         {
             base.Update();
-            
             fsm.Update();
             CheckHunger();
         }
@@ -70,14 +71,14 @@ namespace PotatoGame
         //Adding to list
         protected virtual void OnEnable()
         {
-            if(GameManager.Instance && GameManager.Instance.plantsController)
-                GameManager.Instance.plantsController.AutonomousPotatoes.Add(this);
+            if(manager && manager.plantsController)
+                manager.plantsController.AutonomousPotatoes.Add(this);
         }
 
         protected virtual void OnDisable()
         {
-            if(GameManager.Instance && GameManager.Instance.plantsController)
-                GameManager.Instance.plantsController.AutonomousPotatoes.Remove(this);
+            if(manager && manager.plantsController)
+                manager.plantsController.AutonomousPotatoes.Remove(this);
         }
         
         #endregion
@@ -125,12 +126,14 @@ namespace PotatoGame
     #region Base State
 
     //THIS IS GOING TO BE THE BRAIN OF THE DECISION MAKING 
+    //Todo implement different decision making based on different AI
+    //Note: i changed from potato base state to AIbasestate
     [System.Serializable]
-    public class PotatoBaseState<T> : State where T : PotatoAI
+    public class AIBaseState<T> : State where T : PotatoAI
     {
         protected T component;
 
-        public PotatoBaseState(T component)
+        public AIBaseState(T component)
         {
             this.component = component;
         }
@@ -156,7 +159,6 @@ namespace PotatoGame
                     break;                
                 case PotatoStates.Look:
                     BinaryBranching(PotatoStates.Move, PotatoStates.Idle);
-
                     break;
             }
         }
@@ -273,12 +275,10 @@ namespace PotatoGame
     #region Move State
     // AI CONTROLLER STATES
     [System.Serializable]
-    public class MoveAI<T>: PotatoBaseState<T> where T: PotatoAI
+    public class MoveAI<T>: AIBaseState<T> where T: PotatoAI
     {
-        // protected T component;
-    
-        protected Vector3 seekPosition;
-        protected float seekRange = 10.0f;
+        protected T component;
+        
         protected float moveTimer = 0.0f;
         protected float moveTime = 5.0f;
     
@@ -322,9 +322,9 @@ namespace PotatoGame
             float randY = Random.Range(-1.0f, 1.0f);
             Vector3 randomPos = new Vector3(randX,0,randY);
             Vector3 currentPosXZ = new Vector3(component.transform.position.x,0,component.transform.position.z);
-            seekPosition = currentPosXZ + (randomPos * seekRange);
+            component.seekPosition = currentPosXZ + (randomPos * component.seekRange);
 
-            component.NavMesh.SetDestination(seekPosition);
+            component.NavMesh.SetDestination(component.seekPosition);
         }
     
         protected virtual void MoveToPosition()
@@ -332,11 +332,11 @@ namespace PotatoGame
             if (moveTimer <= moveTime)
             {
                 moveTimer += Time.deltaTime;
-                seekPosition.y = component.transform.position.y;
-                // component.Heading = (seekPosition - component.transform.position).normalized;
+                component.seekPosition.y = component.transform.position.y;
+                // component.Heading = (component.seekPosition - component.transform.position).normalized;
             }
             //condition for completion 
-            if (Vector3.Distance(component.transform.position, seekPosition) < 1.5f || moveTimer >= moveTime)
+            if (Vector3.Distance(component.transform.position, component.seekPosition) < 1.5f || moveTimer >= moveTime)
             {
                 moveTimer = 0;  // reset the timer 
                 MakeDecision(); // make new decision 
@@ -348,13 +348,13 @@ namespace PotatoGame
             base.DrawGizmos();
             //draw the seek range 
             Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(component.transform.position, seekRange);
+            Gizmos.DrawWireSphere(component.transform.position, component.seekRange);
             //draw the target 
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(seekPosition, 0.2f);
+            Gizmos.DrawWireSphere(component.seekPosition, 0.2f);
             //draw a line to target
             Gizmos.color = Color.black;
-            Gizmos.DrawLine(component.transform.position, seekPosition);
+            Gizmos.DrawLine(component.transform.position, component.seekPosition);
 
             Gizmos.color = Color.magenta;
             Gizmos.DrawWireCube(component.transform.position, Vector3.one );
@@ -365,15 +365,12 @@ namespace PotatoGame
     #region Idle State
 
     [System.Serializable]
-    public class IdleAI<T>: PotatoBaseState<T> where T: PotatoAI
+    public class IdleAI<T>: AIBaseState<T> where T: PotatoAI
     {
-        // protected T component;
+        protected T component;
 
         protected float idleTimer = 0.0f;
         protected float idleTime = 5.0f;
-
-        protected float popOutTimer = 0.0f;
-        protected float popOutTime = 3.0f;
 
         public IdleAI(T component) : base(component)
         {
@@ -401,8 +398,7 @@ namespace PotatoGame
             else
             {
                 component.Heading = Vector3.zero;
-                component.NavMesh.Stop();  //will stop its current destination
-                component.NavMesh.ResetPath(); 
+                component.NavMesh.StopNavigation(); // stops the nav mesh destination and path
             }
         }
 
@@ -417,7 +413,7 @@ namespace PotatoGame
     #region Feed State
 
     [System.Serializable]
-    public class Feed<T>: PotatoBaseState<T> where T: PotatoAI
+    public class Feed<T>: AIBaseState<T> where T: PotatoAI
     {
         //will transition into feed state from look state 
         
@@ -457,8 +453,7 @@ namespace PotatoGame
                 Vector3 targetPosition = component.FeedTarget.transform.position;
                 if (Vector3.Distance(component.transform.position, targetPosition) < component.FeedDistance)
                 {
-                    component.NavMesh.Stop();  //will stop its current destination
-                    component.NavMesh.ResetPath(); 
+                    component.NavMesh.StopNavigation();
                     
                     //eatimer is for decreasing healthbar by tigs
                     eatTimer += Time.deltaTime;
@@ -496,10 +491,10 @@ namespace PotatoGame
 
     #endregion
     
-    #region Feed State
+    #region Look State
 
     [System.Serializable]
-    public class Look<T>: PotatoBaseState<T> where T: PotatoAI
+    public class Look<T>: AIBaseState<T> where T: PotatoAI
     {
         //will transition into look after moving or idling
         
@@ -531,7 +526,19 @@ namespace PotatoGame
         {
             //check for surrounding AI
             //check for food 
-            //check for whatever 
+            //check for whatever
+            
+            //todo generalize and maybe get the closest?
+            //todo prevent it from eating itself
+            Collider[] hitColliders = Physics.OverlapSphere(component.transform.position, component.seekRange);
+            foreach (Collider hit in hitColliders)
+            {
+                if(hit.TryGetComponent(out PotatoAI potato))
+                {
+                    component.FeedTarget = potato;
+                    TriggerExit(PotatoStates.Eat);
+                }
+            }
         }
 
         public override void DrawGizmos()
@@ -539,6 +546,103 @@ namespace PotatoGame
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(component.transform.position, Vector3.one);
         }
+    }
+
+    #endregion
+    
+    #region Dying State
+
+    [System.Serializable]
+    public class Dying<T>: AIBaseState<T> where T: PotatoAI
+    {
+        //will transition into look after moving or idling
+        
+        protected T component;
+
+        protected bool hasFinishedDying = false;
+
+        public Dying(T component) : base(component)
+        {
+            this.component = component;
+        }
+
+        public override void OnStateStart()
+        {
+            base.OnStateStart();
+            
+        }
+
+        //Everyframe while ur in this state
+        public override void OnStateUpdate()
+        {
+            base.OnStateUpdate();
+            DyingAnimation();
+            CheckDeath();
+        }
+
+        IEnumerator DyingAnim()
+        {
+            //emit particle and other stuff it needs
+            yield return null;
+        }
+
+        protected void DyingAnimation()
+        {
+            //process for dying here
+            
+            //it has finished doing everything before dying
+            hasFinishedDying = true;
+        }
+
+        protected void CheckDeath()
+        {
+            if (hasFinishedDying)
+            {
+                component.Die();
+            }
+        }
+
+    }
+
+    #endregion
+    
+    #region Picked Up State
+
+    [System.Serializable]
+    public class PickedUp<T>: AIBaseState<T> where T: PotatoAI
+    {
+        //will transition into look after moving or idling
+        
+        protected T component;
+
+        protected bool isPickedUp = false;
+        
+        public PickedUp(T component) : base(component)
+        {
+            this.component = component;
+        }
+
+        public override void OnStateStart()
+        {
+            base.OnStateStart();
+            isPickedUp = true;
+        }
+
+        //Everyframe while ur in this state
+        public override void OnStateUpdate()
+        {
+            base.OnStateUpdate();
+
+        }
+
+        protected void PickedUpState()
+        {
+            //disbale physics
+            //disable pathfinding
+            //do nothing else 
+        }
+        
+
     }
 
     #endregion

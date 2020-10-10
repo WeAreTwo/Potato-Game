@@ -818,11 +818,16 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
+  currentState: 
   navAgentSettings: {fileID: 11400000, guid: f89e21232f1b6944bbb8b74c5c520528, type: 2}
+  seekPosition: {x: 0, y: 0, z: 0}
+  seekRange: 10
   player: {fileID: 0}
+  bellPosition: {x: 0, y: 0, z: 0}
+  feedTarget: {fileID: 0}
+  feedDistance: 1
   hunger: 100
   hungerDecreaseFactor: 3
-  bellPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &3300318489027887405
 GameObject:
   m_ObjectHideFlags: 0
