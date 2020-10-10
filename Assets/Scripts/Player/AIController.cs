@@ -9,9 +9,27 @@ using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
+
+    [System.Serializable]
+    public enum AIStates
+    {
+        Idle,
+        Move,
+        MoveToBell,
+        Follow,
+        Look,
+        Eat,
+        Dying,
+        PickedUp,
+        RunningAway
+    }
+    
     [RequireComponent(typeof(NavMeshAgent))]
     public class AIController : MovementBase
     {
+        protected GameManager manager;
+        
+        [SerializeField] protected string currentState;
         [SerializeField] protected NavSettings navAgentSettings;
         
         protected NavMeshAgent navAgent;
@@ -27,6 +45,10 @@ namespace PotatoGame
         protected Vector3 lastFrameVelocity;
         protected float speedDifference;
         protected float speedAnimThreshold = 0.009f;
+        
+        //seeking and movement
+        public Vector3 seekPosition;
+        public float seekRange = 10.0f;
 
         protected Vector3 mouseTest = Vector3.zero;
 
@@ -35,12 +57,15 @@ namespace PotatoGame
         public NavMeshAgent NavMesh { get => navAgent; set => navAgent = value; }
         public StateMachine Fsm { get => fsm; set => fsm = value; }
         public float Health { get => health; set => health = value; }
+        public Vector3 SeekPosition { get => seekPosition; set => seekPosition = value; }
+        public float SeekRange { get => seekRange; set => seekRange = value; }
 
         #endregion
 
         protected override void Awake()
         {
             base.Awake();
+            manager = GameManager.Instance;
             navAgent = this.GetComponent<NavMeshAgent>();
         }
 
@@ -52,6 +77,7 @@ namespace PotatoGame
         protected override void Update()
         {
             base.Update();
+            currentState = fsm.Current.ToString(); //update the current state for visibility
             CheckLastFrameVelocity();
         }
 

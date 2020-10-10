@@ -29,6 +29,13 @@ namespace PotatoGame
 
         protected void Update()
         {
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                foreach (var potato in autonomousPotatoes)
+                {
+                    potato.Fsm.Current.TriggerExit(PotatoStates.Look);
+                }
+            }
 
             if (Input.GetKeyDown(KeyCode.B))
             {

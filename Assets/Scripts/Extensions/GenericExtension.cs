@@ -112,5 +112,11 @@ namespace PotatoGame
             agent.height = settings.height;
             agent.avoidancePriority = settings.priority;
         }
+
+        public static void StopNavigation(this NavMeshAgent agent)
+        {
+            agent.Stop();
+            agent.ResetPath();
+        }
     }
 }
