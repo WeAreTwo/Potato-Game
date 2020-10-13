@@ -146,6 +146,12 @@ namespace PotatoGame
             }
         }
     }
+
+    // [System.Serializable]
+    // public class DebugLeaf : Leaf
+    // {
+    //     
+    // }
     
     public class BehaviourTree : MonoBehaviour
     {
