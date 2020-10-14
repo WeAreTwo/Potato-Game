@@ -63,89 +63,105 @@ namespace PotatoGame
         public virtual void OnReset() {}
 
         //to determine succes,  fail, running
-        public abstract NodeState CheckNodeStatus();
+        public abstract NodeState TickNode();
     }
 
     [System.Serializable]
-    public abstract class Composite : Node
+    public class SequenceNode : Node
     {
-        [SerializeField] protected List<Node> childNodes = new List<Node>();
+        [SerializeField] protected int currentNodeIndex = 0;
+        [SerializeField] protected List<Node> childNodes;
 
-        public Composite(List<Node> childNodes)
+        public SequenceNode(List<Node> childNodes)
         {
             this.childNodes = childNodes;
         }
         
-        public override NodeState CheckNodeStatus()
+        public override NodeState TickNode()
         {
-            
-            bool anyChildRunning = false;
-            
-            //todo make it start from the running node of lookping through the first nodes again
-            //if some node is still running then keep looping
-            while (anyChildRunning)
+            NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
+            Debug.Log(currentNodeState);
+            switch(currentNodeState)
             {
-                anyChildRunning = false; //reset bool
-                
-                foreach (Node child in childNodes)
-                {
-                    switch (child.CheckNodeStatus())
-                    {
-                        case NodeState.SUCCESS:
-                            continue;
-                        case NodeState.FAILURE:
-                            this.nodeStatus = NodeState.FAILURE;
-                            return this.nodeStatus;
-                        case NodeState.RUNNING:
-                            anyChildRunning = true;
-                            continue;
-                    }
-                }
+                case NodeState.SUCCESS:
+                    if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
+                    break;
+                case NodeState.RUNNING:
+                    return NodeState.RUNNING;
+                    break;
+                case NodeState.FAILURE:
+                    return NodeState.FAILURE;
+                    break;
             }
 
-            this.nodeStatus = anyChildRunning ? NodeState.RUNNING : NodeState.SUCCESS;
-            return this.nodeStatus;
+            if (currentNodeIndex == childNodes.Count - 1)
+            {
+                this.nodeStatus = NodeState.SUCCESS;
+                return NodeState.SUCCESS;
+            }
+
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING;
         }
     }
     
     //node with only 1 child
     [System.Serializable]
-    public abstract class Decorator : Node
+    public abstract class DecoratorNode : Node
     {
         
     }
     
+    //node with only 1 child
+    [System.Serializable]
+    public abstract class ConditionNode : DecoratorNode
+    {
+        protected MonoBehaviour context;
+        
+        public ConditionNode(MonoBehaviour context)
+        {
+            this.context = context;
+        }
+
+        public override NodeState TickNode()
+        {
+            return this.nodeStatus;
+        }
+    }
+    
     //end node at the very end, behaviour is here
     [System.Serializable]
-    public abstract class Leaf : Node
+    public abstract class ActionNode<T> : Node where T : MonoBehaviour
     {
-        public delegate NodeState LeafNodeDelegate();
-
-        //will prob not use delegate
-        private LeafNodeDelegate leaf;
+        protected T context;
         
-        public Leaf(LeafNodeDelegate leaf) {
-            this.leaf = leaf;
+        public ActionNode(T context)
+        {
+            this.context = context;
         }
 
         //behaviour goes here
-        public override NodeState CheckNodeStatus() {
-            switch (leaf()) {
-                case NodeState.SUCCESS:
-                    this.nodeStatus = NodeState.SUCCESS;
-                    return this.nodeStatus;
-                case NodeState.FAILURE:
-                    this.nodeStatus = NodeState.FAILURE;
-                    return this.nodeStatus;
-                case NodeState.RUNNING:
-                    this.nodeStatus = NodeState.RUNNING;
-                    return this.nodeStatus;
-                default:
-                    this.nodeStatus = NodeState.FAILURE;
-                    return this.nodeStatus;
-            }
+        public override NodeState TickNode()
+        {
+            return this.nodeStatus;
         }
+        
+        // switch () {
+        //     case NodeState.SUCCESS:
+        //     this.nodeStatus = NodeState.SUCCESS;
+        //     return this.nodeStatus;
+        //     case NodeState.FAILURE:
+        //     this.nodeStatus = NodeState.FAILURE;
+        //     return this.nodeStatus;
+        //     case NodeState.RUNNING:
+        //     this.nodeStatus = NodeState.RUNNING;
+        //     return this.nodeStatus;
+        //     default:
+        //     this.nodeStatus = NodeState.FAILURE;
+        //     return this.nodeStatus;
+        // }
     }
+    
 
     // [System.Serializable]
     // public class DebugLeaf : Leaf
