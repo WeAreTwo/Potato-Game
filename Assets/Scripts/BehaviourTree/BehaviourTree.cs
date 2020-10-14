@@ -79,6 +79,7 @@ namespace PotatoGame
         
         public override NodeState TickNode()
         {
+
             NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
             Debug.Log(currentNodeState);
             switch(currentNodeState)
@@ -90,7 +91,7 @@ namespace PotatoGame
                     return NodeState.RUNNING;
                     break;
                 case NodeState.FAILURE:
-                    return NodeState.FAILURE;
+                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
                     break;
             }
 
@@ -109,24 +110,49 @@ namespace PotatoGame
     [System.Serializable]
     public abstract class DecoratorNode : Node
     {
-        
+        [SerializeField] protected Node childNode;
+
+        public DecoratorNode(Node childNode)
+        {
+            this.childNode = childNode;
+        }
     }
     
-    //node with only 1 child
+    //node with only 1 child, checks for condition
     [System.Serializable]
-    public abstract class ConditionNode : DecoratorNode
+    public abstract class ConditionNode<T> : DecoratorNode where T : MonoBehaviour
     {
-        protected MonoBehaviour context;
+        protected T context;
         
-        public ConditionNode(MonoBehaviour context)
+        public ConditionNode(Node childNode, T context) : base(childNode)
         {
+            this.childNode = childNode;
             this.context = context;
         }
 
         public override NodeState TickNode()
         {
-            return this.nodeStatus;
+            this.nodeStatus = CheckCondition();
+
+            switch (this.nodeStatus)
+            {
+                case NodeState.SUCCESS:
+                    childNode.TickNode();
+                    return NodeState.SUCCESS;
+                    break;
+                case NodeState.RUNNING:
+                    return NodeState.RUNNING;
+                    break;
+                case NodeState.FAILURE:
+                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
+                    break;
+            }
+
+            return NodeState.RUNNING;
+            // return this.nodeStatus;
         }
+
+        public abstract NodeState CheckCondition();
     }
     
     //end node at the very end, behaviour is here

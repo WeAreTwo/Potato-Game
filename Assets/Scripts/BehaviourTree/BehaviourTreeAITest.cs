@@ -15,6 +15,7 @@ namespace PotatoGame
         public GameObject destinationFour;
         
         [SerializeField] protected SequenceNode moveSequenceNode;
+        [SerializeField] protected CheckForItem hasSwordCondition;
         [SerializeField] protected MoveToNode moveToOne;
         [SerializeField] protected MoveToNode moveToTwo;
         [SerializeField] protected MoveToNode moveToThree;
@@ -22,6 +23,8 @@ namespace PotatoGame
 
         public NavMeshAgent navAgent;
         public bool hasPath;
+
+        public bool hasSword = false;
         
         // Start is called before the first frame update
         void Start()
@@ -41,7 +44,9 @@ namespace PotatoGame
                                 moveToOne,
                                 moveToTwo,
                                 moveToThree,
-                                moveToFour
+                                hasSwordCondition = new CheckForItem(
+                                    moveToFour,this
+                                )
                             }
                         )
                 );
@@ -54,8 +59,9 @@ namespace PotatoGame
             
             //call the behaviour tree tick
             moveSequenceNode.TickNode();
-            
-            
+
+
+
         }
 
         void OnDrawGizmos()

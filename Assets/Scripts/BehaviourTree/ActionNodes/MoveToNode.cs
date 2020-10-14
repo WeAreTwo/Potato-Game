@@ -49,5 +49,29 @@ namespace PotatoGame
             context.navAgent.StopNavigation();
         }
     }
+    
+    [System.Serializable]
+    public class CheckForItem : ConditionNode<BehaviourTreeAITest>
+    {
+        public CheckForItem(Node childNode, BehaviourTreeAITest context) : base(childNode, context)
+        {
+            this.childNode = childNode;
+            this.context = context;
+        }
+        
+        public override NodeState CheckCondition()
+        {
+            if (context.hasSword)
+            {
+                this.nodeStatus = NodeState.SUCCESS;
+                return this.nodeStatus;
+            }
+            else
+            {
+                this.nodeStatus = NodeState.FAILURE;
+                return this.nodeStatus;
+            }
+        }
+    }
 
 }
