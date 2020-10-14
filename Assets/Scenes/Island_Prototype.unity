@@ -382,7 +382,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1430c084fb26f144384816f867bdb86e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_drawArea: 1
   m_playerInField: 0
+  m_sphere:
+  - {fileID: 422420731}
+  - {fileID: 422420730}
+  m_box: []
 --- !u!135 &422420730
 SphereCollider:
   m_ObjectHideFlags: 0
