@@ -2332,6 +2332,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4621215fc19739545be5890b81bbf9bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_nameText: {fileID: 0}
+  m_dialogueText: {fileID: 0}
+  m_animator: {fileID: 0}
 --- !u!1 &1378822026
 GameObject:
   m_ObjectHideFlags: 0
@@ -2770,7 +2773,14 @@ MonoBehaviour:
   destinationFour: {fileID: 221390309}
   moveSequenceNode:
     nodeStatus: 0
+    compositeName: 
     currentNodeIndex: 0
+  grabSword:
+    nodeStatus: 0
+    compositeName: 
+    currentNodeIndex: 0
+  hasSwordCondition:
+    nodeStatus: 0
   moveToOne:
     nodeStatus: 2
     destination: {x: 0, y: 0, z: 0}
@@ -2784,11 +2794,12 @@ MonoBehaviour:
     destination: {x: 0, y: 0, z: 0}
     remainingDist: 0
   moveToFour:
-    nodeStatus: 0
+    nodeStatus: 2
     destination: {x: 0, y: 0, z: 0}
     remainingDist: 0
   navAgent: {fileID: 0}
   hasPath: 0
+  hasSword: 0
 --- !u!195 &2076825011
 NavMeshAgent:
   m_ObjectHideFlags: 0

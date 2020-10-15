@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace PotatoGame
 {
+    //using interface to pass context , so we can remove constructor 
     [System.Serializable]
     public class MoveToNode : ActionNode<BehaviourTreeAITest>
     {
@@ -53,9 +54,8 @@ namespace PotatoGame
     [System.Serializable]
     public class CheckForItem : ConditionNode<BehaviourTreeAITest>
     {
-        public CheckForItem(Node childNode, BehaviourTreeAITest context) : base(childNode, context)
+        public CheckForItem(BehaviourTreeAITest context) : base(context)
         {
-            this.childNode = childNode;
             this.context = context;
         }
         

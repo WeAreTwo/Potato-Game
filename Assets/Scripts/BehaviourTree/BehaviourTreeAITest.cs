@@ -15,6 +15,8 @@ namespace PotatoGame
         public GameObject destinationFour;
         
         [SerializeField] protected SequenceNode moveSequenceNode;
+        [SerializeField] protected SequenceNode grabSword;
+        
         [SerializeField] protected CheckForItem hasSwordCondition;
         [SerializeField] protected MoveToNode moveToOne;
         [SerializeField] protected MoveToNode moveToTwo;
@@ -31,25 +33,25 @@ namespace PotatoGame
         {
             navAgent = this.GetComponent<NavMeshAgent>();
             
+            //for each children, get component, set context (this)
+            
             moveToOne = new MoveToNode(this, destinationOne.transform.position);
             moveToTwo = new MoveToNode(this, destinationTwo.transform.position);
             moveToThree = new MoveToNode(this, destinationThree.transform.position);
             moveToFour = new MoveToNode(this, destinationFour.transform.position);
             
             //initiation behaviour tree here
-            moveSequenceNode = new SequenceNode(
-                    new List<Node>(
-                            new Node[] 
-                            {
-                                moveToOne,
-                                moveToTwo,
-                                moveToThree,
-                                hasSwordCondition = new CheckForItem(
-                                    moveToFour,this
-                                )
-                            }
-                        )
-                );
+            grabSword = new SequenceNode("Grab Sword",
+                new CheckForItem(this),
+                new MoveToNode(this, destinationFour.transform.position)
+            );
+            
+            moveSequenceNode = new SequenceNode("Move Sequence",
+                    moveToOne,
+                    moveToTwo,
+                    moveToThree,
+                    grabSword
+                    );
         }
 
         // Update is called once per frame

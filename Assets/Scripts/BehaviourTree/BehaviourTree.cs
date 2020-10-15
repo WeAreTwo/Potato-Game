@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Sirenix.Utilities;
 using UnityEngine;
 
 namespace PotatoGame
@@ -24,57 +26,85 @@ namespace PotatoGame
     [System.Serializable]
     public abstract class Node
     {
-        protected bool onOtartCalled = false;
-        protected bool onOxitCalled = false;
+        protected int ticks = 0; //how many times it got updates in the update function
+        
+        protected bool onEnterCalled = false;
+        protected bool onExitCalled = false;
         protected bool onOompleteCalled = false;
         
         public NodeState nodeStatus = NodeState.RUNNING;
 
         //constructor
-        public Node()
-        {
-            
-        }
+        public Node() {}
         
         //called once when entered
-        public virtual void OnStart() 
+        public virtual void OnEnterNode() 
         {
-            onOtartCalled = true;
-        }
-
-        //called everyframe
-        public virtual void OnUpdate()
-        {
-            
+            onEnterCalled = true;
         }
         
-        //called when exiting
-        public virtual void OnExit() 
-        {
-            onOxitCalled = true;
-        }
-        
-        //called when completed
-        public virtual void OnComplete() 
-        {
-            onOompleteCalled = true;
-        }
-        
-        public virtual void OnReset() {}
-
+        //main node function called in update
         //to determine succes,  fail, running
         public abstract NodeState TickNode();
+
+
+        //called when exiting
+        public virtual void OnExitNode() 
+        {
+            onExitCalled = true;
+        }
+
+        public virtual void OnReset()
+        {
+            ticks = 0;
+        }
+        
+        public virtual void DrawGizmos() {}
+    }
+
+    //node with more than 1 node
+    [System.Serializable]
+    public abstract class Composite : Node
+    {
+        [SerializeField] protected string compositeName;
+        [SerializeField] protected List<Node> childNodes;
+
+        public Composite(string compositeName, params Node[] childNodes)
+        {
+            this.childNodes = childNodes.ToList();
+        }
+    }    
+    //node with only 1 child
+    [System.Serializable]
+    public abstract class DecoratorNode : Node
+    {
+        [SerializeField] protected Node childNode;
+
+        public DecoratorNode(Node childNode)
+        {
+            this.childNode = childNode;
+        }
+    }    
+    
+    //leafs are responsible for changing the ai script so we need context
+    [System.Serializable]
+    public abstract class Leaf<T> : Node where T : MonoBehaviour
+    {
+        protected T context;
+        public Leaf(T context)
+        {
+            this.context = context;
+        }
     }
 
     [System.Serializable]
-    public class SequenceNode : Node
+    public class SequenceNode : Composite
     {
         [SerializeField] protected int currentNodeIndex = 0;
-        [SerializeField] protected List<Node> childNodes;
 
-        public SequenceNode(List<Node> childNodes)
+        public SequenceNode(string compositeName, params Node[] childNodes) : base(compositeName, childNodes)
         {
-            this.childNodes = childNodes;
+            this.childNodes = childNodes.ToList();
         }
         
         public override NodeState TickNode()
@@ -105,28 +135,14 @@ namespace PotatoGame
             return NodeState.RUNNING;
         }
     }
-    
-    //node with only 1 child
-    [System.Serializable]
-    public abstract class DecoratorNode : Node
-    {
-        [SerializeField] protected Node childNode;
 
-        public DecoratorNode(Node childNode)
-        {
-            this.childNode = childNode;
-        }
-    }
-    
+
     //node with only 1 child, checks for condition
     [System.Serializable]
-    public abstract class ConditionNode<T> : DecoratorNode where T : MonoBehaviour
+    public abstract class ConditionNode<T> : Leaf<T> where T : MonoBehaviour
     {
-        protected T context;
-        
-        public ConditionNode(Node childNode, T context) : base(childNode)
+        public ConditionNode(T context) : base(context)
         {
-            this.childNode = childNode;
             this.context = context;
         }
 
@@ -137,7 +153,6 @@ namespace PotatoGame
             switch (this.nodeStatus)
             {
                 case NodeState.SUCCESS:
-                    childNode.TickNode();
                     return NodeState.SUCCESS;
                     break;
                 case NodeState.RUNNING:
@@ -157,11 +172,11 @@ namespace PotatoGame
     
     //end node at the very end, behaviour is here
     [System.Serializable]
-    public abstract class ActionNode<T> : Node where T : MonoBehaviour
+    public abstract class ActionNode<T> : Leaf<T> where T : MonoBehaviour
     {
         protected T context;
         
-        public ActionNode(T context)
+        public ActionNode(T context) : base(context)
         {
             this.context = context;
         }
