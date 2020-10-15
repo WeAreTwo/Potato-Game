@@ -84,15 +84,25 @@ public class FieldTypeController : MonoBehaviour
         else
             Gizmos.color = m_areaColor;
         
-
         // Draw all spheres collider
         if (m_sphere != null)
         {
             for (int i = 0; i < m_sphere.Length; i++)
             {
                 // Get the position and radius of the collider
-                var offset = transform.position + m_sphere[i].center;
-                Gizmos.DrawWireSphere(offset, m_sphere[i].radius);
+                Gizmos.matrix = transform.localToWorldMatrix;
+                Gizmos.DrawWireSphere(m_sphere[i].center, m_sphere[i].radius);
+            }
+        }
+        
+        // Draw all boxes collider
+        if (m_box != null)
+        {
+            for (int i = 0; i < m_box.Length; i++)
+            {
+                // Get the position and size of the collider
+                Gizmos.matrix = transform.localToWorldMatrix;
+                Gizmos.DrawWireCube(m_box[i].center, m_box[i].size);
             }
         }
     }
