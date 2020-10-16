@@ -10,6 +10,7 @@ public class FieldTypeController : MonoBehaviour
     // public variables -------------------------
     public bool m_playerInField = false;  // Check if the player is in this field or not
     [Title("Field Type")] 
+    public string m_fieldName = "ENTER FIELD NAME";  // Name of the field
     public bool m_potatoField;  // State if the field is for potatoes
     public bool m_tomatoField;  // State if the field is for tomatoes
     public bool m_onionField;  // State if the field is for onions
@@ -23,8 +24,6 @@ public class FieldTypeController : MonoBehaviour
     // private variables ------------------------
     private GameObject _mPlayer;  // Instance of the player game object in the scene
     
-
-
 
 
     // ------------------------------------------
@@ -57,7 +56,7 @@ public class FieldTypeController : MonoBehaviour
         {
             // Player in the area
             m_playerInField = true;
-            Debug.Log("Player in field area A");
+            Debug.Log("Player in " + m_fieldName + " field.");
         }
     }
     
@@ -68,7 +67,7 @@ public class FieldTypeController : MonoBehaviour
         {
             // Player out of the area
             m_playerInField = false;
-            Debug.Log("Player no longer in field area A");
+            Debug.Log("Player no longer in " + m_fieldName + " field." );
         }
     }
 
