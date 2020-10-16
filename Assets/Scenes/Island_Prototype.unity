@@ -128,7 +128,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh18606
+  m_Name: pb_Mesh18592
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -383,6 +383,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_playerInField: 0
+  m_potatoField: 1
+  m_tomatoField: 0
+  m_onionField: 0
   m_drawArea: 1
   m_areaColor: {r: 1, g: 0.28504565, b: 0, a: 1}
   m_sphere:
@@ -527,6 +530,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_playerInField: 0
+  m_potatoField: 0
+  m_tomatoField: 0
+  m_onionField: 1
   m_drawArea: 1
   m_areaColor: {r: 0.30411178, g: 0.479832, b: 0.9622642, a: 1}
   m_sphere:
@@ -2973,6 +2979,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_playerInField: 0
+  m_potatoField: 0
+  m_tomatoField: 1
+  m_onionField: 0
   m_drawArea: 1
   m_areaColor: {r: 0.9622642, g: 0.28595585, b: 0.71588165, a: 1}
   m_sphere: []

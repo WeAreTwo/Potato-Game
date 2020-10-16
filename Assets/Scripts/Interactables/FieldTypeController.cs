@@ -9,6 +9,10 @@ public class FieldTypeController : MonoBehaviour
 {
     // public variables -------------------------
     public bool m_playerInField = false;  // Check if the player is in this field or not
+    [Title("Field Type")] 
+    public bool m_potatoField;  // State if the field is for potatoes
+    public bool m_tomatoField;  // State if the field is for tomatoes
+    public bool m_onionField;  // State if the field is for onions
     [Space(10)][Title("Scene View")]
     public bool m_drawArea;  // Draw the area in scene view (for testing and prototyping level)
     [ShowIf("m_drawArea")] public Color m_areaColor;  // Color of this area
@@ -18,6 +22,7 @@ public class FieldTypeController : MonoBehaviour
     
     // private variables ------------------------
     private GameObject _mPlayer;  // Instance of the player game object in the scene
+    
 
 
 
