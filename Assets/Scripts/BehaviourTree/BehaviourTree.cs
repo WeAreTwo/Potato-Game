@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Sirenix.Utilities;
 using UnityEngine;
 
 namespace PotatoGame
@@ -24,108 +26,300 @@ namespace PotatoGame
     [System.Serializable]
     public abstract class Node
     {
-        public NodeState nodeState = NodeState.RUNNING;
+        protected int ticks = 0; //how many times it got updates in the update function
+        
+        protected bool onEnterCalled = false;
+        protected bool onExitCalled = false;
+        protected bool onOompleteCalled = false;
+        
+        public NodeState nodeStatus = NodeState.RUNNING;
+        
+        //todo gotta update the ticks , maybe subcribe method OnTickNode()?
 
         //constructor
-        public Node()
+        public Node() {}
+        
+        //called once when entered
+        public virtual void OnEnterNode() 
         {
-            
+            onEnterCalled = true;
         }
         
+        //main node function called in update
         //to determine succes,  fail, running
-        public abstract NodeState Evaluate();
+        public abstract NodeState TickNode();
+
+
+        //called when exiting
+        public virtual void OnExitNode() 
+        {
+            onExitCalled = true;
+        }
+
+        public virtual void OnReset()
+        {
+            ticks = 0;
+        }
+        
+        public virtual void DrawGizmos() {}
+    }
+
+    //node with more than 1 node
+    [System.Serializable]
+    public abstract class CompositeNode : Node
+    {
+        [SerializeField] protected string compositeName;
+        [SerializeField] protected List<Node> childNodes;
+
+        public CompositeNode(string compositeName, params Node[] childNodes)
+        {
+            this.childNodes = childNodes.ToList();
+        }
+        
+        //reset every child node
+        public override void OnReset()
+        {
+            base.OnReset();
+
+            foreach (Node child in childNodes)
+            {
+                child.OnReset();
+            }
+        }
+    }    
+    //node with only 1 child
+    [System.Serializable]
+    public abstract class DecoratorNode : Node
+    {
+        [SerializeField] protected Node childNode;
+
+        public DecoratorNode(Node childNode)
+        {
+            this.childNode = childNode;
+        }
+        
+        //reset child node
+        public override void OnReset()
+        {
+            base.OnReset();
+            childNode.OnReset();
+        }
+    }    
+    
+    //leafs are responsible for changing the ai script so we need context
+    [System.Serializable]
+    public abstract class LeafNode<T> : Node where T : MonoBehaviour
+    {
+        protected T context;
+        public LeafNode(T context)
+        {
+            this.context = context;
+        }
     }
 
     [System.Serializable]
-    public abstract class Composite : Node
+    public class SequenceNode : CompositeNode
     {
-        [SerializeField] protected List<Node> childNodes = new List<Node>();
+        [SerializeField] protected int currentNodeIndex = 0;
 
-        public Composite(List<Node> childNodes)
+        public SequenceNode(string compositeName, params Node[] childNodes) : base(compositeName, childNodes)
         {
-            this.childNodes = childNodes;
+            this.childNodes = childNodes.ToList();
         }
         
-        public override NodeState Evaluate()
+        public override NodeState TickNode()
         {
-            bool anyChildRunning = false;
-            foreach (Node child in childNodes)
+
+            NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
+            switch(currentNodeState)
             {
-                switch (child.Evaluate())
-                {
-                    case NodeState.SUCCESS:
-                        continue;
-                    case NodeState.FAILURE:
-                        this.nodeState = NodeState.FAILURE;
-                        return this.nodeState;
-                    case NodeState.RUNNING:
-                        anyChildRunning = true;
-                        continue;
-                }
+                case NodeState.SUCCESS:
+                    if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
+                    break;
+                case NodeState.RUNNING:
+                    return NodeState.RUNNING;
+                    break;
+                case NodeState.FAILURE:
+                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
+                    break;
             }
 
-            this.nodeState = anyChildRunning ? NodeState.RUNNING : NodeState.SUCCESS;
-            return this.nodeState;
+            if (currentNodeIndex == childNodes.Count - 1)
+            {
+                this.nodeStatus = NodeState.SUCCESS;
+                return NodeState.SUCCESS;
+            }
+
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING;
+        }
+        
+        //reset the index
+        public override void OnReset()
+        {
+            base.OnReset();
+            currentNodeIndex = 0;
+        }
+    }
+
+    //selector is like an OR , it will return success if any children returns success
+    //will not stop after a failure
+    //usefull for describing a preferred set of behaviours
+    [System.Serializable]
+    public class SelectorNode : CompositeNode
+    {
+        [SerializeField] protected int currentNodeIndex = 0;
+
+        public SelectorNode(string compositeName, params Node[] childNodes) : base(compositeName, childNodes)
+        {
+            this.childNodes = childNodes.ToList();
+        }
+        
+        //will stop at the first instance of success, fail will increment
+        public override NodeState TickNode()
+        {
+
+            NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
+            switch(currentNodeState)
+            {
+                //will stop processing children the moment we return success
+                case NodeState.SUCCESS:
+                    return NodeState.SUCCESS;
+                    break;
+                case NodeState.RUNNING:
+                    return NodeState.RUNNING;
+                    break;
+                case NodeState.FAILURE:
+                    if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
+                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
+                    break;
+            }
+
+            if (currentNodeIndex == childNodes.Count - 1)
+            {
+                this.nodeStatus = NodeState.SUCCESS;
+                return NodeState.SUCCESS;
+            }
+
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING;
+        }
+        
+        //reset the index
+        public override void OnReset()
+        {
+            base.OnReset();
+            currentNodeIndex = 0;
         }
     }
     
-    //node with only 1 child
+    //will repeate node X number of times or forevere
     [System.Serializable]
-    public abstract class Decorator : Node
+    public class RepeaterNode : DecoratorNode
     {
+        public bool repeatForever; //if the node will loop forever
+        public int repeatTimes = 1; //if it wont repeat forever, for how many times
         
+        public RepeaterNode(Node childNode, bool repeatForever = true, int repeatTimes = 1) : base(childNode)
+        {
+            this.repeatForever = repeatForever;
+            this.repeatTimes = repeatTimes;
+        }
+        
+        public override NodeState TickNode()
+        {
+            NodeState childNodeState;
+            
+            //if its forever cycle these nodes
+            if (repeatForever)
+            {
+                childNodeState = childNode.TickNode();
+                switch(childNodeState)
+                {
+                    case NodeState.SUCCESS:
+                        return NodeState.SUCCESS;
+                        break;
+                    case NodeState.RUNNING:
+                        return NodeState.RUNNING;
+                        break;
+                    case NodeState.FAILURE:
+                        return NodeState.FAILURE; 
+                        break;
+                }
+            }
+            
+            //if not keep check for how many times it processed
+            else if (ticks < repeatTimes)
+            {
+                childNodeState = childNode.TickNode();
+                switch(childNodeState)
+                {
+                    case NodeState.SUCCESS:
+                        return NodeState.SUCCESS;
+                        break;
+                    case NodeState.RUNNING:
+                        return NodeState.RUNNING;
+                        break;
+                    case NodeState.FAILURE:
+                        return NodeState.FAILURE; 
+                        break;
+                }
+            }
+
+            return NodeState.SUCCESS;  //default return success
+        }
+    }
+
+    //node with only 1 child, checks for condition
+    [System.Serializable]
+    public abstract class ConditionNode<T> : LeafNode<T> where T : MonoBehaviour
+    {
+        public ConditionNode(T context) : base(context)
+        {
+            this.context = context;
+        }
+
+        public override NodeState TickNode()
+        {
+            this.nodeStatus = CheckCondition();
+
+            switch (this.nodeStatus)
+            {
+                case NodeState.SUCCESS:
+                    return NodeState.SUCCESS;
+                    break;
+                case NodeState.RUNNING:
+                    return NodeState.RUNNING;
+                    break;
+                case NodeState.FAILURE:
+                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
+                    break;
+            }
+
+            return NodeState.RUNNING;
+            // return this.nodeStatus;
+        }
+
+        public abstract NodeState CheckCondition();
     }
     
     //end node at the very end, behaviour is here
     [System.Serializable]
-    public abstract class Leaf : Node
+    public abstract class ActionNode<T> : LeafNode<T> where T : MonoBehaviour
     {
-        public delegate NodeState LeafNodeDelegate();
-
-        /* The delegate that is called to evaluate this node */
-        private LeafNodeDelegate leaf;
-
-        /* Because this node contains no logic itself,
-         * the logic must be passed in in the form of 
-         * a delegate. As the signature states, the action
-         * needs to return a NodeState enum */
-        public Leaf(LeafNodeDelegate leaf) {
-            this.leaf = leaf;
-        }
-
-        /* Evaluates the node using the passed in delegate and 
-         * reports the resulting state as appropriate */
-        public override NodeState Evaluate() {
-            switch (leaf()) {
-                case NodeState.SUCCESS:
-                    this.nodeState = NodeState.SUCCESS;
-                    return this.nodeState;
-                case NodeState.FAILURE:
-                    this.nodeState = NodeState.FAILURE;
-                    return this.nodeState;
-                case NodeState.RUNNING:
-                    this.nodeState = NodeState.RUNNING;
-                    return this.nodeState;
-                default:
-                    this.nodeState = NodeState.FAILURE;
-                    return this.nodeState;
-            }
+        protected T context;
+        
+        public ActionNode(T context) : base(context)
+        {
+            this.context = context;
         }
     }
     
-    public class BehaviourTree : MonoBehaviour
-    {
-        // Start is called before the first frame update
-        void Start()
-        {
 
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-    }
+    // [System.Serializable]
+    // public class DebugLeaf : Leaf
+    // {
+    //     
+    // }
 
 }
