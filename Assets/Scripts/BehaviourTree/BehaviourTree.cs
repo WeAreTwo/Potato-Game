@@ -33,6 +33,8 @@ namespace PotatoGame
         protected bool onOompleteCalled = false;
         
         public NodeState nodeStatus = NodeState.RUNNING;
+        
+        //todo gotta update the ticks , maybe subcribe method OnTickNode()?
 
         //constructor
         public Node() {}
@@ -73,6 +75,17 @@ namespace PotatoGame
         {
             this.childNodes = childNodes.ToList();
         }
+        
+        //reset every child node
+        public override void OnReset()
+        {
+            base.OnReset();
+
+            foreach (Node child in childNodes)
+            {
+                child.OnReset();
+            }
+        }
     }    
     //node with only 1 child
     [System.Serializable]
@@ -83,6 +96,13 @@ namespace PotatoGame
         public DecoratorNode(Node childNode)
         {
             this.childNode = childNode;
+        }
+        
+        //reset child node
+        public override void OnReset()
+        {
+            base.OnReset();
+            childNode.OnReset();
         }
     }    
     
@@ -133,6 +153,13 @@ namespace PotatoGame
             this.nodeStatus = NodeState.RUNNING;
             return NodeState.RUNNING;
         }
+        
+        //reset the index
+        public override void OnReset()
+        {
+            base.OnReset();
+            currentNodeIndex = 0;
+        }
     }
 
     //selector is like an OR , it will return success if any children returns success
@@ -176,6 +203,13 @@ namespace PotatoGame
 
             this.nodeStatus = NodeState.RUNNING;
             return NodeState.RUNNING;
+        }
+        
+        //reset the index
+        public override void OnReset()
+        {
+            base.OnReset();
+            currentNodeIndex = 0;
         }
     }
     
@@ -279,27 +313,6 @@ namespace PotatoGame
         {
             this.context = context;
         }
-
-        //behaviour goes here
-        public override NodeState TickNode()
-        {
-            return this.nodeStatus;
-        }
-        
-        // switch () {
-        //     case NodeState.SUCCESS:
-        //     this.nodeStatus = NodeState.SUCCESS;
-        //     return this.nodeStatus;
-        //     case NodeState.FAILURE:
-        //     this.nodeStatus = NodeState.FAILURE;
-        //     return this.nodeStatus;
-        //     case NodeState.RUNNING:
-        //     this.nodeStatus = NodeState.RUNNING;
-        //     return this.nodeStatus;
-        //     default:
-        //     this.nodeStatus = NodeState.FAILURE;
-        //     return this.nodeStatus;
-        // }
     }
     
 
@@ -308,20 +321,5 @@ namespace PotatoGame
     // {
     //     
     // }
-    
-    public class BehaviourTree : MonoBehaviour
-    {
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-    }
 
 }
