@@ -13,6 +13,8 @@ namespace PotatoGame
         public GameObject destinationTwo;
         public GameObject destinationThree;
         public GameObject destinationFour;
+
+        [SerializeField] protected RepeaterNode repeatMoveSequence;
         
         [SerializeField] protected SequenceNode moveSequenceNode;
         [SerializeField] protected SequenceNode grabSword;
@@ -49,9 +51,13 @@ namespace PotatoGame
             moveSequenceNode = new SequenceNode("Move Sequence",
                     moveToOne,
                     moveToTwo,
-                    moveToThree,
-                    grabSword
+                    moveToThree
+                    // grabSword
                     );
+            
+            repeatMoveSequence = new RepeaterNode(
+                    moveSequenceNode, false, 3
+                );
         }
 
         // Update is called once per frame
@@ -60,7 +66,7 @@ namespace PotatoGame
             hasPath = navAgent.hasPath;
             
             //call the behaviour tree tick
-            moveSequenceNode.TickNode();
+            repeatMoveSequence.TickNode();
 
 
 
