@@ -56,13 +56,12 @@ namespace PotatoGame
     public class Follow : ActionNode<BehaviourTreeAITest>
     {
 
-        [SerializeField] protected GameObject followTarget;
+        // [SerializeField] protected GameObject followTarget;
         [SerializeField] protected float followDistance;
         
-        public Follow(BehaviourTreeAITest context, GameObject followTarget, float followDistance = 1.0f) : base(context)
+        public Follow(BehaviourTreeAITest context, float followDistance = 10.0f) : base(context)
         {
             this.context = context;
-            this.followTarget = followTarget;
             this.followDistance = followDistance;
         }
 
@@ -70,30 +69,31 @@ namespace PotatoGame
         public override NodeState TickNode()
         {
             //if the target ceizes to exist, then its fails
-            if (this.followTarget == null)
+            if (context.seekTarget == null)
             {
                 this.nodeStatus = NodeState.FAILURE;
                 return NodeState.FAILURE;
             }
             
             //if it doesnt have a path, set one
-            if (!context.navAgent.hasPath)
-            {
-                context.navAgent.SetDestination(this.followTarget.transform.position);
-            }
+            // if (!context.navAgent.hasPath)
+            // {
+                context.navAgent.SetDestination(context.seekTarget.transform.position);
+            // }
             
             //if ur outside the followw distance, consider this succesfull
-            if (Vector3.Distance(context.transform.position, this.followTarget.transform.position) > followDistance)
+            if (Vector3.Distance(context.transform.position, context.seekTarget.transform.position) > followDistance)
             {
-                OnReset();
-                this.nodeStatus = NodeState.SUCCESS;
-                return NodeState.SUCCESS;
+                context.navAgent.StopNavigation();
+                this.nodeStatus = NodeState.FAILURE;
+                return NodeState.FAILURE;
             }
             else
             {
                 this.nodeStatus = NodeState.RUNNING;
                 return NodeState.RUNNING;
             }
+                return NodeState.RUNNING;
         }
 
         public override void OnReset()
@@ -123,20 +123,46 @@ namespace PotatoGame
                 return NodeState.FAILURE;
             }
         }
+    }    
+    
+    [System.Serializable]
+    public class CheckForPlayer : ConditionNode<BehaviourTreeAITest>
+    {
+        public CheckForPlayer(BehaviourTreeAITest context) : base(context)
+        {
+            this.context = context;
+        }
 
-        // public override NodeState CheckCondition()
-        // {
-        //     if (context.hasSword)
-        //     {
-        //         this.nodeStatus = NodeState.SUCCESS;
-        //         return this.nodeStatus;
-        //     }
-        //     else
-        //     {
-        //         this.nodeStatus = NodeState.FAILURE;
-        //         return this.nodeStatus;
-        //     }
-        // }
+        public override NodeState TickNode()
+        {
+            Debug.Log(nodeStatus);
+
+            if (context.seekTarget != null)
+            {
+                this.nodeStatus = NodeState.SUCCESS;
+                return NodeState.SUCCESS;
+            }
+            else
+            {
+                Collider[] hitColliders = Physics.OverlapSphere(context.transform.position, context.seekingRange);
+                foreach (var col in hitColliders)
+                {
+                    if (col.TryGetComponent(out PlayerController component))
+                    {
+                        context.seekTarget = component.gameObject;
+                        this.nodeStatus = NodeState.SUCCESS;
+                        return NodeState.SUCCESS;
+                    }
+                }
+
+                //if no player is found, return fail
+                this.nodeStatus = NodeState.FAILURE;
+                return NodeState.FAILURE;
+            }
+
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING;
+        }
     }
     
     [System.Serializable]

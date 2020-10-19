@@ -206,28 +206,39 @@ namespace PotatoGame
         {
             // if (this.nodeStatus == NodeState.FAILURE) return NodeState.FAILURE; //if its already fail, return fail right away
             
-            NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
-            switch(currentNodeState)
+            // NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
+            foreach (Node node in childNodes)
             {
-                //will stop processing children the moment we return success
-                case NodeState.SUCCESS:
-                    this.nodeStatus = NodeState.SUCCESS;
-                    return NodeState.SUCCESS;
-                    break;
-                case NodeState.RUNNING:
-                    this.nodeStatus = NodeState.RUNNING;
-                    return NodeState.RUNNING;
-                    break;
-                case NodeState.FAILURE:
-                    if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
-                    else if (currentNodeIndex == childNodes.Count - 1)
-                    {
-                        this.nodeStatus = NodeState.FAILURE;
-                        return NodeState.FAILURE;
-                    }
-                    break;
+                NodeState currentNodeState = node.TickNode();
+                switch (currentNodeState)
+                {
+                    //will stop processing children the moment we return success
+                    case NodeState.SUCCESS:
+                        this.nodeStatus = NodeState.SUCCESS;
+                        return NodeState.SUCCESS;
+                        break;
+                    case NodeState.RUNNING:
+                        this.nodeStatus = NodeState.RUNNING;
+                        return NodeState.RUNNING;
+                        break;
+                    case NodeState.FAILURE:
+                        // if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
+                        // else if (currentNodeIndex == childNodes.Count - 1)
+                        // {
+                        //     this.nodeStatus = NodeState.FAILURE;
+                        //     return NodeState.FAILURE;
+                        // }
+                        
+                        if (childNodes.IndexOf(node) == childNodes.Count - 1)
+                        {
+                            this.nodeStatus = NodeState.FAILURE;
+                            return NodeState.FAILURE;
+                        }
+                        continue;
+                        break;
+                }
             }
-            
+
             this.nodeStatus = NodeState.RUNNING;
             return NodeState.RUNNING;
         }

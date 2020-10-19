@@ -63,6 +63,12 @@ namespace PotatoGame
     [RequireComponent(typeof(NavMeshAgent))]
     public class BehaviourTreeAITest : MonoBehaviour
     {
+        public NavMeshAgent navAgent;
+        public bool hasPath;
+        public bool hasSword = false;
+        public float seekingRange = 1.5f;
+        public GameObject seekTarget;
+        
         public GameObject destinationOne;
         public GameObject destinationTwo;
         public GameObject destinationThree;
@@ -70,6 +76,7 @@ namespace PotatoGame
 
         [SerializeField] protected RepeaterNode repeatMoveSequence;
         
+        [SerializeField] protected SequenceNode followSequenceNode;
         [SerializeField] protected SequenceNode moveSequenceNode;
         [SerializeField] protected SelectorNode moveSelectorNode;
         [SerializeField] protected SequenceNode grabSword;
@@ -83,10 +90,7 @@ namespace PotatoGame
         
         [SerializeField] protected ReturnNode returnFail;
 
-        public NavMeshAgent navAgent;
-        public bool hasPath;
 
-        public bool hasSword = false;
         
         // Start is called before the first frame update
         void Start()
@@ -116,11 +120,22 @@ namespace PotatoGame
                     // grabSword
                     );
                         
-            moveSelectorNode = new SelectorNode("Move Selector",
-                grabSword,
-                new ReturnNode(this, NodeState.FAILURE),
-                new ReturnNode(this, NodeState.FAILURE),
-                    moveToThree
+            followSequenceNode = new SequenceNode("Follow Player",
+                    new CheckForPlayer(this),
+                    new Follow(this)
+            );
+            
+            // moveSelectorNode = new SelectorNode("Move Selector",
+            //     grabSword,
+            //     new ReturnNode(this, NodeState.FAILURE),
+            //     new ReturnNode(this, NodeState.FAILURE),
+            //         moveToThree
+            //         );
+            
+            //will complete move sequence before it checks again for player to follow
+            moveSelectorNode = new SelectorNode("Follow Selector",
+    followSequenceNode,
+                        moveSequenceNode
                     );
             
             repeatMoveSequence = new RepeaterNode(
@@ -153,6 +168,9 @@ namespace PotatoGame
                 Gizmos.color = Color.blue;
                 Gizmos.DrawWireSphere(destinationFour.transform.position, 1.0f);
             }
+            
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(this.transform.position, seekingRange);
         }
     }
 

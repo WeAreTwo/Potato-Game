@@ -2767,6 +2767,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ca0e2691422a2d45a31f1b6fd6fd1f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  navAgent: {fileID: 0}
+  hasPath: 0
+  hasSword: 0
+  seekingRange: 5
+  seekTarget: {fileID: 0}
   destinationOne: {fileID: 651788087}
   destinationTwo: {fileID: 1211250835}
   destinationThree: {fileID: 1910983434}
@@ -2777,6 +2782,11 @@ MonoBehaviour:
     repeatForever: 0
     currentCycle: 0
     repeatCycles: 0
+  followSequenceNode:
+    ticks: 0
+    nodeStatus: 0
+    compositeName: 
+    currentNodeIndex: 0
   moveSequenceNode:
     ticks: 0
     nodeStatus: 0
@@ -2819,9 +2829,6 @@ MonoBehaviour:
     ticks: 0
     nodeStatus: 0
     returnType: 0
-  navAgent: {fileID: 0}
-  hasPath: 0
-  hasSword: 0
 --- !u!195 &2076825011
 NavMeshAgent:
   m_ObjectHideFlags: 0
