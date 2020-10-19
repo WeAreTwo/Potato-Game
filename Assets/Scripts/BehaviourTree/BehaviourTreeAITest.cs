@@ -71,6 +71,7 @@ namespace PotatoGame
         [SerializeField] protected RepeaterNode repeatMoveSequence;
         
         [SerializeField] protected SequenceNode moveSequenceNode;
+        [SerializeField] protected SelectorNode moveSelectorNode;
         [SerializeField] protected SequenceNode grabSword;
         
         [SerializeField] protected CheckForItem hasSwordCondition;
@@ -78,6 +79,9 @@ namespace PotatoGame
         [SerializeField] protected MoveToNode moveToTwo;
         [SerializeField] protected MoveToNode moveToThree;
         [SerializeField] protected MoveToNode moveToFour;
+        
+        
+        [SerializeField] protected ReturnNode returnFail;
 
         public NavMeshAgent navAgent;
         public bool hasPath;
@@ -95,11 +99,14 @@ namespace PotatoGame
             moveToTwo = new MoveToNode(this, destinationTwo.transform.position);
             moveToThree = new MoveToNode(this, destinationThree.transform.position);
             moveToFour = new MoveToNode(this, destinationFour.transform.position);
+            returnFail = new ReturnNode(this, NodeState.FAILURE);
+
+            hasSwordCondition = new CheckForItem(this);
             
             //initiation behaviour tree here
             grabSword = new SequenceNode("Grab Sword",
-                new CheckForItem(this),
-                new MoveToNode(this, destinationFour.transform.position)
+                hasSwordCondition,
+                moveToFour
             );
             
             moveSequenceNode = new SequenceNode("Move Sequence",
@@ -108,9 +115,16 @@ namespace PotatoGame
                     moveToThree
                     // grabSword
                     );
+                        
+            moveSelectorNode = new SelectorNode("Move Selector",
+                grabSword,
+                new ReturnNode(this, NodeState.FAILURE),
+                new ReturnNode(this, NodeState.FAILURE),
+                    moveToThree
+                    );
             
             repeatMoveSequence = new RepeaterNode(
-                    moveSequenceNode, false, 3
+                moveSelectorNode, true
                 );
         }
 

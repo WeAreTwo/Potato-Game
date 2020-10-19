@@ -22,6 +22,7 @@ namespace PotatoGame
 
         public override NodeState TickNode()
         {
+            // Debug.Log("on move node");
             remainingDist = context.navAgent.remainingDistance;
             
             //if it doesnt have a path, set one
@@ -108,20 +109,54 @@ namespace PotatoGame
         {
             this.context = context;
         }
-        
-        public override NodeState CheckCondition()
+
+        public override NodeState TickNode()
         {
             if (context.hasSword)
             {
                 this.nodeStatus = NodeState.SUCCESS;
-                return this.nodeStatus;
+                return NodeState.SUCCESS;
             }
             else
             {
                 this.nodeStatus = NodeState.FAILURE;
-                return this.nodeStatus;
+                return NodeState.FAILURE;
             }
         }
+
+        // public override NodeState CheckCondition()
+        // {
+        //     if (context.hasSword)
+        //     {
+        //         this.nodeStatus = NodeState.SUCCESS;
+        //         return this.nodeStatus;
+        //     }
+        //     else
+        //     {
+        //         this.nodeStatus = NodeState.FAILURE;
+        //         return this.nodeStatus;
+        //     }
+        // }
+    }
+    
+    [System.Serializable]
+    public class ReturnNode : ConditionNode<BehaviourTreeAITest>
+    {
+        [SerializeField] protected NodeState returnType;
+        
+        public ReturnNode(BehaviourTreeAITest context, NodeState returnType) : base(context)
+        {
+            this.context = context;
+            this.returnType = returnType;
+        }
+
+        public override NodeState TickNode()
+        {
+            this.nodeStatus = returnType;
+            Debug.Log(this.nodeStatus);
+            return returnType;
+        }
+        
     }
 
 }

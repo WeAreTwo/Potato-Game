@@ -2771,32 +2771,54 @@ MonoBehaviour:
   destinationTwo: {fileID: 1211250835}
   destinationThree: {fileID: 1910983434}
   destinationFour: {fileID: 221390309}
+  repeatMoveSequence:
+    ticks: 0
+    nodeStatus: 0
+    repeatForever: 0
+    currentCycle: 0
+    repeatCycles: 0
   moveSequenceNode:
+    ticks: 0
+    nodeStatus: 0
+    compositeName: 
+    currentNodeIndex: 0
+  moveSelectorNode:
+    ticks: 0
     nodeStatus: 0
     compositeName: 
     currentNodeIndex: 0
   grabSword:
+    ticks: 0
     nodeStatus: 0
     compositeName: 
     currentNodeIndex: 0
   hasSwordCondition:
+    ticks: 0
     nodeStatus: 0
   moveToOne:
+    ticks: 0
     nodeStatus: 2
     destination: {x: 0, y: 0, z: 0}
     remainingDist: 0
   moveToTwo:
+    ticks: 0
     nodeStatus: 2
     destination: {x: 0, y: 0, z: 0}
     remainingDist: 0
   moveToThree:
+    ticks: 0
     nodeStatus: 2
     destination: {x: 0, y: 0, z: 0}
     remainingDist: 0
   moveToFour:
+    ticks: 0
     nodeStatus: 2
     destination: {x: 0, y: 0, z: 0}
     remainingDist: 0
+  returnFail:
+    ticks: 0
+    nodeStatus: 0
+    returnType: 0
   navAgent: {fileID: 0}
   hasPath: 0
   hasSword: 0

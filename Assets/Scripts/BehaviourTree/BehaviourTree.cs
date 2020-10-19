@@ -78,7 +78,7 @@ namespace PotatoGame
 
         public virtual void OnDebug()
         {
-            
+            Debug.Log("im called");
         }
         
         public virtual void DrawGizmos() {}
@@ -204,7 +204,8 @@ namespace PotatoGame
         //will stop at the first instance of success, fail will increment
         public override NodeState TickNode()
         {
-
+            // if (this.nodeStatus == NodeState.FAILURE) return NodeState.FAILURE; //if its already fail, return fail right away
+            
             NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
             switch(currentNodeState)
             {
@@ -219,18 +220,14 @@ namespace PotatoGame
                     break;
                 case NodeState.FAILURE:
                     if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
-                    this.nodeStatus = NodeState.FAILURE;
-                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
+                    else if (currentNodeIndex == childNodes.Count - 1)
+                    {
+                        this.nodeStatus = NodeState.FAILURE;
+                        return NodeState.FAILURE;
+                    }
                     break;
             }
-
-            //todo need to fix the indexing here like i did in the sequence node 
-            if (currentNodeIndex == childNodes.Count - 1)
-            {
-                this.nodeStatus = NodeState.SUCCESS;
-                return NodeState.SUCCESS;
-            }
-
+            
             this.nodeStatus = NodeState.RUNNING;
             return NodeState.RUNNING;
         }
@@ -324,28 +321,28 @@ namespace PotatoGame
             this.context = context;
         }
 
-        public override NodeState TickNode()
-        {
-            this.nodeStatus = CheckCondition();
+        // public override NodeState TickNode()
+        // {
+        //     // this.nodeStatus = CheckCondition();
+        //
+        //     switch (this.nodeStatus)
+        //     {
+        //         case NodeState.SUCCESS:
+        //             return NodeState.SUCCESS;
+        //             break;
+        //         case NodeState.RUNNING:
+        //             return NodeState.RUNNING;
+        //             break;
+        //         case NodeState.FAILURE:
+        //             return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
+        //             break;
+        //     }
+        //
+        //     return NodeState.RUNNING;
+        //     // return this.nodeStatus;
+        // }
 
-            switch (this.nodeStatus)
-            {
-                case NodeState.SUCCESS:
-                    return NodeState.SUCCESS;
-                    break;
-                case NodeState.RUNNING:
-                    return NodeState.RUNNING;
-                    break;
-                case NodeState.FAILURE:
-                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
-                    break;
-            }
-
-            return NodeState.RUNNING;
-            // return this.nodeStatus;
-        }
-
-        public abstract NodeState CheckCondition();
+        // public abstract NodeState CheckCondition();
     }
     
     //end node at the very end, behaviour is here
