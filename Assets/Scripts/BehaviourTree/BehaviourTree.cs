@@ -206,10 +206,10 @@ namespace PotatoGame
         {
             // if (this.nodeStatus == NodeState.FAILURE) return NodeState.FAILURE; //if its already fail, return fail right away
             
-            // NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
-            foreach (Node node in childNodes)
-            {
-                NodeState currentNodeState = node.TickNode();
+            NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
+            // foreach (Node node in childNodes)
+            // {
+                // NodeState currentNodeState = node.TickNode();
                 switch (currentNodeState)
                 {
                     //will stop processing children the moment we return success
@@ -222,21 +222,21 @@ namespace PotatoGame
                         return NodeState.RUNNING;
                         break;
                     case NodeState.FAILURE:
-                        // if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
-                        // else if (currentNodeIndex == childNodes.Count - 1)
-                        // {
-                        //     this.nodeStatus = NodeState.FAILURE;
-                        //     return NodeState.FAILURE;
-                        // }
-                        
-                        if (childNodes.IndexOf(node) == childNodes.Count - 1)
+                        if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
+                        else if (currentNodeIndex == childNodes.Count - 1)
                         {
                             this.nodeStatus = NodeState.FAILURE;
                             return NodeState.FAILURE;
                         }
-                        continue;
+                        
+                        // if (childNodes.IndexOf(node) == childNodes.Count - 1)
+                        // {
+                        //     this.nodeStatus = NodeState.FAILURE;
+                        //     return NodeState.FAILURE;
+                        // }
+                        // continue;
                         break;
-                }
+                // }
             }
 
             this.nodeStatus = NodeState.RUNNING;

@@ -135,7 +135,7 @@ namespace PotatoGame
             //will complete move sequence before it checks again for player to follow
             moveSelectorNode = new SelectorNode("Follow Selector",
     followSequenceNode,
-                        moveSequenceNode
+                        moveToTwo
                     );
             
             repeatMoveSequence = new RepeaterNode(
