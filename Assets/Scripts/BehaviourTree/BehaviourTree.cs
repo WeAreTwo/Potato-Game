@@ -8,6 +8,20 @@ using UnityEngine;
 namespace PotatoGame
 {
 
+    [System.Serializable]
+    public abstract class BehaviourTree<T> where T : MonoBehaviour
+    {
+        protected T context;
+
+        public BehaviourTree(T context)
+        {
+            this.context = context;
+        }
+        
+        public abstract void Initialize();
+        public abstract void Run();
+    }
+    
     /*
      * Notes:
      * -Each node will return either succes, failure or running
