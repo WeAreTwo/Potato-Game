@@ -6,63 +6,10 @@ using UnityEngine.AI;
 
 namespace PotatoGame
 {
-    [System.Serializable]
-    public class AITest : BehaviourTree<BehaviourTreeAITest>
-    {
-
-        [SerializeField] protected RepeaterNode root;
-        
-        [SerializeField] protected SequenceNode moveSequenceNode;
-        [SerializeField] protected SequenceNode grabSword;
-        
-        [SerializeField] protected CheckForItem hasSwordCondition;
-        [SerializeField] protected MoveToNode moveToOne;
-        [SerializeField] protected MoveToNode moveToTwo;
-        [SerializeField] protected MoveToNode moveToThree;
-        [SerializeField] protected MoveToNode moveToFour;
-        
-        public AITest(BehaviourTreeAITest context) : base(context)
-        {
-            this.context = context;
-        }
-        
-        public override void Initialize()
-        {
-            //for each children, get component, set context (this)
-            
-            moveToOne = new MoveToNode(context, context.destinationOne.transform.position);
-            moveToTwo = new MoveToNode(context, context.destinationTwo.transform.position);
-            moveToThree = new MoveToNode(context, context.destinationThree.transform.position);
-            moveToFour = new MoveToNode(context, context.destinationFour.transform.position);
-            
-            //initiation behaviour tree here
-            grabSword = new SequenceNode("Grab Sword",
-                new CheckForItem(context),
-                new MoveToNode(context, context.destinationFour.transform.position)
-            );
-            
-            moveSequenceNode = new SequenceNode("Move Sequence",
-                moveToOne,
-                moveToTwo,
-                moveToThree
-                // grabSword
-            );
-            
-            root = new RepeaterNode(
-                moveSequenceNode, false, 3
-            );
-        }
-
-        public override void Run()
-        {
-            root.TickNode();
-        }
-    }
-    
-    
     [RequireComponent(typeof(NavMeshAgent))]
     public class BehaviourTreeAITest : MonoBehaviour
     {
+        [Header("Context Parameters")]
         public NavMeshAgent navAgent;
         public bool hasPath;
         public bool hasSword = false;
@@ -78,109 +25,41 @@ namespace PotatoGame
         public GameObject destinationThree;
         public GameObject destinationFour;
 
-        [SerializeField] protected RepeaterNode repeatMoveSequence;
-        
-        [SerializeField] protected SequenceNode pickUpSequence;
-        [SerializeField] protected CheckNearbyItem checkNearbyItem;
-        [SerializeField] protected PickUpItem pickUpItem;
-        [SerializeField] protected WaitFor waitFor;
-        [SerializeField] protected DropItem dropItem;
-        
-        
-        [SerializeField] protected SequenceNode followSequenceNode;
-        [SerializeField] protected SequenceNode moveSequenceNode;
-        [SerializeField] protected SelectorNode moveSelectorNode;
-        [SerializeField] protected SequenceNode grabSword;
-        
-        [SerializeField] protected CheckForItem hasSwordCondition;
-        [SerializeField] protected MoveToNode moveToOne;
-        [SerializeField] protected MoveToNode moveToTwo;
-        [SerializeField] protected MoveToNode moveToThree;
-        [SerializeField] protected MoveToNode moveToFour;
-        
-        
-        [SerializeField] protected ReturnNode returnFail;
-
-
+        [Header("Behaviour Trees")]
+        [SerializeField] protected PickItemTree pickUpTree;
+        [SerializeField] protected MoveTree moveTree;
+        [SerializeField] protected FollowTree followTree;
         
         // Start is called before the first frame update
-        void Start()
+        protected void Start()
         {
             navAgent = this.GetComponent<NavMeshAgent>();
             
-            //for each children, get component, set context (this)
+            //picking and dropping behaviour 
+            pickUpTree = new PickItemTree(this); //pass the context first
+            pickUpTree.Initialize(); //Initialize Tree
             
-            moveToOne = new MoveToNode(this, destinationOne.transform.position);
-            moveToTwo = new MoveToNode(this, destinationTwo.transform.position);
-            moveToThree = new MoveToNode(this, destinationThree.transform.position);
-            moveToFour = new MoveToNode(this, destinationFour.transform.position);
-            returnFail = new ReturnNode(this, NodeState.FAILURE);
-
-            hasSwordCondition = new CheckForItem(this);
+            moveTree = new MoveTree(this); //pass the context first
+            moveTree.Initialize(); //Initialize Tree
             
-            //initiation behaviour tree here
-            grabSword = new SequenceNode("Grab Sword",
-                hasSwordCondition,
-                moveToFour
-            );
+            followTree = new FollowTree(this); //pass the context first
+            followTree.Initialize(); //Initialize Tree
             
-            moveSequenceNode = new SequenceNode("Move Sequence",
-                    moveToOne,
-                    moveToTwo,
-                    moveToThree
-                    // grabSword
-                    );
-                        
-            followSequenceNode = new SequenceNode("Follow Player",
-                    new CheckForPlayer(this),
-                    new Follow(this)
-            );
             
-            // moveSelectorNode = new SelectorNode("Move Selector",
-            //     grabSword,
-            //     new ReturnNode(this, NodeState.FAILURE),
-            //     new ReturnNode(this, NodeState.FAILURE),
-            //         moveToThree
-            //         );
-            
-            //will complete move sequence before it checks again for player to follow
-            moveSelectorNode = new SelectorNode("Follow Selector",
-    followSequenceNode,
-                        moveToTwo
-                    );
-            
-            checkNearbyItem = new CheckNearbyItem(this);
-            pickUpItem = new PickUpItem(this);
-            waitFor = new WaitFor(this);
-            dropItem = new DropItem(this);
-            pickUpSequence = new SequenceNode(
-                "Pick Up Sequence",
-                checkNearbyItem,
-                // new WaitFor(this, 2.0f),
-                pickUpItem,
-                waitFor,
-                dropItem
-            
-            );
-            
-            repeatMoveSequence = new RepeaterNode(
-                pickUpSequence, false, 1
-                );
         }
 
         // Update is called once per frame
-        void Update()
+        protected void Update()
         {
             hasPath = navAgent.hasPath;
             
             //call the behaviour tree tick
-            repeatMoveSequence.TickNode();
-
-
-
+            // pickUpTree.Run(); //update the tree
+            // moveTree.Run();
+            // followTree.Run();
         }
 
-        void OnDrawGizmos()
+        protected void OnDrawGizmos()
         {
             if (destinationOne && destinationTwo && destinationThree && destinationFour)
             {

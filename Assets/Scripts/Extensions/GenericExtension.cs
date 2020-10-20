@@ -105,7 +105,7 @@ namespace PotatoGame
             obj.transform.SetParent(parent);
             obj.transform.position = new Vector3(
                 parent.transform.position.x, 
-                obj.transform.position.y + 1.0f,
+                obj.transform.position.y + 2.0f,
                 parent.transform.position.z
             );
             Rigidbody rb = obj.GetComponent<Rigidbody>();
