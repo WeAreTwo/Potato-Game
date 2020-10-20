@@ -14,11 +14,26 @@ namespace PotatoGame
 
         public override NodeState TickNode()
         {
+            if (context.pickUpObject == null)
+            {
+                this.nodeStatus = NodeState.FAILURE;
+                return NodeState.FAILURE;
+            }
+            
             if (Vector3.Distance(context.transform.position, context.pickUpObject.transform.position) < context.pickUpRange)
             {
-                context.pickUpObject.HoldObject(context.transform);
-                this.nodeStatus = NodeState.SUCCESS;
-                return NodeState.SUCCESS;
+                if (context.pickUpObject.TryGetComponent(out InteractableObject interactable))
+                {
+                    interactable.PickUp();
+                    context.pickUpObject.HoldObjectAI(context.transform);
+                    this.nodeStatus = NodeState.SUCCESS;
+                    return NodeState.SUCCESS;
+                }
+                else
+                {
+                    this.nodeStatus = NodeState.FAILURE;
+                    return NodeState.FAILURE;
+                }
             }
             else
             {
@@ -39,9 +54,9 @@ namespace PotatoGame
 
         public override NodeState TickNode()
         {
-            if (context.pickUpObject)
+            if (context.pickUpObject && context.pickUpObject.TryGetComponent(out InteractableObject interactable))
             {
-                context.pickUpObject.ThrowObject(context.transform.forward, 1.0f);
+                interactable.Throw(context.transform.forward, 5.0f);
                 this.nodeStatus = NodeState.SUCCESS;
                 return NodeState.SUCCESS;
             }

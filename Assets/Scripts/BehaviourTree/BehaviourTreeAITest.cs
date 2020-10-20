@@ -80,6 +80,13 @@ namespace PotatoGame
 
         [SerializeField] protected RepeaterNode repeatMoveSequence;
         
+        [SerializeField] protected SequenceNode pickUpSequence;
+        [SerializeField] protected CheckNearbyItem checkNearbyItem;
+        [SerializeField] protected PickUpItem pickUpItem;
+        [SerializeField] protected WaitFor waitFor;
+        [SerializeField] protected DropItem dropItem;
+        
+        
         [SerializeField] protected SequenceNode followSequenceNode;
         [SerializeField] protected SequenceNode moveSequenceNode;
         [SerializeField] protected SelectorNode moveSelectorNode;
@@ -142,8 +149,22 @@ namespace PotatoGame
                         moveToTwo
                     );
             
+            checkNearbyItem = new CheckNearbyItem(this);
+            pickUpItem = new PickUpItem(this);
+            waitFor = new WaitFor(this);
+            dropItem = new DropItem(this);
+            pickUpSequence = new SequenceNode(
+                "Pick Up Sequence",
+                checkNearbyItem,
+                // new WaitFor(this, 2.0f),
+                pickUpItem,
+                waitFor,
+                dropItem
+            
+            );
+            
             repeatMoveSequence = new RepeaterNode(
-                moveSelectorNode, true
+                pickUpSequence, false, 1
                 );
         }
 
@@ -173,8 +194,13 @@ namespace PotatoGame
                 Gizmos.DrawWireSphere(destinationFour.transform.position, 1.0f);
             }
             
+            //seeking range
             Gizmos.color = Color.magenta;
             Gizmos.DrawWireSphere(this.transform.position, seekingRange);
+            
+            //item pickup range 
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(this.transform.position, pickUpRange);
         }
     }
 
