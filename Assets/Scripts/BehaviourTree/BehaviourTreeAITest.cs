@@ -66,8 +66,12 @@ namespace PotatoGame
         public NavMeshAgent navAgent;
         public bool hasPath;
         public bool hasSword = false;
+        
         public float seekingRange = 1.5f;
         public GameObject seekTarget;
+        
+        public GameObject pickUpObject;
+        public float pickUpRange = 2.5f;
         
         public GameObject destinationOne;
         public GameObject destinationTwo;
