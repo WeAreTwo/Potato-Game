@@ -101,5 +101,27 @@ namespace PotatoGame
             context.navAgent.StopNavigation();
         }
     }
+    
+    [System.Serializable]
+    public class PickRandomPosition : ActionNode<BehaviourTreeAITest>
+    {
+        public PickRandomPosition(BehaviourTreeAITest context) : base(context)
+        {
+            this.context = context;
+        }
+
+        public override NodeState TickNode()
+        {
+            
+            float randX = UnityEngine.Random.Range(-1.0f, 1.0f);
+            float randY = UnityEngine.Random.Range(-1.0f, 1.0f);
+            Vector3 randomPos = new Vector3(randX, 0, randY);
+            Vector3 currentPosXZ = new Vector3(context.transform.position.x, 0, context.transform.position.z);
+            context.seekPosition = currentPosXZ + (randomPos * context.seekingRange);
+
+            this.nodeStatus = NodeState.SUCCESS;
+            return NodeState.SUCCESS;
+        }
+    }
 
 }
