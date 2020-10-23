@@ -55,7 +55,7 @@ namespace PotatoGame
             hasPath = navAgent.hasPath;
             
             //call the behaviour tree tick
-            // pickUpTree.Run(); //update the tree
+            pickUpTree.Run(); //update the tree
             // moveTree.Run();
             // followTree.Run();
         }
