@@ -22,6 +22,7 @@ namespace PotatoGame
 
         public override NodeState TickNode()
         {
+            // Debug.Log("on move node");
             remainingDist = context.navAgent.remainingDistance;
             
             //if it doesnt have a path, set one
@@ -52,25 +53,52 @@ namespace PotatoGame
     }
     
     [System.Serializable]
-    public class CheckForItem : ConditionNode<BehaviourTreeAITest>
+    public class Follow : ActionNode<BehaviourTreeAITest>
     {
-        public CheckForItem(BehaviourTreeAITest context) : base(context)
+
+        // [SerializeField] protected GameObject followTarget;
+        [SerializeField] protected float followDistance;
+        
+        public Follow(BehaviourTreeAITest context, float followDistance = 10.0f) : base(context)
         {
             this.context = context;
+            this.followDistance = followDistance;
         }
-        
-        public override NodeState CheckCondition()
+
+
+        public override NodeState TickNode()
         {
-            if (context.hasSword)
+            //if the target ceizes to exist, then its fails
+            if (context.seekTarget == null)
             {
-                this.nodeStatus = NodeState.SUCCESS;
-                return this.nodeStatus;
+                this.nodeStatus = NodeState.FAILURE;
+                return NodeState.FAILURE;
+            }
+            
+            //if it doesnt have a path, set one
+            // if (!context.navAgent.hasPath)
+            // {
+                context.navAgent.SetDestination(context.seekTarget.transform.position);
+            // }
+            
+            //if ur outside the followw distance, consider this succesfull
+            if (Vector3.Distance(context.transform.position, context.seekTarget.transform.position) > followDistance)
+            {
+                context.navAgent.StopNavigation();
+                this.nodeStatus = NodeState.FAILURE;
+                return NodeState.FAILURE;
             }
             else
             {
-                this.nodeStatus = NodeState.FAILURE;
-                return this.nodeStatus;
+                this.nodeStatus = NodeState.RUNNING;
+                return NodeState.RUNNING;
             }
+                return NodeState.RUNNING;
+        }
+
+        public override void OnReset()
+        {
+            context.navAgent.StopNavigation();
         }
     }
 

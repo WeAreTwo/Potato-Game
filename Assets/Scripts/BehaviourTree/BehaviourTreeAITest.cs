@@ -9,64 +9,57 @@ namespace PotatoGame
     [RequireComponent(typeof(NavMeshAgent))]
     public class BehaviourTreeAITest : MonoBehaviour
     {
+        [Header("Context Parameters")]
+        public NavMeshAgent navAgent;
+        public bool hasPath;
+        public bool hasSword = false;
+        
+        public float seekingRange = 1.5f;
+        public GameObject seekTarget;
+        
+        public GameObject pickUpObject;
+        public float pickUpRange = 2.5f;
+        
         public GameObject destinationOne;
         public GameObject destinationTwo;
         public GameObject destinationThree;
         public GameObject destinationFour;
-        
-        [SerializeField] protected SequenceNode moveSequenceNode;
-        [SerializeField] protected SequenceNode grabSword;
-        
-        [SerializeField] protected CheckForItem hasSwordCondition;
-        [SerializeField] protected MoveToNode moveToOne;
-        [SerializeField] protected MoveToNode moveToTwo;
-        [SerializeField] protected MoveToNode moveToThree;
-        [SerializeField] protected MoveToNode moveToFour;
 
-        public NavMeshAgent navAgent;
-        public bool hasPath;
-
-        public bool hasSword = false;
+        [Header("Behaviour Trees")]
+        [SerializeField] protected PickItemTree pickUpTree;
+        [SerializeField] protected MoveTree moveTree;
+        [SerializeField] protected FollowTree followTree;
         
         // Start is called before the first frame update
-        void Start()
+        protected void Start()
         {
             navAgent = this.GetComponent<NavMeshAgent>();
             
-            //for each children, get component, set context (this)
+            //picking and dropping behaviour 
+            pickUpTree = new PickItemTree(this); //pass the context first
+            pickUpTree.Initialize(); //Initialize Tree
             
-            moveToOne = new MoveToNode(this, destinationOne.transform.position);
-            moveToTwo = new MoveToNode(this, destinationTwo.transform.position);
-            moveToThree = new MoveToNode(this, destinationThree.transform.position);
-            moveToFour = new MoveToNode(this, destinationFour.transform.position);
+            moveTree = new MoveTree(this); //pass the context first
+            moveTree.Initialize(); //Initialize Tree
             
-            //initiation behaviour tree here
-            grabSword = new SequenceNode("Grab Sword",
-                new CheckForItem(this),
-                new MoveToNode(this, destinationFour.transform.position)
-            );
+            followTree = new FollowTree(this); //pass the context first
+            followTree.Initialize(); //Initialize Tree
             
-            moveSequenceNode = new SequenceNode("Move Sequence",
-                    moveToOne,
-                    moveToTwo,
-                    moveToThree,
-                    grabSword
-                    );
+            
         }
 
         // Update is called once per frame
-        void Update()
+        protected void Update()
         {
             hasPath = navAgent.hasPath;
             
             //call the behaviour tree tick
-            moveSequenceNode.TickNode();
-
-
-
+            // pickUpTree.Run(); //update the tree
+            // moveTree.Run();
+            // followTree.Run();
         }
 
-        void OnDrawGizmos()
+        protected void OnDrawGizmos()
         {
             if (destinationOne && destinationTwo && destinationThree && destinationFour)
             {
@@ -79,6 +72,14 @@ namespace PotatoGame
                 Gizmos.color = Color.blue;
                 Gizmos.DrawWireSphere(destinationFour.transform.position, 1.0f);
             }
+            
+            //seeking range
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(this.transform.position, seekingRange);
+            
+            //item pickup range 
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(this.transform.position, pickUpRange);
         }
     }
 

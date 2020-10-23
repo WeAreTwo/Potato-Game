@@ -99,6 +99,23 @@ namespace PotatoGame
             obj.SetAllColliderTriggers(true);
         }
         
+        //AI will hold it over head
+        public static void HoldObjectAI(this GameObject obj, Transform parent)
+        {
+            obj.transform.SetParent(parent);
+            obj.transform.position = new Vector3(
+                parent.transform.position.x, 
+                obj.transform.position.y + 2.0f,
+                parent.transform.position.z
+            );
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.DeActivatePhysics();
+            }
+            obj.SetAllColliderTriggers(true);
+        }
+        
         //NAV MESH EXTENSION METHODS
         public static void SetNavSetting(this NavMeshAgent agent, NavSettings settings)
         {

@@ -8,6 +8,20 @@ using UnityEngine;
 namespace PotatoGame
 {
 
+    [System.Serializable]
+    public abstract class BehaviourTree<T> where T : MonoBehaviour
+    {
+        protected T context;
+
+        public BehaviourTree(T context)
+        {
+            this.context = context;
+        }
+        
+        public abstract void Initialize();
+        public abstract void Run();
+    }
+    
     /*
      * Notes:
      * -Each node will return either succes, failure or running
@@ -26,11 +40,11 @@ namespace PotatoGame
     [System.Serializable]
     public abstract class Node
     {
-        protected int ticks = 0; //how many times it got updates in the update function
+        [SerializeField] protected int ticks = 0; //how many times it got updates in the update function
         
         protected bool onEnterCalled = false;
         protected bool onExitCalled = false;
-        protected bool onOompleteCalled = false;
+        protected bool onCompleteCalled = false;
         
         public NodeState nodeStatus = NodeState.RUNNING;
         
@@ -58,7 +72,13 @@ namespace PotatoGame
 
         public virtual void OnReset()
         {
+            nodeStatus = NodeState.RUNNING;
             ticks = 0;
+        }
+
+        public virtual void OnDebug()
+        {
+            Debug.Log("im called");
         }
         
         public virtual void DrawGizmos() {}
@@ -117,6 +137,8 @@ namespace PotatoGame
         }
     }
 
+    //in order for the sequence node to return success, ALL child nodes need to return success
+    //if one of them doesnt return sucess , the sequence return failure 
     [System.Serializable]
     public class SequenceNode : CompositeNode
     {
@@ -129,28 +151,32 @@ namespace PotatoGame
         
         public override NodeState TickNode()
         {
+            //if it failed once, terminate sequence 
+            if (this.nodeStatus == NodeState.FAILURE) return NodeState.FAILURE;
 
+            //else continue sequence
             NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
             switch(currentNodeState)
             {
                 case NodeState.SUCCESS:
                     if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
+                    else if (currentNodeIndex == childNodes.Count - 1)
+                    {
+                        this.nodeStatus = NodeState.SUCCESS;
+                        return NodeState.SUCCESS;
+                    }
                     break;
                 case NodeState.RUNNING:
+                    this.nodeStatus = NodeState.RUNNING;
                     return NodeState.RUNNING;
                     break;
                 case NodeState.FAILURE:
+                    this.nodeStatus = NodeState.FAILURE;
                     return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
                     break;
             }
 
-            if (currentNodeIndex == childNodes.Count - 1)
-            {
-                this.nodeStatus = NodeState.SUCCESS;
-                return NodeState.SUCCESS;
-            }
-
-            this.nodeStatus = NodeState.RUNNING;
+            this.nodeStatus = NodeState.RUNNING; //default is running status
             return NodeState.RUNNING;
         }
         
@@ -178,27 +204,39 @@ namespace PotatoGame
         //will stop at the first instance of success, fail will increment
         public override NodeState TickNode()
         {
-
+            // if (this.nodeStatus == NodeState.FAILURE) return NodeState.FAILURE; //if its already fail, return fail right away
+            
             NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
-            switch(currentNodeState)
-            {
-                //will stop processing children the moment we return success
-                case NodeState.SUCCESS:
-                    return NodeState.SUCCESS;
-                    break;
-                case NodeState.RUNNING:
-                    return NodeState.RUNNING;
-                    break;
-                case NodeState.FAILURE:
-                    if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
-                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
-                    break;
-            }
-
-            if (currentNodeIndex == childNodes.Count - 1)
-            {
-                this.nodeStatus = NodeState.SUCCESS;
-                return NodeState.SUCCESS;
+            // foreach (Node node in childNodes)
+            // {
+                // NodeState currentNodeState = node.TickNode();
+                switch (currentNodeState)
+                {
+                    //will stop processing children the moment we return success
+                    case NodeState.SUCCESS:
+                        this.nodeStatus = NodeState.SUCCESS;
+                        return NodeState.SUCCESS;
+                        break;
+                    case NodeState.RUNNING:
+                        this.nodeStatus = NodeState.RUNNING;
+                        return NodeState.RUNNING;
+                        break;
+                    case NodeState.FAILURE:
+                        if (currentNodeIndex < childNodes.Count - 1) currentNodeIndex++;
+                        else if (currentNodeIndex == childNodes.Count - 1)
+                        {
+                            this.nodeStatus = NodeState.FAILURE;
+                            return NodeState.FAILURE;
+                        }
+                        
+                        // if (childNodes.IndexOf(node) == childNodes.Count - 1)
+                        // {
+                        //     this.nodeStatus = NodeState.FAILURE;
+                        //     return NodeState.FAILURE;
+                        // }
+                        // continue;
+                        break;
+                // }
             }
 
             this.nodeStatus = NodeState.RUNNING;
@@ -218,12 +256,13 @@ namespace PotatoGame
     public class RepeaterNode : DecoratorNode
     {
         public bool repeatForever; //if the node will loop forever
-        public int repeatTimes = 1; //if it wont repeat forever, for how many times
+        [SerializeField] protected int currentCycle = 0;
+        public int repeatCycles = 1; //if it wont repeat forever, for how many times
         
-        public RepeaterNode(Node childNode, bool repeatForever = true, int repeatTimes = 1) : base(childNode)
+        public RepeaterNode(Node childNode, bool repeatForever = true, int repeatCycles = 1) : base(childNode)
         {
             this.repeatForever = repeatForever;
-            this.repeatTimes = repeatTimes;
+            this.repeatCycles = repeatCycles;
         }
         
         public override NodeState TickNode()
@@ -237,36 +276,50 @@ namespace PotatoGame
                 switch(childNodeState)
                 {
                     case NodeState.SUCCESS:
+                        currentCycle++;
+                        childNode.OnReset();
                         return NodeState.SUCCESS;
                         break;
                     case NodeState.RUNNING:
                         return NodeState.RUNNING;
                         break;
                     case NodeState.FAILURE:
+                        currentCycle++;
+                        childNode.OnReset();
                         return NodeState.FAILURE; 
                         break;
                 }
             }
             
             //if not keep check for how many times it processed
-            else if (ticks < repeatTimes)
+            else if (currentCycle < repeatCycles)
             {
                 childNodeState = childNode.TickNode();
                 switch(childNodeState)
                 {
                     case NodeState.SUCCESS:
+                        currentCycle++;
+                        childNode.OnReset();
                         return NodeState.SUCCESS;
                         break;
                     case NodeState.RUNNING:
                         return NodeState.RUNNING;
                         break;
                     case NodeState.FAILURE:
+                        currentCycle++;
+                        childNode.OnReset();
                         return NodeState.FAILURE; 
                         break;
                 }
             }
 
             return NodeState.SUCCESS;  //default return success
+        }
+
+        public override void OnReset()
+        {
+            base.OnReset();
+            currentCycle = 0;
         }
     }
 
@@ -279,36 +332,34 @@ namespace PotatoGame
             this.context = context;
         }
 
-        public override NodeState TickNode()
-        {
-            this.nodeStatus = CheckCondition();
+        // public override NodeState TickNode()
+        // {
+        //     // this.nodeStatus = CheckCondition();
+        //
+        //     switch (this.nodeStatus)
+        //     {
+        //         case NodeState.SUCCESS:
+        //             return NodeState.SUCCESS;
+        //             break;
+        //         case NodeState.RUNNING:
+        //             return NodeState.RUNNING;
+        //             break;
+        //         case NodeState.FAILURE:
+        //             return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
+        //             break;
+        //     }
+        //
+        //     return NodeState.RUNNING;
+        //     // return this.nodeStatus;
+        // }
 
-            switch (this.nodeStatus)
-            {
-                case NodeState.SUCCESS:
-                    return NodeState.SUCCESS;
-                    break;
-                case NodeState.RUNNING:
-                    return NodeState.RUNNING;
-                    break;
-                case NodeState.FAILURE:
-                    return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
-                    break;
-            }
-
-            return NodeState.RUNNING;
-            // return this.nodeStatus;
-        }
-
-        public abstract NodeState CheckCondition();
+        // public abstract NodeState CheckCondition();
     }
     
     //end node at the very end, behaviour is here
     [System.Serializable]
     public abstract class ActionNode<T> : LeafNode<T> where T : MonoBehaviour
     {
-        protected T context;
-        
         public ActionNode(T context) : base(context)
         {
             this.context = context;
