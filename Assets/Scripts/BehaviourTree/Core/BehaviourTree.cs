@@ -20,6 +20,8 @@ namespace PotatoGame
         
         public abstract void Initialize();
         public abstract void Run();
+        
+        public virtual void DrawGizmos(){}
     }
     
     /*
@@ -62,8 +64,13 @@ namespace PotatoGame
         //main node function called in update
         //to determine succes,  fail, running
         public abstract NodeState TickNode();
-
-
+        
+        //for when it gets stuck 
+        public virtual void FailSafe()
+        {
+            ticks++;
+        }
+        
         //called when exiting
         public virtual void OnExitNode() 
         {
@@ -80,6 +87,8 @@ namespace PotatoGame
         {
             Debug.Log("im called");
         }
+
+        public virtual void OnCurrentNodePath() {}
         
         public virtual void DrawGizmos() {}
     }
@@ -106,6 +115,16 @@ namespace PotatoGame
                 child.OnReset();
             }
         }
+
+        public override void DrawGizmos()
+        {
+            base.DrawGizmos();
+
+            foreach (Node child in childNodes)
+            {
+                if(child != null) child.DrawGizmos();
+            }
+        }
     }    
     //node with only 1 child
     [System.Serializable]
@@ -123,6 +142,12 @@ namespace PotatoGame
         {
             base.OnReset();
             childNode.OnReset();
+        }
+
+        public override void DrawGizmos()
+        {
+            base.DrawGizmos();
+            if(childNode != null) childNode.DrawGizmos();
         }
     }    
     
@@ -251,6 +276,44 @@ namespace PotatoGame
         }
     }
     
+    //Will invert the result from the child node
+    //e.g if child node is SUCCESS, it will invert to FAILURE vice versa
+    [System.Serializable]
+    public class InverterNode : DecoratorNode
+    {
+        public InverterNode(Node childNode) : base(childNode)
+        {
+        }
+        
+        public override NodeState TickNode()
+        {
+            NodeState childNodeState;
+
+            childNodeState = childNode.TickNode();
+            switch (childNodeState)
+            {
+                case NodeState.SUCCESS:
+                    this.nodeStatus = NodeState.FAILURE;
+                    return NodeState.FAILURE;
+                    break;
+                
+                case NodeState.RUNNING:
+                    this.nodeStatus = NodeState.RUNNING;
+                    return NodeState.RUNNING;
+                    break;
+                
+                case NodeState.FAILURE:
+                    this.nodeStatus = NodeState.SUCCESS;
+                    return NodeState.SUCCESS;
+                    break;
+            }
+
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING;
+        }
+        
+    }
+    
     //will repeate node X number of times or forevere
     [System.Serializable]
     public class RepeaterNode : DecoratorNode
@@ -278,14 +341,17 @@ namespace PotatoGame
                     case NodeState.SUCCESS:
                         currentCycle++;
                         childNode.OnReset();
+                        this.nodeStatus = NodeState.SUCCESS;
                         return NodeState.SUCCESS;
                         break;
                     case NodeState.RUNNING:
+                        this.nodeStatus = NodeState.RUNNING;
                         return NodeState.RUNNING;
                         break;
                     case NodeState.FAILURE:
                         currentCycle++;
                         childNode.OnReset();
+                        this.nodeStatus = NodeState.FAILURE;
                         return NodeState.FAILURE; 
                         break;
                 }
@@ -300,19 +366,23 @@ namespace PotatoGame
                     case NodeState.SUCCESS:
                         currentCycle++;
                         childNode.OnReset();
+                        this.nodeStatus = NodeState.SUCCESS;
                         return NodeState.SUCCESS;
                         break;
                     case NodeState.RUNNING:
+                        this.nodeStatus = NodeState.RUNNING;
                         return NodeState.RUNNING;
                         break;
                     case NodeState.FAILURE:
                         currentCycle++;
                         childNode.OnReset();
+                        this.nodeStatus = NodeState.FAILURE;
                         return NodeState.FAILURE; 
                         break;
                 }
             }
 
+            this.nodeStatus = NodeState.SUCCESS;
             return NodeState.SUCCESS;  //default return success
         }
 
