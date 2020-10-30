@@ -12,6 +12,8 @@ namespace PotatoGame
         [SerializeField] protected float waitTime = 5.0f;
         [SerializeField] protected float waitTimer = 0;
         
+        
+        
         public WaitFor(BehaviourTreeAITest context, float waitTime = 5.0f) : base(context)
         {
             this.context = context;
@@ -20,6 +22,7 @@ namespace PotatoGame
 
         public override NodeState TickNode()
         {
+
             if (waitTimer >= waitTime)
             {
                 this.nodeStatus = NodeState.SUCCESS;

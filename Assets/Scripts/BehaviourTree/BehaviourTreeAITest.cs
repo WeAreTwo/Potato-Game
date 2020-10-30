@@ -16,6 +16,7 @@ namespace PotatoGame
         
         public float seekingRange = 1.5f;
         public GameObject seekTarget;
+        public Vector3 seekPosition;
         
         public GameObject pickUpObject;
         public float pickUpRange = 2.5f;
@@ -54,7 +55,7 @@ namespace PotatoGame
             hasPath = navAgent.hasPath;
             
             //call the behaviour tree tick
-            // pickUpTree.Run(); //update the tree
+            pickUpTree.Run(); //update the tree
             // moveTree.Run();
             // followTree.Run();
         }
