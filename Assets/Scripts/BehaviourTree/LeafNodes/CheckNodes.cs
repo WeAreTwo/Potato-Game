@@ -76,17 +76,24 @@ namespace PotatoGame
             this.context = context;
         }
 
+        //Note; returning succes when target is not equal to null not working
         public override NodeState TickNode()
         {
-            Debug.Log(nodeStatus);
+            // Debug.Log(nodeStatus);
 
-            if (context.seekTarget != null)
-            {
-                this.nodeStatus = NodeState.SUCCESS;
-                return NodeState.SUCCESS;
-            }
-            else
-            {
+            /*
+             * ifnequal to null
+             *     checkforplayer()
+             * else
+             */
+            
+            // if (context.seekTarget != null)
+            // {
+            //     // this.nodeStatus = NodeState.SUCCESS;
+            //     // return NodeState.SUCCESS;
+            // }
+            // else
+            // {
                 Collider[] hitColliders = Physics.OverlapSphere(context.transform.position, context.seekingRange);
                 foreach (var col in hitColliders)
                 {
@@ -101,10 +108,10 @@ namespace PotatoGame
                 //if no player is found, return fail
                 this.nodeStatus = NodeState.FAILURE;
                 return NodeState.FAILURE;
-            }
+            // }
 
-            this.nodeStatus = NodeState.RUNNING;
-            return NodeState.RUNNING;
+            // this.nodeStatus = NodeState.RUNNING;
+            // return NodeState.RUNNING;
         }
     }
 

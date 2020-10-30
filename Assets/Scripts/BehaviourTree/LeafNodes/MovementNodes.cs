@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace PotatoGame
 {
@@ -48,10 +49,117 @@ namespace PotatoGame
 
         public override void OnReset()
         {
+            base.OnReset();
             context.navAgent.StopNavigation();
         }
     }
-    
+
+    [System.Serializable]
+    public class PickRandomPosition : ActionNode<BehaviourTreeAITest>
+    {
+        [SerializeField] protected int tickCount = 0;
+        [SerializeField] protected int failThreshold = 1000;
+        [SerializeField] protected Vector3 destination;
+        [SerializeField] protected float remainingDist;
+
+        public PickRandomPosition(BehaviourTreeAITest context) : base(context)
+        {
+            this.context = context;
+        }
+
+        public override void FailSafe()
+        {
+            base.FailSafe();
+            // if (ticks > )
+            // {
+            //     
+            // }
+        }
+
+        //testing the fail safe, will need to polish
+        public bool HasTriggeredFailSafe()
+        {
+            ticks++;
+            tickCount = ticks;
+            if (ticks > failThreshold)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override NodeState TickNode()
+        {
+            if (HasTriggeredFailSafe())
+            {
+                this.nodeStatus = NodeState.FAILURE;
+                return NodeState.FAILURE;
+            }
+            
+            if (destination == Vector3.zero)
+            {
+                float randX = UnityEngine.Random.Range(-1.0f, 1.0f);
+                float randY = UnityEngine.Random.Range(-1.0f, 1.0f);
+                Vector3 randomPos = new Vector3(randX, 0, randY);
+                Vector3 currentPosXZ = new Vector3(context.transform.position.x, 0, context.transform.position.z);
+                destination = currentPosXZ + (randomPos * context.seekingRange);
+            }
+
+
+            // Debug.Log("on move node");
+            remainingDist = Vector3.Distance(context.transform.position, this.destination);
+            
+            Debug.Log($"Does the nav have a path ? {context.navAgent.hasPath}");
+            
+            //if it doesnt have a path, set one
+            if ( destination != Vector3.zero)
+            {
+                context.navAgent.SetDestination(this.destination);
+                //if it still doesnt have a path, return failure 
+                if (context.navAgent.pathStatus == NavMeshPathStatus.PathInvalid)
+                {
+                    this.nodeStatus = NodeState.FAILURE;
+                    return NodeState.FAILURE;
+                }
+            }
+            
+            //as long as it nost stopped , keep running
+            // if (context.navAgent.remainingDistance < 0.05f)
+            if (Vector3.Distance(context.transform.position, this.destination) < 1.55f)
+            {
+                OnReset();
+                this.nodeStatus = NodeState.SUCCESS;
+                return NodeState.SUCCESS;
+            }
+            else
+            {
+                this.nodeStatus = NodeState.RUNNING;
+                return NodeState.RUNNING;
+            }
+        }
+
+        public override void OnReset()
+        {
+            base.OnReset();
+            context.navAgent.StopNavigation();
+            destination = Vector3.zero; //zero is the reset value
+        }
+
+        public override void DrawGizmos()
+        {
+            base.DrawGizmos();
+            if (context.navAgent)
+            {
+                Gizmos.color = Color.black;
+                Gizmos.DrawWireCube(context.navAgent.destination, Vector3.one);
+                
+            }
+        }
+    }
+
     [System.Serializable]
     public class Follow : ActionNode<BehaviourTreeAITest>
     {
@@ -98,30 +206,8 @@ namespace PotatoGame
 
         public override void OnReset()
         {
+            base.OnReset();
             context.navAgent.StopNavigation();
         }
     }
-    
-    [System.Serializable]
-    public class PickRandomPosition : ActionNode<BehaviourTreeAITest>
-    {
-        public PickRandomPosition(BehaviourTreeAITest context) : base(context)
-        {
-            this.context = context;
-        }
-
-        public override NodeState TickNode()
-        {
-            
-            float randX = UnityEngine.Random.Range(-1.0f, 1.0f);
-            float randY = UnityEngine.Random.Range(-1.0f, 1.0f);
-            Vector3 randomPos = new Vector3(randX, 0, randY);
-            Vector3 currentPosXZ = new Vector3(context.transform.position.x, 0, context.transform.position.z);
-            context.seekPosition = currentPosXZ + (randomPos * context.seekingRange);
-
-            this.nodeStatus = NodeState.SUCCESS;
-            return NodeState.SUCCESS;
-        }
-    }
-
 }
