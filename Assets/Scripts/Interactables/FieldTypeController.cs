@@ -22,7 +22,7 @@ public class FieldTypeController : MonoBehaviour
 
     
     // private variables ------------------------
-    private GameObject _mPlayer;  // Instance of the player game object in the scene
+    private GameObject _player;  // Instance of the player game object in the scene
     
 
 
@@ -32,7 +32,7 @@ public class FieldTypeController : MonoBehaviour
     void Start()
     {
         // Get components
-        _mPlayer = GameObject.FindWithTag("Player");
+        _player = GameObject.FindWithTag("Player");
         
 
     }

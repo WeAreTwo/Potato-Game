@@ -12,10 +12,8 @@ public class MusicManager : MonoBehaviour
     public AudioSource m_ambientAudio; // Instance of the audio source responsible for ambient player
     [Title("Music Tracks")]
     public AudioClip m_mainTheme; // Main theme to play when no other actions in progress
-
     [Title("Ambient Tracks")] 
     public AudioClip m_field; // Default field ambient track
-
     [Title("Active Tracks")] 
     [ReadOnly] public AudioClip m_activeMusicTrack; // Music track currently playing
     [ReadOnly] public AudioClip m_activeAmbientTrack; // Ambient track currently playing

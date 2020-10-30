@@ -13,10 +13,10 @@ public class TutorialDialogue : MonoBehaviour
     public Dialogue m_dialogue;  // The dialogue linked to this tutorial
     
     // private variables ------------------------
-    private float _mDelayTimer; // Instance of the timer for the delay
-    private bool _mTutorialStarted = false;  // Check if the tutorial have started
-    private DialogueManager m_dm;  // Instance of the dialogue manager
-    private float _mWaitTimer;  // Timer use for wait time between tips
+    private float _delayTimer; // Instance of the timer for the delay
+    private bool _tutorialStarted = false;  // Check if the tutorial have started
+    private DialogueManager _dm;  // Instance of the dialogue manager
+    private float _waitTimer;  // Timer use for wait time between tips
 
 
     // ------------------------------------------
@@ -25,11 +25,11 @@ public class TutorialDialogue : MonoBehaviour
     void Start()
     {
         // Get component
-        m_dm = FindObjectOfType<DialogueManager>();
+        _dm = FindObjectOfType<DialogueManager>();
         
         // Set the timers
-        _mDelayTimer = m_delay;
-        _mWaitTimer = m_WaitForNextTip;
+        _delayTimer = m_delay;
+        _waitTimer = m_WaitForNextTip;
 
     }
 
@@ -39,7 +39,7 @@ public class TutorialDialogue : MonoBehaviour
     // ------------------------------------------
     void Update()
     {
-        if (!_mTutorialStarted)
+        if (!_tutorialStarted)
             DelayCountDown();
         else
             CheckInput();
@@ -53,13 +53,13 @@ public class TutorialDialogue : MonoBehaviour
     private void DelayCountDown()
     {
         // Count down
-        _mDelayTimer -= Time.deltaTime;
+        _delayTimer -= Time.deltaTime;
 
         // Check if the delay is over
-        if (_mDelayTimer <= 0f)
+        if (_delayTimer <= 0f)
         {
             StartTutorial();
-            _mTutorialStarted = true;
+            _tutorialStarted = true;
         }
     }
     
@@ -68,7 +68,7 @@ public class TutorialDialogue : MonoBehaviour
     private void StartTutorial()
     {
         // Start the tutorial dialogue on screen
-        m_dm.StartDialogue(m_dialogue);
+        _dm.StartDialogue(m_dialogue);
     }
     
 
@@ -76,14 +76,14 @@ public class TutorialDialogue : MonoBehaviour
     private void CheckInput()
     {
         // Display the next sentence of the tutorial
-        if (Input.GetButton("Jump") && _mWaitTimer <= 0f)
+        if (Input.GetButton("Jump") && _waitTimer <= 0f)
         {
             // Reset wait time
-            _mWaitTimer = m_WaitForNextTip;
-            m_dm.DisplayNextSentence();
+            _waitTimer = m_WaitForNextTip;
+            _dm.DisplayNextSentence();
         }
 
         // Count down wait time
-        _mWaitTimer -= Time.deltaTime;
+        _waitTimer -= Time.deltaTime;
     }
 }

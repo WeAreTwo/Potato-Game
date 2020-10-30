@@ -16,8 +16,8 @@ namespace PotatoGame
         protected float m_weightSpeed = 5f; // Speed for the weight transition
 
         // private variables ------------------------
-        private float _mWeightValue; // Value that will be applied to the weight of the ik
-        private bool _mDeactivated; // After an activation, deactivate all 
+        private float _weightValue; // Value that will be applied to the weight of the ik
+        private bool _deactivated; // After an activation, deactivate all 
         
 
         public bool ActivateWeight { get => m_activateWeight; set => m_activateWeight = value; }
@@ -35,7 +35,7 @@ namespace PotatoGame
             // When active, set the targets
             if (m_activateWeight)
                 SetWeight();
-            else if (!_mDeactivated)
+            else if (!_deactivated)
                 ClearTarget();
         }
         
@@ -53,16 +53,16 @@ namespace PotatoGame
 
         protected void SetWeight()
         {
-            _mDeactivated = false;
-            _mWeightValue = Mathf.Lerp(_mWeightValue, 1f, m_weightSpeed * Time.deltaTime);
+            _deactivated = false;
+            _weightValue = Mathf.Lerp(_weightValue, 1f, m_weightSpeed * Time.deltaTime);
 
             // Place the hand effectors to the target position
             SetTransform(m_ik.solver.leftHandEffector, m_leftHandTarget);
             SetTransform(m_ik.solver.rightHandEffector, m_rightHandTarget);
 
             // Set the weight of the effectors to 1 (active)
-            SetWeightValue(m_ik.solver.leftHandEffector, _mWeightValue);
-            SetWeightValue(m_ik.solver.rightHandEffector, _mWeightValue);
+            SetWeightValue(m_ik.solver.leftHandEffector, _weightValue);
+            SetWeightValue(m_ik.solver.rightHandEffector, _weightValue);
         }
 
 
@@ -70,18 +70,18 @@ namespace PotatoGame
         protected void ClearTarget()
         {
             // Do this once per clear
-            if (_mWeightValue > 0f)
+            if (_weightValue > 0f)
             {
-                _mWeightValue -= m_weightSpeed * Time.deltaTime;
+                _weightValue -= m_weightSpeed * Time.deltaTime;
 
                 // Set the weight of the effectors to 1 (active)
-                SetWeightValue(m_ik.solver.leftHandEffector, _mWeightValue);
-                SetWeightValue(m_ik.solver.rightHandEffector, _mWeightValue);
+                SetWeightValue(m_ik.solver.leftHandEffector, _weightValue);
+                SetWeightValue(m_ik.solver.rightHandEffector, _weightValue);
             }
-            else if (!_mDeactivated)
+            else if (!_deactivated)
             {
-                _mWeightValue = 0f;
-                _mDeactivated = true;
+                _weightValue = 0f;
+                _deactivated = true;
             }
         }
 
