@@ -12,17 +12,20 @@ namespace PotatoGame
         [SerializeField] protected RepeaterNode repeatRoot;
         
         [SerializeField] protected SelectorNode rootSelector;
+
+        //follow sequence
         [SerializeField] protected SequenceNode followSequence;
-        
         [SerializeField] protected SequenceNode checkPlayerSequence;
         [SerializeField] protected WaitForNode waitBeforeCheckingPlayer;
         [SerializeField] protected CheckForPlayerNode checkForPlayerNodeNearby;
         [SerializeField] protected FollowNode followPlayer;
-
+        
+        //move to random locations
         [SerializeField] protected SequenceNode moveToRandomPositionSequence;
         [SerializeField] protected WaitForNode waitBeforeMoving;
         [SerializeField] protected MoveToRandomNode moveToRandomPosition;
 
+        //return to tether location
         [SerializeField] protected MoveToNode returnToTetherPosition;
 
 
@@ -33,18 +36,18 @@ namespace PotatoGame
 
         public override void Initialize()
         {
+            //follows the player branch
             waitBeforeCheckingPlayer = new WaitForNode(context, 1.0f);
             checkForPlayerNodeNearby = new CheckForPlayerNode(context);
-            
+
             checkPlayerSequence = new SequenceNode(
                     "Check Player Sequence",
                     waitBeforeCheckingPlayer,
                     checkForPlayerNodeNearby
             );
-            
+
             followPlayer = new FollowNode(context);
 
-            //follows the player branch
             followSequence = new SequenceNode(
                 "Follow Player",
                 checkPlayerSequence,
@@ -60,8 +63,8 @@ namespace PotatoGame
                 moveToRandomPosition
             );
 
-            //return to tether branch
-            returnToTetherPosition = new MoveToNode(context, context.destinationOne.transform.position);
+            //return to tether branch (the position here could be the biome location)
+            returnToTetherPosition = new MoveToNode(context, context.tetherObject.transform.position);
             
 
             //selector branch

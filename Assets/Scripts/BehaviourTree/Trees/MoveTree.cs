@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace PotatoGame
 {
+    /*
+     * NOTE
+     *     NOT FINISHED **DO NOT USE YET**
+     */
     [System.Serializable]
     public class MoveTree : BehaviourTree<AIController>
     {
@@ -24,10 +28,10 @@ namespace PotatoGame
 
         public override void Initialize()
         {
-            moveToOne = new MoveToNode(context, context.destinationOne.transform.position);
-            moveToTwo = new MoveToNode(context, context.destinationTwo.transform.position);
-            moveToThree = new MoveToNode(context, context.destinationThree.transform.position);
-            moveToFour = new MoveToNode(context, context.destinationFour.transform.position);
+            moveToOne = new MoveToNode(context, context.tetherObject.transform.position);
+            // moveToTwo = new MoveToNode(context, context.destinationTwo.transform.position);
+            // moveToThree = new MoveToNode(context, context.destinationThree.transform.position);
+            // moveToFour = new MoveToNode(context, context.destinationFour.transform.position);
             
             moveSequenceNode = new SequenceNode("Move Sequence",
                 moveToOne,

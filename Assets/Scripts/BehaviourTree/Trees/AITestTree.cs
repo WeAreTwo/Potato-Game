@@ -4,7 +4,10 @@ using UnityEngine;
 
 namespace PotatoGame
 {
-
+    /*
+     * NOTE
+     *     NOT FINISHED **DO NOT USE YET**
+     */
     [System.Serializable]
     public class AITestTree : BehaviourTree<AIController>
     {
@@ -29,15 +32,15 @@ namespace PotatoGame
         {
             //for each children, get component, set context (this)
 
-            moveToOne = new MoveToNode(context, context.destinationOne.transform.position);
-            moveToTwo = new MoveToNode(context, context.destinationTwo.transform.position);
-            moveToThree = new MoveToNode(context, context.destinationThree.transform.position);
-            moveToFour = new MoveToNode(context, context.destinationFour.transform.position);
+            moveToOne = new MoveToNode(context, context.tetherObject.transform.position);
+            // moveToTwo = new MoveToNode(context, context.destinationTwo.transform.position);
+            // moveToThree = new MoveToNode(context, context.destinationThree.transform.position);
+            // moveToFour = new MoveToNode(context, context.destinationFour.transform.position);
 
             //initiation behaviour tree here
             grabSword = new SequenceNode("Grab Sword",
-                new CheckForItem(context),
-                new MoveToNode(context, context.destinationFour.transform.position)
+                new CheckForItem(context)
+                // new MoveToNode(context, context.destinationFour.transform.position)
             );
 
             moveSequenceNode = new SequenceNode("Move Sequence",

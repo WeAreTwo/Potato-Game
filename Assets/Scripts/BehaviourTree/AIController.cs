@@ -25,10 +25,7 @@ namespace PotatoGame
         
         //these places could prob be in something like a biome manager?
         [Header("Destinations")]
-        public GameObject destinationOne;
-        public GameObject destinationTwo;
-        public GameObject destinationThree;
-        public GameObject destinationFour;
+        public GameObject tetherObject;
 
         //ANIMATION
         //navmesh velocity difference (to see how much the AI moved)
@@ -70,16 +67,10 @@ namespace PotatoGame
 
         protected virtual void OnDrawGizmos()
         {
-            if (destinationOne && destinationTwo && destinationThree && destinationFour)
+            if (tetherObject)
             {
-                Gizmos.color = Color.magenta;
-                Gizmos.DrawWireSphere(destinationOne.transform.position, 1.0f);
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireSphere(destinationTwo.transform.position, 1.0f);
-                Gizmos.color = Color.black;
-                Gizmos.DrawWireSphere(destinationThree.transform.position, 1.0f);
-                Gizmos.color = Color.blue;
-                Gizmos.DrawWireSphere(destinationFour.transform.position, 1.0f);
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(tetherObject.transform.position, 1.0f);
             }
             
             //seeking range

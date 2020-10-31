@@ -6,7 +6,7 @@
             Interacting with Plants controller to determine plant composition
 
     Behaviour tree
-        ** Draft Passive Agent
+        ** Draft Passive Agent      (done)
         ** Draft Annoying Agent
         *Animation Nodes
         *Conditional Selector (Selects absed on condition)
@@ -14,7 +14,8 @@
         
     Refactoring
         ***AI Controller Refactor to BT         (done)
-        **Picking up
+        **Picking up (controls side)
+        *Animation triggers (MovementBase and AIController)
         
     Interaction
         ***Planting Generation

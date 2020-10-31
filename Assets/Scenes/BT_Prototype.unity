@@ -2765,12 +2765,9 @@ MonoBehaviour:
   seekTarget: {fileID: 0}
   seekPosition: {x: 0, y: 0, z: 0}
   pickUpObject: {fileID: 0}
-  pickUpRange: 1.5
-  destinationOne: {fileID: 651788087}
-  destinationTwo: {fileID: 1211250835}
-  destinationThree: {fileID: 1910983434}
-  destinationFour: {fileID: 221390309}
-  followTree:
+  pickUpRange: 2.5
+  tetherObject: {fileID: 1910983434}
+  passiveAgentTree:
     repeatRoot:
       nodeName: 
       ticks: 0
@@ -2779,21 +2776,14 @@ MonoBehaviour:
       repeatForever: 0
       currentCycle: 0
       repeatCycles: 0
-    followSelectorNode:
+    rootSelector:
       nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
-    followSequenceNode:
-      nodeName: 
-      ticks: 0
-      failThreshold: 0
-      nodeStatus: 0
-      compositeName: 
-      currentNodeIndex: 0
-    testSequenceNode:
+    followSequence:
       nodeName: 
       ticks: 0
       failThreshold: 0
@@ -2807,26 +2797,24 @@ MonoBehaviour:
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
-    waitBeforeChecking:
+    waitBeforeCheckingPlayer:
       nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       waitTime: 0
       waitTimer: 0
-    checkForPlayer:
+    checkForPlayerNodeNearby:
       nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
-    moveCertainAmount:
+    followPlayer:
       nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
-      repeatForever: 0
-      currentCycle: 0
-      repeatCycles: 0
+      followDistance: 0
     moveToRandomPositionSequence:
       nodeName: 
       ticks: 0
@@ -2841,26 +2829,20 @@ MonoBehaviour:
       nodeStatus: 0
       waitTime: 0
       waitTimer: 0
-    pickRandomPosition:
+    moveToRandomPosition:
       nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       destination: {x: 0, y: 0, z: 0}
       remainingDist: 0
-    returnToTether:
+    returnToTetherPosition:
       nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       destination: {x: 0, y: 0, z: 0}
       remainingDist: 0
-    followPlayer:
-      nodeName: 
-      ticks: 0
-      failThreshold: 0
-      nodeStatus: 0
-      followDistance: 0
 --- !u!195 &2076825011
 NavMeshAgent:
   m_ObjectHideFlags: 0
