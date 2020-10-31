@@ -332,7 +332,7 @@ namespace PotatoGame
         {
             NodeState childNodeState;
             
-            //if its forever cycle these nodes
+            //NOTE: Since it repeats forever, IT WILL NOT RETURN SUCCESS OR FAILURE
             if (repeatForever)
             {
                 childNodeState = childNode.TickNode();
@@ -341,8 +341,8 @@ namespace PotatoGame
                     case NodeState.SUCCESS:
                         currentCycle++;
                         childNode.OnReset();
-                        this.nodeStatus = NodeState.SUCCESS;
-                        return NodeState.SUCCESS;
+                        // this.nodeStatus = NodeState.SUCCESS;
+                        // return NodeState.SUCCESS;
                         break;
                     case NodeState.RUNNING:
                         this.nodeStatus = NodeState.RUNNING;
@@ -351,8 +351,8 @@ namespace PotatoGame
                     case NodeState.FAILURE:
                         currentCycle++;
                         childNode.OnReset();
-                        this.nodeStatus = NodeState.FAILURE;
-                        return NodeState.FAILURE; 
+                        // this.nodeStatus = NodeState.FAILURE;
+                        // return NodeState.FAILURE; 
                         break;
                 }
             }
@@ -364,26 +364,128 @@ namespace PotatoGame
                 switch(childNodeState)
                 {
                     case NodeState.SUCCESS:
-                        currentCycle++;
-                        childNode.OnReset();
-                        this.nodeStatus = NodeState.SUCCESS;
-                        return NodeState.SUCCESS;
+                        if (currentCycle + 1 == repeatCycles)
+                        {
+                            childNode.OnReset();
+                            this.nodeStatus = NodeState.SUCCESS;
+                            return NodeState.SUCCESS;
+                        }
+                        else
+                        {
+                            childNode.OnReset();
+                            currentCycle++;
+                        }
                         break;
                     case NodeState.RUNNING:
                         this.nodeStatus = NodeState.RUNNING;
                         return NodeState.RUNNING;
                         break;
                     case NodeState.FAILURE:
-                        currentCycle++;
-                        childNode.OnReset();
-                        this.nodeStatus = NodeState.FAILURE;
-                        return NodeState.FAILURE; 
+                        if (currentCycle + 1 == repeatCycles)
+                        {
+                            childNode.OnReset();
+                            this.nodeStatus = NodeState.FAILURE;
+                            return NodeState.FAILURE;
+                        }
+                        else
+                        {
+                            currentCycle++;
+                            childNode.OnReset();
+                        }
                         break;
                 }
             }
 
-            this.nodeStatus = NodeState.SUCCESS;
-            return NodeState.SUCCESS;  //default return success
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING;  //default return success
+        }
+
+        public override void OnReset()
+        {
+            base.OnReset();
+            currentCycle = 0;
+        }
+    }    
+    
+    //will reapeat until child node return failure
+    [System.Serializable]
+    public class RepeatUntilFailNode : DecoratorNode
+    {
+        [SerializeField] protected int currentCycle = 0;
+        
+        public RepeatUntilFailNode(Node childNode) : base(childNode)
+        {
+        }
+
+        public override NodeState TickNode()
+        {
+            NodeState childNodeState;
+
+            childNodeState = childNode.TickNode();
+            switch (childNodeState)
+            {
+                case NodeState.SUCCESS:
+                    currentCycle++;
+                    childNode.OnReset();
+                    break;
+                case NodeState.RUNNING:
+                    this.nodeStatus = NodeState.RUNNING;
+                    return NodeState.RUNNING;
+                    break;
+                case NodeState.FAILURE:
+                    currentCycle++;
+                    childNode.OnReset();
+                    this.nodeStatus = NodeState.FAILURE;
+                    return NodeState.FAILURE;
+                    break;
+            }
+
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING; //default return success
+        }
+
+        public override void OnReset()
+        {
+            base.OnReset();
+            currentCycle = 0;
+        }
+    }    
+    
+    //will reapeat until child node return success
+    [System.Serializable]
+    public class RepeatUntilSucces : DecoratorNode
+    {
+        [SerializeField] protected int currentCycle = 0;
+        
+        public RepeatUntilSucces(Node childNode) : base(childNode)
+        {
+        }
+
+        public override NodeState TickNode()
+        {
+            NodeState childNodeState;
+
+            childNodeState = childNode.TickNode();
+            switch (childNodeState)
+            {
+                case NodeState.SUCCESS:
+                    currentCycle++;
+                    childNode.OnReset();
+                    this.nodeStatus = NodeState.SUCCESS;
+                    return NodeState.SUCCESS;
+                    break;
+                case NodeState.RUNNING:
+                    this.nodeStatus = NodeState.RUNNING;
+                    return NodeState.RUNNING;
+                    break;
+                case NodeState.FAILURE:
+                    currentCycle++;
+                    childNode.OnReset();
+                    break;
+            }
+
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING; //default return success
         }
 
         public override void OnReset()
