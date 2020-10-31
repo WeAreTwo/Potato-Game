@@ -42,22 +42,21 @@ namespace PotatoGame
     [System.Serializable]
     public abstract class Node
     {
-        [SerializeField] protected int ticks = 0; //how many times it got updates in the update function
-        
+        [SerializeField] protected int ticks = 0; //how many times it got updates in the FailSafe function
+        [SerializeField] protected int failThreshold = 1000;
+
         protected bool onEnterCalled = false;
         protected bool onExitCalled = false;
-        protected bool onCompleteCalled = false;
         
         public NodeState nodeStatus = NodeState.RUNNING;
         
-        //todo gotta update the ticks , maybe subcribe method OnTickNode()?
-
         //constructor
         public Node() {}
         
-        //called once when entered
+        //called once when entered (use in ticknode function)
         public virtual void OnEnterNode() 
         {
+            if(onEnterCalled) return;
             onEnterCalled = true;
         }
         
@@ -65,27 +64,33 @@ namespace PotatoGame
         //to determine succes,  fail, running
         public abstract NodeState TickNode();
         
-        //for when it gets stuck 
-        public virtual void FailSafe()
+        //for when it gets stuck, it will start counting tick (update calls) and reset once its past the threshold
+        public virtual bool TriggerFailSafe()
         {
             ticks++;
+            if (ticks > failThreshold)
+                return true;
+            else
+                return false;
         }
         
         //called when exiting
-        public virtual void OnExitNode() 
+        public virtual void OnExitNode()
         {
+            if (onExitCalled) return; //return if its already been called 
             onExitCalled = true;
         }
 
         public virtual void OnReset()
         {
+            onEnterCalled = false;        //RESET ALL THE CALL FUNCTIONS 
+            onExitCalled = false;
             nodeStatus = NodeState.RUNNING;
             ticks = 0;
         }
 
         public virtual void OnDebug()
         {
-            Debug.Log("im called");
         }
 
         public virtual void OnCurrentNodePath() {}
@@ -453,11 +458,11 @@ namespace PotatoGame
     
     //will reapeat until child node return success
     [System.Serializable]
-    public class RepeatUntilSucces : DecoratorNode
+    public class RepeatUntilSuccess : DecoratorNode
     {
         [SerializeField] protected int currentCycle = 0;
         
-        public RepeatUntilSucces(Node childNode) : base(childNode)
+        public RepeatUntilSuccess(Node childNode) : base(childNode)
         {
         }
 
@@ -495,6 +500,14 @@ namespace PotatoGame
         }
     }
 
+    /*
+     * NOTE:
+     *     THERE ARE 3 TYPES OF LEAF NODE
+     *         CONDITION NODE FOR CHECKING CONDITIONS
+     *         ACTION NODE FOR BEHAVIOUR
+     *         DEBUG NODE FOR DEBUGGING 
+     */
+    
     //node with only 1 child, checks for condition
     [System.Serializable]
     public abstract class ConditionNode<T> : LeafNode<T> where T : MonoBehaviour
@@ -503,29 +516,6 @@ namespace PotatoGame
         {
             this.context = context;
         }
-
-        // public override NodeState TickNode()
-        // {
-        //     // this.nodeStatus = CheckCondition();
-        //
-        //     switch (this.nodeStatus)
-        //     {
-        //         case NodeState.SUCCESS:
-        //             return NodeState.SUCCESS;
-        //             break;
-        //         case NodeState.RUNNING:
-        //             return NodeState.RUNNING;
-        //             break;
-        //         case NodeState.FAILURE:
-        //             return NodeState.FAILURE; //need to do something when it fails otherwise it repeats
-        //             break;
-        //     }
-        //
-        //     return NodeState.RUNNING;
-        //     // return this.nodeStatus;
-        // }
-
-        // public abstract NodeState CheckCondition();
     }
     
     //end node at the very end, behaviour is here
@@ -537,12 +527,14 @@ namespace PotatoGame
             this.context = context;
         }
     }
-    
 
-    // [System.Serializable]
-    // public class DebugLeaf : Leaf
-    // {
-    //     
-    // }
+    [System.Serializable]
+    public abstract class DebugNode<T> : LeafNode<T> where T : MonoBehaviour
+    {
+        public DebugNode(T context) : base(context)
+        {
+            this.context = context;
+        }
+    }
 
 }

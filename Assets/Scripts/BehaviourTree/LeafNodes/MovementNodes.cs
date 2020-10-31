@@ -57,8 +57,6 @@ namespace PotatoGame
     [System.Serializable]
     public class PickRandomPosition : ActionNode<BehaviourTreeAITest>
     {
-        [SerializeField] protected int tickCount = 0;
-        [SerializeField] protected int failThreshold = 1000;
         [SerializeField] protected Vector3 destination;
         [SerializeField] protected float remainingDist;
 
@@ -66,34 +64,10 @@ namespace PotatoGame
         {
             this.context = context;
         }
-
-        public override void FailSafe()
-        {
-            base.FailSafe();
-            // if (ticks > )
-            // {
-            //     
-            // }
-        }
-
-        //testing the fail safe, will need to polish
-        public bool HasTriggeredFailSafe()
-        {
-            ticks++;
-            tickCount = ticks;
-            if (ticks > failThreshold)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
+        
         public override NodeState TickNode()
         {
-            if (HasTriggeredFailSafe())
+            if (TriggerFailSafe())
             {
                 this.nodeStatus = NodeState.FAILURE;
                 return NodeState.FAILURE;
@@ -102,8 +76,8 @@ namespace PotatoGame
             if (destination == Vector3.zero)
             {
                 float randX = UnityEngine.Random.Range(-1.0f, 1.0f);
-                float randY = UnityEngine.Random.Range(-1.0f, 1.0f);
-                Vector3 randomPos = new Vector3(randX, 0, randY);
+                float randZ = UnityEngine.Random.Range(-1.0f, 1.0f);
+                Vector3 randomPos = new Vector3(randX, 0, randZ);
                 Vector3 currentPosXZ = new Vector3(context.transform.position.x, 0, context.transform.position.z);
                 destination = currentPosXZ + (randomPos * context.seekingRange);
             }
