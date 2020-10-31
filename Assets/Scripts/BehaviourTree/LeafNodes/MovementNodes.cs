@@ -153,6 +153,7 @@ namespace PotatoGame
             //if the target ceizes to exist, then its fails
             if (context.seekTarget == null)
             {
+                OnReset();
                 this.nodeStatus = NodeState.FAILURE;
                 return NodeState.FAILURE;
             }
@@ -166,7 +167,7 @@ namespace PotatoGame
             //if ur outside the followw distance, consider this succesfull
             if (Vector3.Distance(context.transform.position, context.seekTarget.transform.position) > followDistance)
             {
-                context.navAgent.StopNavigation();
+                OnReset();
                 this.nodeStatus = NodeState.FAILURE;
                 return NodeState.FAILURE;
             }
@@ -182,6 +183,7 @@ namespace PotatoGame
         {
             base.OnReset();
             context.navAgent.StopNavigation();
+            context.seekTarget = null;
         }
     }
 }

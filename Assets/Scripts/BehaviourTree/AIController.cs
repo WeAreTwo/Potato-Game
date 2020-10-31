@@ -67,6 +67,7 @@ namespace PotatoGame
 
         protected virtual void OnDrawGizmos()
         {
+            //tether object location 
             if (tetherObject)
             {
                 Gizmos.color = Color.red;
@@ -78,10 +79,10 @@ namespace PotatoGame
             Gizmos.DrawWireSphere(this.transform.position, seekingRange);
             
             //seeking target
-            if (seekTarget)
+            if (navAgent && navAgent.hasPath)
             {
                 Gizmos.color = Color.black;
-                Gizmos.DrawLine(this.transform.position, seekTarget.transform.position);
+                Gizmos.DrawLine(this.transform.position, navAgent.destination);
             }
 
             //item pickup range 
