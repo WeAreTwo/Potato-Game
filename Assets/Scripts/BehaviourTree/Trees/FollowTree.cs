@@ -13,12 +13,18 @@ namespace PotatoGame
         
         [SerializeField] protected SelectorNode followSelectorNode;
         [SerializeField] protected SequenceNode followSequenceNode;
+        [SerializeField] protected SequenceNode testSequenceNode;
         
         [SerializeField] protected SequenceNode checkPlayerSequence;
         [SerializeField] protected WaitFor waitBeforeChecking;
         [SerializeField] protected CheckForPlayer checkForPlayer;
-        
+
+        [SerializeField] protected RepeaterNode moveCertainAmount;
+        [SerializeField] protected SequenceNode moveToRandomPositionSequence;
+        [SerializeField] protected WaitFor waitBeforeMoving;
         [SerializeField] protected PickRandomPosition pickRandomPosition;
+
+        [SerializeField] protected MoveToNode returnToTether;
         
         [SerializeField] protected Follow followPlayer;
         
@@ -39,34 +45,47 @@ namespace PotatoGame
             );
             
             followPlayer = new Follow(context);
-            
-            pickRandomPosition = new PickRandomPosition(context);
-            
+
+            //follows the player branch
             followSequenceNode = new SequenceNode(
                 "Follow Player",
                 checkPlayerSequence,
                 followPlayer
             );
             
-            // followSelectorNode = new SelectorNode(
-            //         "Follow Selector",
-            //         followSequenceNode,
-            //         new SequenceNode(
-            //                 "Check Player While Moving",
-            //                 new InverterNode(
-            //                         new CheckForPlayer(context)
-            //                     ),
-            //                 new MoveToNode(context, context.destinationOne.transform.position)
-            //             )
-            // );            
-            followSelectorNode = new SelectorNode(
-                    "Follow Selector",
-                    followSequenceNode,
-                    pickRandomPosition,
-                    new MoveToNode(context, context.destinationOne.transform.position)
+            //move to random position branch
+            waitBeforeMoving = new WaitFor(context, 3.5f);
+            pickRandomPosition = new PickRandomPosition(context);
+            moveToRandomPositionSequence = new SequenceNode(
+                "Move Random Sequence",
+                waitBeforeMoving,
+                pickRandomPosition
             );
             
-            repeatRoot = new RepeaterNode(followSelectorNode);
+            moveCertainAmount = new RepeaterNode(
+                moveToRandomPositionSequence, true, 3
+                );
+
+            //return to tether branch
+            returnToTether = new MoveToNode(context, context.destinationOne.transform.position);
+            
+            //test 
+            testSequenceNode = new SequenceNode(
+                    "Test repeater",
+                    returnToTether,
+                    moveCertainAmount
+                );
+
+            //selector branch
+            followSelectorNode = new SelectorNode(
+                    "Follow Selector",
+                    returnToTether,
+                    moveCertainAmount
+                    
+            );
+            
+            //root node 
+            repeatRoot = new RepeaterNode(testSequenceNode);
         }
 
         public override void Run()
