@@ -5,17 +5,18 @@ using UnityEngine;
 namespace PotatoGame
 {
 
+    //Checks for item (used for testing)
     [System.Serializable]
-    public class CheckForItem : ConditionNode<BehaviourTreeAITest>
+    public class CheckForItem : ConditionNode<AIController>
     {
-        public CheckForItem(BehaviourTreeAITest context) : base(context)
+        public CheckForItem(AIController context) : base(context)
         {
             this.context = context;
         }
 
         public override NodeState TickNode()
         {
-            if (context.hasSword)
+            if (true)
             {
                 this.nodeStatus = NodeState.SUCCESS;
                 return NodeState.SUCCESS;
@@ -28,11 +29,11 @@ namespace PotatoGame
         }
     }
     
-    
+    //Checks for item nearby the agent
     [System.Serializable]
-    public class CheckNearbyItem : ConditionNode<BehaviourTreeAITest>
+    public class CheckNearbyItem : ConditionNode<AIController>
     {
-        public CheckNearbyItem(BehaviourTreeAITest context) : base(context)
+        public CheckNearbyItem(AIController context) : base(context)
         {
             this.context = context;
         }
@@ -69,9 +70,9 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public class CheckForPlayer : ConditionNode<BehaviourTreeAITest>
+    public class CheckForPlayer : ConditionNode<AIController>
     {
-        public CheckForPlayer(BehaviourTreeAITest context) : base(context)
+        public CheckForPlayer(AIController context) : base(context)
         {
             this.context = context;
         }

@@ -11,7 +11,7 @@ namespace PotatoGame
             plantFsm.Health = 100;
             plantFsm.PickedUp = false;
             plantFsm.Planted = false;
-            plantFsm.InitState = PlantStates.Seed;
+            plantFsm.InitState = PlantStates.SEED;
         }
         public static void HarvestInit(this Plant plantFsm)
         {
@@ -19,7 +19,7 @@ namespace PotatoGame
             plantFsm.Health = 100;
             plantFsm.PickedUp = false;
             plantFsm.Planted = false;
-            plantFsm.InitState = PlantStates.Seed;
+            plantFsm.InitState = PlantStates.SEED;
         }
     }
 }

@@ -8,13 +8,13 @@ namespace PotatoGame
     [System.Serializable]
     public enum PlantStates
     {
-        Seed,
-        Grown,
-        Autonomous,
-        Idle,
-        Move,
-        MoveToBell,
-        Eat
+        SEED,
+        GROWN,
+        AUTONOMOUS,
+        IDLE,
+        MOVE,
+        MOVE_TO_BELL,
+        EAT
     }
 
     [System.Serializable]
@@ -41,12 +41,12 @@ namespace PotatoGame
         protected override void Start()
         {
             fsm = new StateMachine();
-            fsm.Add(PlantStates.Seed, new SeedState<PotatoFSM>(this));
-            fsm.Add(PlantStates.Grown, new GrownState<PotatoFSM>(this));
-            fsm.Add(PlantStates.Autonomous, new AutonomousState<PotatoFSM>(this));
-            fsm.Add(PlantStates.Idle, new Idle<PotatoFSM>(this));
-            fsm.Add(PlantStates.Move, new Move<PotatoFSM>(this));
-            fsm.Add(PlantStates.Eat, new Eat<PotatoFSM>(this));
+            fsm.Add(PlantStates.SEED, new SeedState<PotatoFSM>(this));
+            fsm.Add(PlantStates.GROWN, new GrownState<PotatoFSM>(this));
+            fsm.Add(PlantStates.AUTONOMOUS, new AutonomousState<PotatoFSM>(this));
+            fsm.Add(PlantStates.IDLE, new Idle<PotatoFSM>(this));
+            fsm.Add(PlantStates.MOVE, new Move<PotatoFSM>(this));
+            fsm.Add(PlantStates.EAT, new Eat<PotatoFSM>(this));
             
             fsm.Initialize(initState);
         }

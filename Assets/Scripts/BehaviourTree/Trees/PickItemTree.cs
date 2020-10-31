@@ -6,7 +6,7 @@ namespace PotatoGame
 {
 
     [System.Serializable]
-    public class PickItemTree : BehaviourTree<BehaviourTreeAITest>
+    public class PickItemTree : BehaviourTree<AIController>
     {
         [SerializeField] protected SequenceNode pickUpSequence;
         [SerializeField] protected CheckNearbyItem checkNearbyItem;
@@ -14,7 +14,7 @@ namespace PotatoGame
         [SerializeField] protected WaitFor waitFor;
         [SerializeField] protected DropItem dropItem;
         
-        public PickItemTree(BehaviourTreeAITest context) : base(context)
+        public PickItemTree(AIController context) : base(context)
         {
             this.context = context;
         }

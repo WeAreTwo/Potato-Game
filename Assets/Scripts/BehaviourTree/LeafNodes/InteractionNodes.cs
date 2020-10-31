@@ -5,9 +5,9 @@ using UnityEngine;
 namespace PotatoGame
 {
     [System.Serializable]
-    public class PickUpItem : ConditionNode<BehaviourTreeAITest>
+    public class PickUpItem : ConditionNode<AIController>
     {
-        public PickUpItem(BehaviourTreeAITest context) : base(context)
+        public PickUpItem(AIController context) : base(context)
         {
             this.context = context;
         }
@@ -44,10 +44,10 @@ namespace PotatoGame
     }       
     
     [System.Serializable]
-    public class DropItem : ConditionNode<BehaviourTreeAITest>
+    public class DropItem : ConditionNode<AIController>
     {
 
-        public DropItem(BehaviourTreeAITest context) : base(context)
+        public DropItem(AIController context) : base(context)
         {
             this.context = context;
         }

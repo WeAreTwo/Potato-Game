@@ -9,11 +9,11 @@ namespace PotatoGame
     public class PlantsController : MonoBehaviour
     {
         //PLANTS LIST
-        [SerializeField] protected List<PotatoAI> autonomousPotatoes = new List<PotatoAI>();
+        [SerializeField] protected List<AIPotatoFSM> autonomousPotatoes = new List<AIPotatoFSM>();
         [SerializeField] protected List<PlantFSM> plants = new List<PlantFSM>();
 
         #region Properties
-        public List<PotatoAI> AutonomousPotatoes { get => autonomousPotatoes; set => autonomousPotatoes = value; }
+        public List<AIPotatoFSM> AutonomousPotatoes { get => autonomousPotatoes; set => autonomousPotatoes = value; }
         public List<PlantFSM> Plants { get => plants; set => plants = value; }
         #endregion
 

@@ -39,7 +39,7 @@ namespace PotatoGame
             else
             {
                 transitionTime = 0;
-                TriggerExit(PlantStates.Idle);
+                TriggerExit(PlantStates.IDLE);
             }
         }
     

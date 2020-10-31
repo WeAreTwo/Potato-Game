@@ -11,7 +11,7 @@ namespace PotatoGame
         //Finite State Machine
         [Header("FSM PARAMS")]
         protected StateMachine fsm;
-        [SerializeField] protected PlantStates initState = PlantStates.Seed;
+        [SerializeField] protected PlantStates initState = PlantStates.SEED;
 
         [Header("GENERAL")]
         [SerializeField] protected float health = 100.0f;
@@ -30,8 +30,8 @@ namespace PotatoGame
         protected virtual void Start()
         {
             fsm = new StateMachine();
-            fsm.Add(PlantStates.Seed, new SeedState<PlantFSM>(this));
-            fsm.Add(PlantStates.Grown, new GrownState<PlantFSM>(this));
+            fsm.Add(PlantStates.SEED, new SeedState<PlantFSM>(this));
+            fsm.Add(PlantStates.GROWN, new GrownState<PlantFSM>(this));
 
             fsm.Initialize(initState);
         }

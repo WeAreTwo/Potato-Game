@@ -2656,6 +2656,7 @@ GameObject:
   - component: {fileID: 2076825007}
   - component: {fileID: 2076825006}
   - component: {fileID: 2076825011}
+  - component: {fileID: 2076825012}
   - component: {fileID: 2076825010}
   m_Layer: 0
   m_Name: Capsule
@@ -2748,13 +2749,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 2076825005}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ca0e2691422a2d45a31f1b6fd6fd1f3, type: 3}
+  m_Script: {fileID: 11500000, guid: 13b8067117d960b418134bdc1258a580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  heading: {x: 0, y: 0, z: 0}
+  groundOffset: 0.2
+  gravityForce: -9.81
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 0
   navAgent: {fileID: 0}
   hasPath: 0
-  hasSword: 0
-  seekingRange: 5
+  seekingRange: 1.5
   seekTarget: {fileID: 0}
   seekPosition: {x: 0, y: 0, z: 0}
   pickUpObject: {fileID: 0}
@@ -2763,128 +2769,82 @@ MonoBehaviour:
   destinationTwo: {fileID: 1211250835}
   destinationThree: {fileID: 1910983434}
   destinationFour: {fileID: 221390309}
-  pickUpTree:
-    pickUpSequence:
-      ticks: 0
-      nodeStatus: 0
-      compositeName: 
-      currentNodeIndex: 0
-    checkNearbyItem:
-      ticks: 0
-      nodeStatus: 0
-    pickUpItem:
-      ticks: 0
-      nodeStatus: 0
-    waitFor:
-      ticks: 0
-      nodeStatus: 0
-      waitTime: 0
-      waitTimer: 0
-    dropItem:
-      ticks: 0
-      nodeStatus: 0
-  moveTree:
-    repeatMoveSequence:
-      ticks: 0
-      nodeStatus: 0
-      repeatForever: 0
-      currentCycle: 0
-      repeatCycles: 0
-    moveSequenceNode:
-      ticks: 0
-      nodeStatus: 0
-      compositeName: 
-      currentNodeIndex: 0
-    moveSelectorNode:
-      ticks: 0
-      nodeStatus: 0
-      compositeName: 
-      currentNodeIndex: 0
-    moveToOne:
-      ticks: 0
-      nodeStatus: 0
-      destination: {x: 0, y: 0, z: 0}
-      remainingDist: 0
-    moveToTwo:
-      ticks: 0
-      nodeStatus: 0
-      destination: {x: 0, y: 0, z: 0}
-      remainingDist: 0
-    moveToThree:
-      ticks: 0
-      nodeStatus: 0
-      destination: {x: 0, y: 0, z: 0}
-      remainingDist: 0
-    moveToFour:
-      ticks: 0
-      nodeStatus: 0
-      destination: {x: 0, y: 0, z: 0}
-      remainingDist: 0
   followTree:
     repeatRoot:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       repeatForever: 0
       currentCycle: 0
       repeatCycles: 0
     followSelectorNode:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     followSequenceNode:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     testSequenceNode:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     checkPlayerSequence:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     waitBeforeChecking:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       waitTime: 0
       waitTimer: 0
     checkForPlayer:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
     moveCertainAmount:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       repeatForever: 0
       currentCycle: 0
       repeatCycles: 0
     moveToRandomPositionSequence:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     waitBeforeMoving:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       waitTime: 0
       waitTimer: 0
     pickRandomPosition:
       ticks: 0
-      nodeStatus: 0
-      tickCount: 0
       failThreshold: 0
+      nodeStatus: 0
       destination: {x: 0, y: 0, z: 0}
       remainingDist: 0
     returnToTether:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       destination: {x: 0, y: 0, z: 0}
       remainingDist: 0
     followPlayer:
       ticks: 0
+      failThreshold: 0
       nodeStatus: 0
       followDistance: 0
 --- !u!195 &2076825011
@@ -2909,3 +2869,22 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!95 &2076825012
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2076825005}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

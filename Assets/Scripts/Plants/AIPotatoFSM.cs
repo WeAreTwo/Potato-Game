@@ -20,12 +20,12 @@ namespace PotatoGame
         PickedUp
     }
 
-    public class PotatoAI : AIController
+    public class AIPotatoFSM : AIControllerFSM
     {
         [SerializeField] protected GameObject player;
         [SerializeField] protected Vector3 bellPosition;
 
-        [SerializeField] protected PotatoAI feedTarget;
+        [SerializeField] protected AIPotatoFSM feedTarget;
         [SerializeField] protected float feedDistance = 1.0f;
         [SerializeField] protected float hunger = 100.0f;
         [SerializeField] protected float hungerDecreaseFactor = 3.0f;
@@ -33,7 +33,7 @@ namespace PotatoGame
         #region Properties
         public GameObject Player { get => player; set => player = value; }
         public Vector3 BellPosition { get => bellPosition; set => bellPosition = value; }
-        public PotatoAI FeedTarget { get => feedTarget; set => feedTarget = value; }
+        public AIPotatoFSM FeedTarget { get => feedTarget; set => feedTarget = value; }
         public float FeedDistance { get => feedDistance; set => feedDistance = value; }
         public float Hunger { get => hunger; set => hunger = value; }
         public float HungerDecreaseFactor { get => hungerDecreaseFactor; set => hungerDecreaseFactor = value; }
@@ -51,12 +51,12 @@ namespace PotatoGame
         protected override void Start()
         {
             fsm = new StateMachine();
-            fsm.Add(PotatoStates.Idle, new IdleAI<PotatoAI>(this));
-            fsm.Add(PotatoStates.Move, new MoveAI<PotatoAI>(this));
-            fsm.Add(PotatoStates.MoveToBell, new MoveToBell<PotatoAI>(this));
-            fsm.Add(PotatoStates.Follow, new Follow<PotatoAI>(this));
-            fsm.Add(PotatoStates.Eat, new Feed<PotatoAI>(this));
-            fsm.Add(PotatoStates.Look, new Look<PotatoAI>(this));
+            fsm.Add(PotatoStates.Idle, new IdleAI<AIPotatoFSM>(this));
+            fsm.Add(PotatoStates.Move, new MoveAI<AIPotatoFSM>(this));
+            fsm.Add(PotatoStates.MoveToBell, new MoveToBell<AIPotatoFSM>(this));
+            fsm.Add(PotatoStates.Follow, new Follow<AIPotatoFSM>(this));
+            fsm.Add(PotatoStates.Eat, new Feed<AIPotatoFSM>(this));
+            fsm.Add(PotatoStates.Look, new Look<AIPotatoFSM>(this));
             fsm.Initialize(PotatoStates.Idle);
         }
 
@@ -129,7 +129,7 @@ namespace PotatoGame
     //Todo implement different decision making based on different AI
     //Note: i changed from potato base state to AIbasestate
     [System.Serializable]
-    public class AIBaseState<T> : State where T : PotatoAI
+    public class AIBaseState<T> : State where T : AIPotatoFSM
     {
         protected T component;
 
@@ -204,7 +204,7 @@ namespace PotatoGame
 
     #region Move TO Bell
     [System.Serializable]
-    public class MoveToBell<T> : MoveAI<T> where T : PotatoAI
+    public class MoveToBell<T> : MoveAI<T> where T : AIPotatoFSM
     {
         public MoveToBell(T component) : base(component)
         {
@@ -244,7 +244,7 @@ namespace PotatoGame
     #region Follow State
 
     [System.Serializable]
-    public class Follow<T> : MoveAI<T> where T : PotatoAI
+    public class Follow<T> : MoveAI<T> where T : AIPotatoFSM
     {
         
         public Follow(T component) : base(component)
@@ -275,7 +275,7 @@ namespace PotatoGame
     #region Move State
     // AI CONTROLLER STATES
     [System.Serializable]
-    public class MoveAI<T>: AIBaseState<T> where T: PotatoAI
+    public class MoveAI<T>: AIBaseState<T> where T: AIPotatoFSM
     {
         protected T component;
         
@@ -365,7 +365,7 @@ namespace PotatoGame
     #region Idle State
 
     [System.Serializable]
-    public class IdleAI<T>: AIBaseState<T> where T: PotatoAI
+    public class IdleAI<T>: AIBaseState<T> where T: AIPotatoFSM
     {
         protected T component;
 
@@ -413,7 +413,7 @@ namespace PotatoGame
     #region Feed State
 
     [System.Serializable]
-    public class Feed<T>: AIBaseState<T> where T: PotatoAI
+    public class Feed<T>: AIBaseState<T> where T: AIPotatoFSM
     {
         //will transition into feed state from look state 
         
@@ -494,7 +494,7 @@ namespace PotatoGame
     #region Look State
 
     [System.Serializable]
-    public class Look<T>: AIBaseState<T> where T: PotatoAI
+    public class Look<T>: AIBaseState<T> where T: AIPotatoFSM
     {
         //will transition into look after moving or idling
         
@@ -533,7 +533,7 @@ namespace PotatoGame
             Collider[] hitColliders = Physics.OverlapSphere(component.transform.position, component.seekRange);
             foreach (Collider hit in hitColliders)
             {
-                if(hit.TryGetComponent(out PotatoAI potato))
+                if(hit.TryGetComponent(out AIPotatoFSM potato))
                 {
                     component.FeedTarget = potato;
                     TriggerExit(PotatoStates.Eat);
@@ -553,7 +553,7 @@ namespace PotatoGame
     #region Dying State
 
     [System.Serializable]
-    public class Dying<T>: AIBaseState<T> where T: PotatoAI
+    public class Dying<T>: AIBaseState<T> where T: AIPotatoFSM
     {
         //will transition into look after moving or idling
         
@@ -609,7 +609,7 @@ namespace PotatoGame
     #region Picked Up State
 
     [System.Serializable]
-    public class PickedUp<T>: AIBaseState<T> where T: PotatoAI
+    public class PickedUp<T>: AIBaseState<T> where T: AIPotatoFSM
     {
         //will transition into look after moving or idling
         

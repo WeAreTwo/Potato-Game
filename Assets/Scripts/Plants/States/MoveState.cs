@@ -114,7 +114,7 @@ namespace PotatoGame
             
             //if there is a victim, go to eating mode 
             if (component.victim != null)
-                TriggerExit(PlantStates.Eat);
+                TriggerExit(PlantStates.EAT);
             else
                 PickRandomPosition();
 

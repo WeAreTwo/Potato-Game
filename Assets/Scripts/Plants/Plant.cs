@@ -9,7 +9,7 @@ namespace PotatoGame
     public abstract class Plant : InteractableObject, IPlantable
     {
         //Finite State Machine
-        [SerializeField] protected PlantStates initState = PlantStates.Seed;
+        [SerializeField] protected PlantStates initState = PlantStates.SEED;
 
         [Header("GENERAL")]
         [SerializeField] protected float health = 100.0f;

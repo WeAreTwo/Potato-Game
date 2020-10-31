@@ -7,7 +7,7 @@ namespace PotatoGame
 {
 
     [System.Serializable]
-    public class FollowTree : BehaviourTree<BehaviourTreeAITest>
+    public class FollowTree : BehaviourTree<AIController>
     {
         [SerializeField] protected RepeaterNode repeatRoot;
         
@@ -28,7 +28,7 @@ namespace PotatoGame
         
         [SerializeField] protected Follow followPlayer;
         
-        public FollowTree(BehaviourTreeAITest context) : base(context)
+        public FollowTree(AIController context) : base(context)
         {
             this.context = context;
         }

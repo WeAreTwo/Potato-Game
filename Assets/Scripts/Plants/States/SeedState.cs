@@ -89,7 +89,7 @@ namespace PotatoGame
             {
                 growthCompleted = true;
                 growing = false;
-                TriggerExit(PlantStates.Grown);
+                TriggerExit(PlantStates.GROWN);
             }
         }
 

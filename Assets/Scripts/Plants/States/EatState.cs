@@ -130,7 +130,7 @@ namespace PotatoGame
             // }
             else
             {
-                TriggerExit(PlantStates.Idle); //idle in the same spot
+                TriggerExit(PlantStates.IDLE); //idle in the same spot
             }
 
         }

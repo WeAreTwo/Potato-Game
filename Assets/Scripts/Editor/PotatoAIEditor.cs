@@ -6,12 +6,12 @@ using UnityEditor;
 namespace PotatoGame
 {
 
-    [CustomEditor(typeof(PotatoAI))]
+    [CustomEditor(typeof(AIPotatoFSM))]
     public class PotatoAIEditor : Editor
     {
         void OnSceneGUI()
         {
-            PotatoAI potato = (PotatoAI) target;
+            AIPotatoFSM aiPotato = (AIPotatoFSM) target;
 
             // if (potato.Fsm.CurrentStateKey != null)
             // {

@@ -8,13 +8,13 @@ namespace PotatoGame
 {
     //using interface to pass context , so we can remove constructor 
     [System.Serializable]
-    public class MoveToNode : ActionNode<BehaviourTreeAITest>
+    public class MoveToNode : ActionNode<AIController>
     {
 
         [SerializeField] protected Vector3 destination;
         [SerializeField] protected float remainingDist;
         
-        public MoveToNode(BehaviourTreeAITest context, Vector3 destination) : base(context)
+        public MoveToNode(AIController context, Vector3 destination) : base(context)
         {
             this.context = context;
             this.destination = destination;
@@ -55,12 +55,12 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public class PickRandomPosition : ActionNode<BehaviourTreeAITest>
+    public class PickRandomPosition : ActionNode<AIController>
     {
         [SerializeField] protected Vector3 destination;
         [SerializeField] protected float remainingDist;
 
-        public PickRandomPosition(BehaviourTreeAITest context) : base(context)
+        public PickRandomPosition(AIController context) : base(context)
         {
             this.context = context;
         }
@@ -86,7 +86,7 @@ namespace PotatoGame
             // Debug.Log("on move node");
             remainingDist = Vector3.Distance(context.transform.position, this.destination);
             
-            Debug.Log($"Does the nav have a path ? {context.navAgent.hasPath}");
+            // Debug.Log($"Does the nav have a path ? {context.navAgent.hasPath}");
             
             //if it doesnt have a path, set one
             if ( destination != Vector3.zero)
@@ -135,13 +135,13 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public class Follow : ActionNode<BehaviourTreeAITest>
+    public class Follow : ActionNode<AIController>
     {
 
         // [SerializeField] protected GameObject followTarget;
         [SerializeField] protected float followDistance;
         
-        public Follow(BehaviourTreeAITest context, float followDistance = 10.0f) : base(context)
+        public Follow(AIController context, float followDistance = 10.0f) : base(context)
         {
             this.context = context;
             this.followDistance = followDistance;

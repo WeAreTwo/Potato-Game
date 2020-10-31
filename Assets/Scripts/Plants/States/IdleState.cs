@@ -69,7 +69,7 @@ namespace PotatoGame
             }
             else
             {
-                TriggerExit(PlantStates.Move);
+                TriggerExit(PlantStates.MOVE);
             }
         }
 

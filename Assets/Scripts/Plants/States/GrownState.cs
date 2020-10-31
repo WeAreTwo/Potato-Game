@@ -39,7 +39,7 @@ namespace PotatoGame
             {
                 harvestPeriodCompleted = true;
                 harvestable = false;
-                TriggerExit(PlantStates.Autonomous);
+                TriggerExit(PlantStates.AUTONOMOUS);
             }
         }
 

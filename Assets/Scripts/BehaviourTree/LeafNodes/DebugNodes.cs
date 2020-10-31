@@ -5,11 +5,11 @@ using UnityEngine;
 namespace PotatoGame
 {
     [System.Serializable]
-    public class ReturnNode : ConditionNode<BehaviourTreeAITest>
+    public class ReturnNode : ConditionNode<AIController>
     {
         [SerializeField] protected NodeState returnType;
         
-        public ReturnNode(BehaviourTreeAITest context, NodeState returnType) : base(context)
+        public ReturnNode(AIController context, NodeState returnType) : base(context)
         {
             this.context = context;
             this.returnType = returnType;

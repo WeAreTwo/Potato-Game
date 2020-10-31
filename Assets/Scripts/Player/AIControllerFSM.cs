@@ -11,21 +11,21 @@ namespace PotatoGame
 {
 
     [System.Serializable]
-    public enum AIStates
+    public enum AIStatesFSM
     {
-        Idle,
-        Move,
-        MoveToBell,
-        Follow,
-        Look,
-        Eat,
-        Dying,
-        PickedUp,
-        RunningAway
+        IDLE,
+        MOVE,
+        MOVE_TO_BELL,
+        FOLLOW,
+        LOOK,
+        EAT,
+        DYING,
+        PICKEDUP,
+        RUNNING_AWAY
     }
     
     [RequireComponent(typeof(NavMeshAgent))]
-    public class AIController : MovementBase
+    public class AIControllerFSM : MovementBase
     {
         protected GameManager manager;
         
@@ -34,7 +34,7 @@ namespace PotatoGame
         
         protected NavMeshAgent navAgent;
         protected StateMachine fsm;
-        protected PlantStates initState = PlantStates.Idle;
+        protected PlantStates initState = PlantStates.IDLE;
         
         //base params
         protected float health = 100.0f;

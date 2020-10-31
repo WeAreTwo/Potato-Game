@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PotatoGame
 {
     [System.Serializable]
-    public class MoveTree : BehaviourTree<BehaviourTreeAITest>
+    public class MoveTree : BehaviourTree<AIController>
     {
         [SerializeField] protected RepeaterNode repeatMoveSequence;
      
@@ -17,7 +17,7 @@ namespace PotatoGame
         [SerializeField] protected MoveToNode moveToThree;
         [SerializeField] protected MoveToNode moveToFour;
         
-        public MoveTree(BehaviourTreeAITest context) : base(context)
+        public MoveTree(AIController context) : base(context)
         {
             this.context = context;
         }

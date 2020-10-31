@@ -107,6 +107,7 @@ namespace PotatoGame
 
         public CompositeNode(string compositeName, params Node[] childNodes)
         {
+            this.compositeName = compositeName;
             this.childNodes = childNodes.ToList();
         }
         
