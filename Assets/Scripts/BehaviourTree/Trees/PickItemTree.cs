@@ -11,7 +11,7 @@ namespace PotatoGame
         [SerializeField] protected SequenceNode pickUpSequence;
         [SerializeField] protected CheckNearbyItem checkNearbyItem;
         [SerializeField] protected PickUpItem pickUpItem;
-        [SerializeField] protected WaitFor waitFor;
+        [SerializeField] protected WaitForNode waitForNode;
         [SerializeField] protected DropItem dropItem;
         
         public PickItemTree(AIController context) : base(context)
@@ -23,14 +23,14 @@ namespace PotatoGame
         {
             checkNearbyItem = new CheckNearbyItem(context);
             pickUpItem = new PickUpItem(context);
-            waitFor = new WaitFor(context);
+            waitForNode = new WaitForNode(context);
             dropItem = new DropItem(context);
             pickUpSequence = new SequenceNode(
                 "Pick Up Sequence",
                 checkNearbyItem,
                 // new WaitFor(this, 2.0f),
                 pickUpItem,
-                waitFor,
+                waitForNode,
                 dropItem
 
             );

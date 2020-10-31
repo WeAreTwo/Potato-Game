@@ -15,13 +15,13 @@ namespace PotatoGame
         public bool hasPath;
         
         [Header("Seeking Parameters")]
-        public float seekingRange = 1.5f;
+        public float seekingRange = 6.5f;
         public GameObject seekTarget;
         public Vector3 seekPosition;
         
         [Header("Pickup Parameters")]
         public GameObject pickUpObject;
-        public float pickUpRange = 2.5f;
+        public float pickUpRange = 1.5f;
         
         //these places could prob be in something like a biome manager?
         [Header("Destinations")]

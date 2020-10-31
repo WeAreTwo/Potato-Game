@@ -20,7 +20,8 @@ namespace PotatoGame
         
         public abstract void Initialize();
         public abstract void Run();
-        
+
+        public virtual void Debug(){}
         public virtual void DrawGizmos(){}
     }
     
@@ -42,6 +43,8 @@ namespace PotatoGame
     [System.Serializable]
     public abstract class Node
     {
+        public string nodeName;
+        
         [SerializeField] protected int ticks = 0; //how many times it got updates in the FailSafe function
         [SerializeField] protected int failThreshold = 1000;
 
@@ -51,7 +54,13 @@ namespace PotatoGame
         public NodeState nodeStatus = NodeState.RUNNING;
         
         //constructor
-        public Node() {}
+        public Node()
+        {
+            // automatically assign name based on class name
+            string nodeName = this.GetType().ToString();
+            nodeName = nodeName.Replace("PotatoGame.", "");
+            this.nodeName = nodeName;
+        }
         
         //called once when entered (use in ticknode function)
         public virtual void OnEnterNode() 
@@ -89,7 +98,7 @@ namespace PotatoGame
             ticks = 0;
         }
 
-        public virtual void OnDebug()
+        public virtual void OnDebug(string link)
         {
         }
 
@@ -104,6 +113,7 @@ namespace PotatoGame
     {
         [SerializeField] protected string compositeName;
         [SerializeField] protected List<Node> childNodes;
+        [SerializeField] protected int currentNodeIndex = 0;
 
         public CompositeNode(string compositeName, params Node[] childNodes)
         {
@@ -122,6 +132,20 @@ namespace PotatoGame
             }
         }
 
+        public override void OnDebug(string link)
+        {
+            base.OnDebug(link);
+
+            // foreach (Node child in childNodes)
+            // {
+            //     child.OnDebug($"{link} {nodeName} >> ");
+            // }
+
+            childNodes[currentNodeIndex].OnDebug($"{link} {nodeName} >> ");
+            
+        }
+        
+        
         public override void DrawGizmos()
         {
             base.DrawGizmos();
@@ -149,6 +173,13 @@ namespace PotatoGame
             base.OnReset();
             childNode.OnReset();
         }
+        
+        public override void OnDebug(string link)
+        {
+            base.OnDebug(link);
+            
+            childNode.OnDebug($"{link} {nodeName} ** ");
+        }
 
         public override void DrawGizmos()
         {
@@ -166,6 +197,13 @@ namespace PotatoGame
         {
             this.context = context;
         }
+        
+        public override void OnDebug(string link)
+        {
+            base.OnDebug(link);
+            
+            Debug.Log($"{link} {nodeName} :: ");
+        }
     }
 
     //in order for the sequence node to return success, ALL child nodes need to return success
@@ -173,8 +211,7 @@ namespace PotatoGame
     [System.Serializable]
     public class SequenceNode : CompositeNode
     {
-        [SerializeField] protected int currentNodeIndex = 0;
-
+        
         public SequenceNode(string compositeName, params Node[] childNodes) : base(compositeName, childNodes)
         {
             this.childNodes = childNodes.ToList();
@@ -225,8 +262,7 @@ namespace PotatoGame
     [System.Serializable]
     public class SelectorNode : CompositeNode
     {
-        [SerializeField] protected int currentNodeIndex = 0;
-
+        
         public SelectorNode(string compositeName, params Node[] childNodes) : base(compositeName, childNodes)
         {
             this.childNodes = childNodes.ToList();

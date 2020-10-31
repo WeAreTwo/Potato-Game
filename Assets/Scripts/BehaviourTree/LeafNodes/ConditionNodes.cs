@@ -70,9 +70,9 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public class CheckForPlayer : ConditionNode<AIController>
+    public class CheckForPlayerNode : ConditionNode<AIController>
     {
-        public CheckForPlayer(AIController context) : base(context)
+        public CheckForPlayerNode(AIController context) : base(context)
         {
             this.context = context;
         }

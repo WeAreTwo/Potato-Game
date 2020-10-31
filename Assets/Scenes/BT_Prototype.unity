@@ -2758,19 +2758,21 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
+  health: 100
   navAgent: {fileID: 0}
   hasPath: 0
-  seekingRange: 1.5
+  seekingRange: 6.5
   seekTarget: {fileID: 0}
   seekPosition: {x: 0, y: 0, z: 0}
   pickUpObject: {fileID: 0}
-  pickUpRange: 2.5
+  pickUpRange: 1.5
   destinationOne: {fileID: 651788087}
   destinationTwo: {fileID: 1211250835}
   destinationThree: {fileID: 1910983434}
   destinationFour: {fileID: 221390309}
   followTree:
     repeatRoot:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
@@ -2778,40 +2780,47 @@ MonoBehaviour:
       currentCycle: 0
       repeatCycles: 0
     followSelectorNode:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     followSequenceNode:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     testSequenceNode:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     checkPlayerSequence:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     waitBeforeChecking:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       waitTime: 0
       waitTimer: 0
     checkForPlayer:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
     moveCertainAmount:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
@@ -2819,30 +2828,35 @@ MonoBehaviour:
       currentCycle: 0
       repeatCycles: 0
     moveToRandomPositionSequence:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       compositeName: 
       currentNodeIndex: 0
     waitBeforeMoving:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       waitTime: 0
       waitTimer: 0
     pickRandomPosition:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       destination: {x: 0, y: 0, z: 0}
       remainingDist: 0
     returnToTether:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0
       destination: {x: 0, y: 0, z: 0}
       remainingDist: 0
     followPlayer:
+      nodeName: 
       ticks: 0
       failThreshold: 0
       nodeStatus: 0

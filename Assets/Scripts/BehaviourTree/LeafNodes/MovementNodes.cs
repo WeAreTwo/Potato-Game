@@ -55,12 +55,12 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public class PickRandomPosition : ActionNode<AIController>
+    public class MoveToRandomNode : ActionNode<AIController>
     {
         [SerializeField] protected Vector3 destination;
         [SerializeField] protected float remainingDist;
 
-        public PickRandomPosition(AIController context) : base(context)
+        public MoveToRandomNode(AIController context) : base(context)
         {
             this.context = context;
         }
@@ -135,13 +135,13 @@ namespace PotatoGame
     }
 
     [System.Serializable]
-    public class Follow : ActionNode<AIController>
+    public class FollowNode : ActionNode<AIController>
     {
 
         // [SerializeField] protected GameObject followTarget;
         [SerializeField] protected float followDistance;
         
-        public Follow(AIController context, float followDistance = 10.0f) : base(context)
+        public FollowNode(AIController context, float followDistance = 10.0f) : base(context)
         {
             this.context = context;
             this.followDistance = followDistance;

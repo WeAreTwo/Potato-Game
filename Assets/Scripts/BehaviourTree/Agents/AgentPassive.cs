@@ -13,9 +13,9 @@ namespace PotatoGame
     {
         
         [Header("Behaviour Tree")]
-        [SerializeField] protected FollowTree followTree;
+        [SerializeField] protected PassiveAgentTree passiveAgentTree;
 
-        
+        protected int frameCount = 0;
         protected override void Awake()
         {
             base.Awake();
@@ -25,22 +25,29 @@ namespace PotatoGame
         {
             base.Start();
             
-            followTree = new FollowTree(this); //pass the context first
-            followTree.Initialize(); //Initialize Tree
+            passiveAgentTree = new PassiveAgentTree(this); //pass the context first
+            passiveAgentTree.Initialize(); //Initialize Tree
         }
 
         protected override void Update()
         {
             base.Update();
             
-            followTree.Run();
+            passiveAgentTree.Run(); //run the tree (updates)
+            
+            //debugging the link
+            frameCount++;
+            if (frameCount % 10 == 0)
+            {
+                passiveAgentTree.Debug();
+            }
         }
 
         protected override void OnDrawGizmos()
         {
             base.OnDrawGizmos();
             
-            followTree.DrawGizmos(); //draw tree gizmos 
+            passiveAgentTree.DrawGizmos(); //draw tree gizmos 
         }
     }
 

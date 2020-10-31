@@ -6,13 +6,14 @@
             Interacting with Plants controller to determine plant composition
 
     Behaviour tree
-        **Add picking things up in tree
+        ** Draft Passive Agent
+        ** Draft Annoying Agent
         *Animation Nodes
         *Conditional Selector (Selects absed on condition)
         *Random Selector
         
     Refactoring
-        ***AI Controller Refactor to BT
+        ***AI Controller Refactor to BT         (done)
         **Picking up
         
     Interaction
@@ -20,4 +21,4 @@
         **Planting
         
     Debugging
-        *Interface to debug BT (Handles or cascading strings)
+        **Interface to debug BT (Handles or cascading strings)      (done)

@@ -7,12 +7,12 @@ namespace PotatoGame
 
     //wait a certain amount of time 
     [System.Serializable]
-    public class WaitFor : ActionNode<AIController>
+    public class WaitForNode : ActionNode<AIController>
     {
         [SerializeField] protected float waitTime = 5.0f;
         [SerializeField] protected float waitTimer = 0;
         
-        public WaitFor(AIController context, float waitTime = 5.0f) : base(context)
+        public WaitForNode(AIController context, float waitTime = 5.0f) : base(context)
         {
             this.context = context;
             this.waitTime = waitTime;
