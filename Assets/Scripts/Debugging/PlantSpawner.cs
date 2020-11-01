@@ -38,7 +38,7 @@ namespace PotatoGame
                     Vector3 samplePosition = SampleRandomPosition();
                     Vector3 position = RaycastDown(samplePosition);
 
-                    if (CheckValidity(position, GameManager.Instance.plantsController.Plants))
+                    if (CheckValidity(position, GameManager.Instance.plantsControllerFsm.Plants))
                     {
                         PlantFSM spawnedObj = Instantiate(spawnObject, position + Vector3.up, Random.rotation ) as PlantFSM;
                     }

@@ -95,7 +95,7 @@ namespace PotatoGame
         protected virtual void CheckForNearbyPotatoes()
         {
             //Check is there are other potatoes nearby
-            var allPlants = GameManager.Instance.plantsController.Plants;
+            var allPlants = GameManager.Instance.plantsControllerFsm.Plants;
             if (allPlants != null)
             {
                 foreach (var plant in allPlants)

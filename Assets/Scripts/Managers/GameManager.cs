@@ -15,7 +15,7 @@ namespace PotatoGame
         public IKController ikController;
         public InventoryController inventoryController;
         public TopViewCameraController cameraController;
-        public PlantsController plantsController;
+        public PlantsControllerFSM plantsControllerFsm;
         public ShaderController shaderController;
         public VarietyPoolController varietyPoolController;
 
@@ -35,7 +35,7 @@ namespace PotatoGame
             if(ikController == null) GetController(ref ikController);
             if(inventoryController == null) GetController(ref inventoryController);
             if(cameraController == null) GetController(ref cameraController);
-            if(plantsController == null) GetController(ref plantsController);
+            if(plantsControllerFsm == null) GetController(ref plantsControllerFsm);
             if(shaderController == null) GetController(ref shaderController);
             if(varietyPoolController == null) GetController(ref varietyPoolController);
         }

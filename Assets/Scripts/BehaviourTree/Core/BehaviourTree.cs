@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sirenix.Utilities;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace PotatoGame
 {
@@ -315,6 +316,96 @@ namespace PotatoGame
         {
             base.OnReset();
             currentNodeIndex = 0;
+        }
+    }
+    
+    //will randomly select a child node 
+    [System.Serializable]
+    public class RandomSelectorNode : CompositeNode
+    {
+        
+        public RandomSelectorNode(string compositeName, params Node[] childNodes) : base(compositeName, childNodes)
+        {
+            this.childNodes = childNodes.ToList();
+            this.currentNodeIndex = Random.Range(0, childNodes.Length); //get a random index
+        }
+        
+        //will stop at the first instance of success, fail will increment
+        public override NodeState TickNode()
+        {
+            NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
+            switch (currentNodeState)
+                {
+                    //will stop processing children the moment we return success
+                    case NodeState.SUCCESS:
+                        this.nodeStatus = NodeState.SUCCESS;
+                        return NodeState.SUCCESS;
+                        break;
+                    case NodeState.RUNNING:
+                        this.nodeStatus = NodeState.RUNNING;
+                        return NodeState.RUNNING;
+                        break;
+                    case NodeState.FAILURE:
+                        this.currentNodeIndex = Random.Range(0, childNodes.Count);
+                        this.nodeStatus = NodeState.FAILURE;
+                        return NodeState.FAILURE;
+                        break;
+            }
+
+            this.nodeStatus = NodeState.RUNNING;
+            return NodeState.RUNNING;
+        }
+        
+        //reset the index
+        public override void OnReset()
+        {
+            base.OnReset();
+            this.currentNodeIndex = Random.Range(0, childNodes.Count);
+        }
+    }
+        
+    //Condition selector will choose between 2 nodes based on a condition node 
+    //it's a like a branching node with only 2 child nodes (e.g. does x if true, does y if false)
+    [System.Serializable]
+    public class ConditionalSelectorNode : CompositeNode
+    {
+        [SerializeField] protected Node conditionNode;
+        
+        public ConditionalSelectorNode(string compositeName, Node conditionNode, params Node[] childNodes) : base(compositeName, childNodes)
+        {
+            if(childNodes.Length != 2) Debug.LogError("A conditional selector node can only have 2 child nodes");
+
+            this.childNodes = childNodes.ToList();
+            
+            this.conditionNode = conditionNode;
+            // this.childNodes = new List<Node>(2);
+            // this.childNodes[0] = childNodes[0];
+            // this.childNodes[1] = childNodes[1];
+        }
+        
+        //will stop at the first instance of success, fail will increment
+        public override NodeState TickNode()
+        {
+            NodeState conditionState = conditionNode.TickNode();
+
+            if (conditionState == NodeState.SUCCESS)
+            {
+                currentNodeIndex = 0; //if the condition returns SUCCESS use this node
+            }
+            else if (conditionState == NodeState.FAILURE)
+            {
+                currentNodeIndex = 1; //if the condition return FAILURE use this node 
+            }
+
+            NodeState currentNodeState = childNodes[currentNodeIndex].TickNode();
+            this.nodeStatus = currentNodeState;
+            return currentNodeState;
+        }
+
+        //reset the index
+        public override void OnReset()
+        {
+            base.OnReset();
         }
     }
     

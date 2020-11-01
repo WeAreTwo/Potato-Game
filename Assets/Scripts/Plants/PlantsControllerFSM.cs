@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PotatoGame
 {
 
-    public class PlantsController : MonoBehaviour
+    public class PlantsControllerFSM : MonoBehaviour
     {
         //PLANTS LIST
         [SerializeField] protected List<AIPotatoFSM> autonomousPotatoes = new List<AIPotatoFSM>();

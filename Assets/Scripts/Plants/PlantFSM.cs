@@ -44,12 +44,12 @@ namespace PotatoGame
 
         protected virtual void OnEnable()
         {
-            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Add(this);
+            if(GameManager.Instance != null) GameManager.Instance.plantsControllerFsm.Plants.Add(this);
         }
 
         protected virtual void OnDisable()
         {
-            if(GameManager.Instance != null) GameManager.Instance.plantsController.Plants.Remove(this);
+            if(GameManager.Instance != null) GameManager.Instance.plantsControllerFsm.Plants.Remove(this);
         }
 
         protected virtual void OnCollisionEnter(Collision col)

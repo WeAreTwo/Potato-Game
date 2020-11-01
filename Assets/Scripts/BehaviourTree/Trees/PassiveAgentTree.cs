@@ -12,6 +12,7 @@ namespace PotatoGame
         [SerializeField] protected RepeaterNode repeatRoot;
         
         [SerializeField] protected SelectorNode rootSelector;
+        [SerializeField] protected ConditionalSelectorNode rootConditionSelector;
 
         //follow sequence
         [SerializeField] protected SequenceNode followSequence;
@@ -76,8 +77,17 @@ namespace PotatoGame
                     
             );
             
+            //condition selector branch
+            rootConditionSelector = new ConditionalSelectorNode(
+                "Check Player Selector",
+                new CheckForPlayerNode(context),
+                followPlayer,
+                returnToTetherPosition
+                
+            );
+            
             //root node 
-            repeatRoot = new RepeaterNode(rootSelector);
+            repeatRoot = new RepeaterNode(rootConditionSelector);
         }
 
         public override void Run()

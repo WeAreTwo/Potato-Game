@@ -71,14 +71,14 @@ namespace PotatoGame
         //Adding to list
         protected virtual void OnEnable()
         {
-            if(manager && manager.plantsController)
-                manager.plantsController.AutonomousPotatoes.Add(this);
+            if(manager && manager.plantsControllerFsm)
+                manager.plantsControllerFsm.AutonomousPotatoes.Add(this);
         }
 
         protected virtual void OnDisable()
         {
-            if(manager && manager.plantsController)
-                manager.plantsController.AutonomousPotatoes.Remove(this);
+            if(manager && manager.plantsControllerFsm)
+                manager.plantsControllerFsm.AutonomousPotatoes.Remove(this);
         }
         
         #endregion
