@@ -16,20 +16,18 @@ namespace PotatoGame
         [Space(10)]
         public float m_zoomSpeed = 300f; // Speed when zooming in/out
         public float m_rotateSpeed = 25f; // Rotation speed of the camera around the target
-
         [Space(10)] [Title("Target and Position")]
         public Transform m_target; // The target that should be the subject to follow
-
         public float m_smoothSpeed = 0.125f; // Smooth float for following movement
-        public Vector3 offset; // Position of the camera around the target
+        [FormerlySerializedAs("offset")] public Vector3 m_offset; // Position of the camera around the target
 
 
         // private variables ------------------------
-        private Camera _mCam; // Instance of the camera component
-        private float _mZoomMin; // Minimum zoom of the camera
-        private float _mZoomMax; // Maximum zoom of the camera
-        private float _mTiltMin; // Minimum incline value of the offset
-        private float _mTiltMax; // Maximum incline value of the offset
+        private Camera _cam; // Instance of the camera component
+        private float _zoomMin; // Minimum zoom of the camera
+        private float _zoomMax; // Maximum zoom of the camera
+        private float _tiltMin; // Minimum incline value of the offset
+        private float _tiltMax; // Maximum incline value of the offset
 
 
         // ------------------------------------------
@@ -38,17 +36,17 @@ namespace PotatoGame
         void Start()
         {
             // Get components
-            _mCam = GetComponent<Camera>();
+            _cam = GetComponent<Camera>();
 
             // Set zoom range and get the current zoom
-            _mZoomMin = 10f;
-            _mZoomMax = 35f;
-            m_currentZoom = _mCam.fieldOfView;
+            _zoomMin = 10f;
+            _zoomMax = 35f;
+            m_currentZoom = _cam.fieldOfView;
             
             // Set tilt range and current tilt
-            _mTiltMin = 2.8f;
-            _mTiltMax = 20f;
-            m_currentTilt = offset.y;
+            _tiltMin = 2.8f;
+            _tiltMax = 20f;
+            m_currentTilt = m_offset.y;
         }
 
         // ------------------------------------------
@@ -76,7 +74,7 @@ namespace PotatoGame
         private void FollowTarget()
         {
             // Instance of the desired position of the camera and the smooth(lerp) position
-            Vector3 desiredPosition = m_target.position + offset;
+            Vector3 desiredPosition = m_target.position + m_offset;
             Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, m_smoothSpeed);
 
             // Change the current position of the camera
@@ -95,16 +93,16 @@ namespace PotatoGame
             m_currentZoom += Input.GetAxis("Zoom") * -step * 2f;
 
             // Safe net it
-            if (m_currentZoom < _mZoomMin)
-                m_currentZoom = _mZoomMin;
-            else if (m_currentZoom > _mZoomMax)
-                m_currentZoom = _mZoomMax;
+            if (m_currentZoom < _zoomMin)
+                m_currentZoom = _zoomMin;
+            else if (m_currentZoom > _zoomMax)
+                m_currentZoom = _zoomMax;
 
             // Smooth zoom
-            var smoothZoom = Mathf.Lerp(_mCam.fieldOfView, m_currentZoom, m_smoothSpeed);
+            var smoothZoom = Mathf.Lerp(_cam.fieldOfView, m_currentZoom, m_smoothSpeed);
 
             // Update current zoom
-            _mCam.fieldOfView = smoothZoom;
+            _cam.fieldOfView = smoothZoom;
         }
         
         
@@ -120,12 +118,12 @@ namespace PotatoGame
                 m_currentTilt += Input.GetAxis("Mouse Y") * -step * 5f;
 
             // Safe net it
-            if (m_currentTilt < _mTiltMin)
-                m_currentTilt = _mTiltMin;
-            else if (m_currentTilt > _mTiltMax)
-                m_currentTilt = _mTiltMax;
+            if (m_currentTilt < _tiltMin)
+                m_currentTilt = _tiltMin;
+            else if (m_currentTilt > _tiltMax)
+                m_currentTilt = _tiltMax;
 
-            offset.y = m_currentTilt;
+            m_offset.y = m_currentTilt;
         }
         
 
@@ -144,7 +142,7 @@ namespace PotatoGame
             }
 
             // Rotate around the target while keeping the offset
-            offset = Quaternion.AngleAxis(step, Vector3.up) * offset;
+            m_offset = Quaternion.AngleAxis(step, Vector3.up) * m_offset;
         }
     }
 }
