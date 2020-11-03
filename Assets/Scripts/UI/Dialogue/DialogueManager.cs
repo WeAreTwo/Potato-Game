@@ -13,7 +13,7 @@ public class DialogueManager : MonoBehaviour
     public Animator m_animator;  // Dialogue animator to trigger open and close animation
     
     // private variables ------------------------
-    private Queue<string> _mSentences;  // Holds the whole dialogue in a queue
+    private Queue<string> _sentences;  // Holds the whole dialogue in a queue
 
 
     // ------------------------------------------
@@ -22,7 +22,7 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         // Assigned an instance of queue of type string
-        _mSentences = new Queue<string>();
+        _sentences = new Queue<string>();
         
     }
 
@@ -45,12 +45,12 @@ public class DialogueManager : MonoBehaviour
         m_nameText.text = dialogue.name;
         
         // Clear past dialogues
-        _mSentences.Clear();
+        _sentences.Clear();
 
         // Enqueue each sentence from the new dialogue
         foreach (var sentence in dialogue.sentences)
         {
-            _mSentences.Enqueue(sentence);
+            _sentences.Enqueue(sentence);
         }
         
         // Display the first sentence
@@ -62,14 +62,14 @@ public class DialogueManager : MonoBehaviour
     public void DisplayNextSentence()
     {
         // Make sure the dialogue is not over
-        if (_mSentences.Count == 0)
+        if (_sentences.Count == 0)
         {
             EndDialogue();
             return;
         }
 
         // Print the next sentence on UI
-        var sentence = _mSentences.Dequeue();
+        var sentence = _sentences.Dequeue();
         m_dialogueText.text = sentence;
     }
 
