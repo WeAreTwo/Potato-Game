@@ -2201,7 +2201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d9645ef1177da643ad3a429c5c2fe9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_pointRadius: 1.5
+  m_pointRadius: 1.14
   m_regionSize: {x: 60.55, y: 61.77}
   m_rejectionSamples: 30
   m_groundLayer:
