@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEditor;
+using Debug = UnityEngine.Debug;
 
-public class FieldTypeController : MonoBehaviour
+public class BiomeController : MonoBehaviour
 {
     // public variables -------------------------
     public bool m_playerInField = false;  // Check if the player is in this field or not
-    [Title("Field Type")] 
-    public string m_fieldName = "ENTER FIELD NAME";  // Name of the field
-    public bool m_potatoField;  // State if the field is for potatoes
-    public bool m_tomatoField;  // State if the field is for tomatoes
-    public bool m_onionField;  // State if the field is for onions
+    [Title("Biome Type")]
+    [ValueDropdown("BiomeTypes")] 
+    public int m_biomeType = 0;
+    [ReadOnly] public Color m_biomeColor;
     [Space(10)][Title("Scene View")]
     public bool m_drawArea;  // Draw the area in scene view (for testing and prototyping level)
-    [ShowIf("m_drawArea")] public Color m_areaColor;  // Color of this area
     [ShowIf("m_drawArea")] public SphereCollider[] m_sphere;  // All spheres collider to determine the area
     [ShowIf("m_drawArea")] public BoxCollider[] m_box;  // All boxes collider to determine the area
 
+    [HideInInspector] public string m_biomeName;  // Name of the biome
     
     // private variables ------------------------
     private GameObject _player;  // Instance of the player game object in the scene
-    
+
 
 
     // ------------------------------------------
@@ -34,47 +35,54 @@ public class FieldTypeController : MonoBehaviour
         // Get components
         _player = GameObject.FindWithTag("Player");
         
-
+        // Get correct biome name
+        GetBiomeParameters();
     }
 
-    // ------------------------------------------
-    // Update is called once per frame
-    // ------------------------------------------
-    void Update()
-    {
-        
-    }
 
-    // ------------------------------------------
-    // Methods
-    // ------------------------------------------
-    // Get the triggers in action ----------------------------------------------
-    private void OnTriggerStay(Collider col)
+    // All the available biome types -------------------------------------------
+    private IEnumerable BiomeTypes = new ValueDropdownList<int>()
     {
-        // Check if colliding with the player
-        if (col.CompareTag("Player"))
-        {
-            // Player in the area
-            m_playerInField = true;
-            Debug.Log("Player in " + m_fieldName + " field.");
+        {"None", 0},
+        {"Type A", 1},
+        {"Type B", 2},
+        {"Type C", 3},
+    };
+    
+    
+    // Get the correct name for the biome ---------------------------------------
+    private void GetBiomeParameters()
+    {
+        // Select the correct name
+        switch(m_biomeType)
+        { 
+            case 0: 
+                m_biomeName = "None";
+                m_biomeColor = Color.clear;
+                break;
+            case 1:
+                m_biomeName = "Type A";
+                m_biomeColor = new Color(1, 0.3f, 0, 1);
+                break;
+            case 2:
+                m_biomeName = "Type B";
+                m_biomeColor = new Color(0.95f, 0.3f, 0.7f, 1);
+                break;
+            case 3:
+                m_biomeName = "Type C";
+                m_biomeColor = new Color(0.3f, 0.5f, 0.95f, 1);
+                break;
         }
     }
     
-    private void OnTriggerExit(Collider col)
+    
+    // Function to load when modifying the inspector ---------------------------
+    private void OnValidate()
     {
-        // Check if colliding with the player
-        if (col.CompareTag("Player"))
-        {
-            // Player out of the area
-            m_playerInField = false;
-            Debug.Log("Player no longer in " + m_fieldName + " field." );
-        }
+        // get the selected biome parameter
+        GetBiomeParameters();
     }
 
-    
-    
-    
-    
     // Interactive gizmos in scene view ----------------------------------------
     private void OnDrawGizmos()
     {
@@ -86,7 +94,7 @@ public class FieldTypeController : MonoBehaviour
         if (m_playerInField)
             Gizmos.color = Color.green;
         else
-            Gizmos.color = m_areaColor;
+            Gizmos.color = m_biomeColor;
         
         // Draw all spheres collider
         if (m_sphere != null)
