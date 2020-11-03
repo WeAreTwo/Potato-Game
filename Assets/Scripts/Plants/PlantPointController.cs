@@ -45,8 +45,9 @@ public class PlantPointController : MonoBehaviour
         m_playerInRange = false;
         Debug.Log("Player no longer in " + m_pointIsInBiome + " biome." );
     }
+
     
-    
+    #region Gizmos
     // Draw Gizmos into the scene ----------------------------------------------
     private void OnDrawGizmos()
     {
@@ -56,4 +57,6 @@ public class PlantPointController : MonoBehaviour
         Gizmos.color = m_pointColor;
         Gizmos.DrawSphere(transform.position, m_gizmoRadius);
     }
+    #endregion
+    
 }

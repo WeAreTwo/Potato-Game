@@ -5,11 +5,11 @@ using Sirenix.OdinInspector;
 public class PlantingPointsGenerator : MonoBehaviour
 {
     // public variables -------------------------
-    [Title("Points parameters")]
+    [Title("Sample parameters")]
     public float m_pointRadius;  // Radius of each point
     public Vector2 m_regionSize;  // Region size where to spawn points (grid)
     public int m_rejectionSamples = 30;  // Number of rejection per point allowed
-    [Title("Valid Planting Spot")] 
+    [Title("Valid Planting Points")] 
     public LayerMask m_groundLayer;  // Layer mask to collide with (ground)
     public LayerMask m_biomeLayer;  // Layer mask to collide with (biomes)
     [AssetsOnly] public GameObject m_plantingPointObject;  // Planting point prefab object
@@ -141,8 +141,9 @@ public class PlantingPointsGenerator : MonoBehaviour
             SearchGroundPoints();
         }
     }
+
     
-    
+    #region Gizmos
     // Draw Gizmos into the scene ----------------------------------------------
     private void OnDrawGizmos()
     {
@@ -205,4 +206,5 @@ public class PlantingPointsGenerator : MonoBehaviour
             child.GetComponent<PlantPointController>().m_drawGizmos = m_drawPointsBiome;
         }
     }
+    #endregion
 }

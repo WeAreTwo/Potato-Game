@@ -82,7 +82,10 @@ public class BiomeController : MonoBehaviour
         // get the selected biome parameter
         GetBiomeParameters();
     }
+    
 
+    #region Gizmos
+    
     // Interactive gizmos in scene view ----------------------------------------
     private void OnDrawGizmos()
     {
@@ -118,4 +121,5 @@ public class BiomeController : MonoBehaviour
             }
         }
     }
+    #endregion
 }
