@@ -46,7 +46,7 @@ namespace PotatoGame
         }
     }
     
-    public class Potato : Plant
+    public class PotatoPlant : Plant
     {
         protected const string name = "Seed";
 
@@ -58,7 +58,7 @@ namespace PotatoGame
         protected Material mat;
         
         //CONSTRUCTOR
-        public Potato()
+        public PotatoPlant()
         {
         }
 
