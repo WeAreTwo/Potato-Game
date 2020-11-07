@@ -17,12 +17,12 @@ namespace PotatoGame
         [Title("Interactive States")]
         [SerializeField] protected bool m_holding; // Is an object in hand?
         [SerializeField] protected bool m_interactStationary; // Is an object in hand?
-        [Header("Interactable Objects")]
+        [Title("Interactable Objects")]
         public GameObject m_pickedObject; // Target caught by a trigger
         public GameObject m_proximityObject; // Target caught by a trigger
         public GameObject m_proximityStationaryObject; // Target caught by a trigger
         public GameObject m_planterObject;
-        [Header("Physics")]
+        [Title("Physics")]
         public float m_throwForce = 2.5f; // Force when an object is trow after holding
         public float m_raycastOffsetX = 2f; // Offset on the x axis for raycasts
         public float m_raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
@@ -59,7 +59,11 @@ namespace PotatoGame
         // ------------------------------------------
         protected void Update()
         {
-            CheckInputs(); // Always check for inputs
+            // Check inputs only if this action controller is linked to the player
+            if (_isPlayer)
+                CheckInputs(); 
+            
+            
             HoldingState();
         }
         

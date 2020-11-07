@@ -99,6 +99,9 @@ public class PlantingPointsGenerator : MonoBehaviour
             var castOrigin = point;
             castOrigin.y += 50f;
 
+            // Create a name for the point
+            var pointName = string.Empty;
+
             // Cast a ray in search of a biome
             RaycastHit biomeHit;
             if (Physics.Raycast(castOrigin, Vector3.down, out biomeHit, Mathf.Infinity,m_biomeLayer))
@@ -108,6 +111,7 @@ public class PlantingPointsGenerator : MonoBehaviour
                 candidateController.m_pointIsInBiome = activeBiome.m_biomeName;
                 candidateController.m_biomeType = activeBiome.m_biomeType;
                 candidateController.m_pointColor = activeBiome.m_biomeColor;
+                pointName = "Plant Point " + activeBiome.m_biomeName;
             }
             else
             {
@@ -115,6 +119,7 @@ public class PlantingPointsGenerator : MonoBehaviour
                 candidateController.m_pointIsInBiome = "Not in a biome";
                 candidateController.m_biomeType = 0;
                 candidateController.m_pointColor = Color.gray;
+                pointName = "Plant Point Empty";
             }
             
             // Update the candidate general values
@@ -122,7 +127,8 @@ public class PlantingPointsGenerator : MonoBehaviour
             candidateController.m_gizmoRadius = m_displayRadius;
             
             // Instantiate the new planting point based on the candidate
-            Instantiate(candidate, point, Quaternion.identity, transform);
+            var newPoint = Instantiate(candidate, point, Quaternion.identity, transform);
+            newPoint.name = pointName;
             
             // Points are generated
             _pointsGenerated = true;
