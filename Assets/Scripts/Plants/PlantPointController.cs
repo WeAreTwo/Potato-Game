@@ -32,7 +32,6 @@ public class PlantPointController : MonoBehaviour
         
         // Player in the area
         m_playerInRange = true;
-        Debug.Log("Player can plant a " + m_pointIsInBiome + " plant.");
     }
     
     private void OnTriggerExit(Collider col)
@@ -43,7 +42,21 @@ public class PlantPointController : MonoBehaviour
         
         // Player out of the area
         m_playerInRange = false;
-        Debug.Log("Player no longer in " + m_pointIsInBiome + " biome." );
+    }
+    
+    
+    // Planting an object at this point ----------------------------------------
+    public void Planted()
+    {
+        // This point is now occupied
+        m_occupied = true;
+    }
+    
+    // Harvesting and object planted a this point ------------------------------
+    public void Harvested()
+    {
+        // This point is now available
+        m_occupied = false;
     }
 
     

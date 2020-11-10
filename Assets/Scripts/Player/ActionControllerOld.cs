@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 namespace PotatoGame
 {
     [RequireComponent(typeof(IKController))]
-    public class ActionController : MonoBehaviour
+    public class ActionControllerOld : MonoBehaviour
     {
         
         // public variables -------------------------
@@ -258,7 +258,6 @@ namespace PotatoGame
             m_holding = true;
             // m_proximityObject = pickUpObject;
             m_pickedObject = pickUpObject;
-
         }
 
         // For harvesting potatoes when they are ready ---------------------------------
@@ -327,7 +326,6 @@ namespace PotatoGame
             _ik.ActivateWeight = false; //reset hand position
             _ik.m_leftHandTarget.parent = this.transform;
             _ik.m_rightHandTarget.parent = this.transform;
-
         }
 
         protected void ResetInteraction()
@@ -407,7 +405,7 @@ namespace PotatoGame
             Gizmos.DrawSphere(_leftOrigin, 0.1f);
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(_rightOrigin, 0.1f);
-            Gizmos.DrawSphere(m_planterObject.transform.position, 0.1f);
+            // Gizmos.DrawSphere(m_planterObject.transform.position, 0.1f);
 
             Debug.DrawRay(_leftOrigin, _leftDirectionToObject * 1.5f, Color.magenta);
             Debug.DrawRay(_rightOrigin, _rightDirectionToObject * 1.5f, Color.green);
