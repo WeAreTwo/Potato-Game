@@ -115,7 +115,28 @@ namespace PotatoGame
             // Start the pick up process
             StartCoroutine(PickUp(0.3f, m_pickedObject));
         }
-        
+
+
+        // Trow a hold object ----------------------------------------------------------
+        public void Trow()
+        {
+            // Reset the ik
+            ResetHandWeight();
+
+            // Bring the picked object on the default layer
+            m_pickedObject.layer = 0;
+            
+            // Trow the object and reactivate object's physics
+            var rb = m_pickedObject.GetComponent<Rigidbody>();
+            var direction = transform.forward;
+            
+            PhysicsSwitch(true, rb);
+            rb.velocity = direction * m_trowForce;
+            
+            // Ready for next action
+            ResetInteraction();
+        }
+
         
         // Wait before starting to hold and simulate pick up ---------------------------
         private IEnumerator PickUp(float delay, GameObject pickUpObject)
@@ -129,23 +150,17 @@ namespace PotatoGame
         }
         
         
-        // Trow a hold object ----------------------------------------------------------
-        public void Trow()
+        // Reset the actions -----------------------------------------------------------
+        private void ResetInteraction()
         {
-            // Reset the ik
-            ResetHandWeight();
-        
-            /*public virtual void Throw(Vector3 direction, float force)
-            {
-                pickedUp = false;
-                this.gameObject.layer = 0; // bring back the default physic layer
-                this.gameObject.ThrowObject(direction, force);
-            }*/
-            
-            
+            // Get rid of the object
+            m_pickedObject.transform.parent = null;
+            m_pickedObject = null;
+
+            // Clear hold
+            m_holding = false;
         }
         
-
         #endregion
 
         # region Physics
