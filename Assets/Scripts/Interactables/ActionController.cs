@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using PotatoGame;
-using RootMotion.Demos;
-using UnityEngine;
 using Sirenix.OdinInspector;
-using UnityEngine.Analytics;
-using UnityEngine.Serialization;
 
 namespace PotatoGame
 {
@@ -30,20 +24,21 @@ namespace PotatoGame
         public float m_raycastOffsetX = 2f;  // Offset on the x axis for raycasts
         public float m_raycastOffsetZ = -0.2f;  // Offset on the z axis for raycasts
         [Space(20)] 
-        public static bool m_drawGizmos;  // Draw gizmos related to all action controllers
-
-
+        public bool m_drawGizmos;  // Draw gizmos related to all action controllers
+        
+        
         // private variables ------------------------
-        private bool _isPlayer;  // Determine if the entity is controlled by the player
-        private bool _canPlant;  // Determine if the player can plant or not
+        private BoxCollider _pickUpBox;  // Instance of the pickup box
         private Transform _planter;  // By where the entity will send a seed
-        private float _closestPointDistance = 0.0f;  // The distance between closest point and planter
-        private BoxCollider _interactionBox;  // Collider with a trigger
+        private Rigidbody _pickedRB;  // RB of the picked object
+        private Collider _pickedCollider;  // Colliders of the picked object
+        private float _closestPointDistance;  // The distance between closest point and planter
         private Vector3 _rightCastOrigin = Vector3.zero;  // Used for right hand raycast starting point
         private Vector3 _leftCastOrigin = Vector3.zero;  // Used for left hand raycast starting point
-        private Vector3 _leftDirectionToObject;
-        private Vector3 _rightDirectionToObject;
+        private Vector3 _leftDirectionToObject;  // Contextual direction from the left object
+        private Vector3 _rightDirectionToObject;  // Contextual direction from the right object
         private IKController _ik;  // Instance of the ik controller
+        
 
         // ------------------------------------------
         // Start is called before update
@@ -51,12 +46,9 @@ namespace PotatoGame
         void Start()
         {
             // Get Components
-            _interactionBox = GetComponent<BoxCollider>();
             _planter = gameObject.transform.GetChild(0);
             _ik = GameManager.Instance.ikController;
-
-            // Is this action controller triggered bvy the player?
-            _isPlayer = gameObject.transform.parent.CompareTag("Player");
+            _pickUpBox = GetComponent<BoxCollider>();
         }
 
         // ------------------------------------------
@@ -68,9 +60,7 @@ namespace PotatoGame
             
             // Hold a picked up object
             if (m_holding)
-            {
                 Hold();
-            }
         }
 
         // ------------------------------------------
@@ -119,15 +109,14 @@ namespace PotatoGame
             m_proximityObject = null;
             
             // Make the new picked object as a child
-            m_pickedObject.transform.SetParent(transform);
+            m_pickedObject.transform.SetParent(transform); 
             
-            // Deactivate physics on the picked object
-            PhysicsSwitch(false, m_pickedObject.GetComponent<Rigidbody>());
+            // Capture picked object physics data and deactivate them
+            SetPickedObject();
+            PhysicsSwitch(false, _pickedRB, _pickedCollider);
             
-            // Put hands on the object
+            // Put hands on the object & start pick up process
             SetHandTargets();
-            
-            // Start the pick up process
             StartCoroutine(PickUpProcess(0.3f, m_pickedObject));
         }
 
@@ -142,11 +131,10 @@ namespace PotatoGame
             m_pickedObject.layer = 0;
             
             // Trow the object and reactivate object's physics
-            var rb = m_pickedObject.GetComponent<Rigidbody>();
             var direction = transform.forward;
             
-            PhysicsSwitch(true, rb);
-            rb.velocity = direction * m_trowForce;
+            PhysicsSwitch(true, _pickedRB, _pickedCollider);
+            _pickedRB.velocity = direction * m_trowForce;
             
             // Ready for next action
             ResetInteraction();
@@ -159,14 +147,21 @@ namespace PotatoGame
             if (!m_closestPoint)
                 return;
             
+            var plantPos = m_closestPoint.transform.position;
+
+            // Bring the picked object on the default layer 
+            m_pickedObject.layer = 0;
+            PhysicsSwitch(false, _pickedRB, _pickedCollider);
             
-            
-            
-            
+            // Plant the object in ground with small animation
+            ParticleController.Instance.EmitAt(plantPos);
+            m_pickedObject.transform.position = plantPos;
+                    
+            ResetHandWeight();
+            ResetInteraction();
         }
         
-
-
+        
         // Wait before starting to hold and simulate pick up ---------------------------
         private IEnumerator PickUpProcess(float delay, GameObject pickUpObject)
         {
@@ -218,12 +213,8 @@ namespace PotatoGame
         {
             // Make sure the list is not empty
             if (m_proximityPoints == null)
-            {
-                // No available point, can't plant
-                _canPlant = false;
                 return;
-            }
-
+            
             // Calculate the closest available point
             foreach (var point in m_proximityPoints)
             {
@@ -251,14 +242,28 @@ namespace PotatoGame
         # region Physics
 
         // Activate or deactivate physics on a rb --------------------------------------
-        private static void PhysicsSwitch(bool state, Rigidbody rb)
+        private void PhysicsSwitch(bool state, Rigidbody rb, Collider col)
         {
             // Change gravity and transform collider behaviour 
             rb.useGravity = state;
-            rb.gameObject.GetComponent<Collider>().isTrigger = !state;
+            col.isTrigger = !state;
+            _pickUpBox.isTrigger = state;
 
             // Change the constraints
             rb.constraints = state ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
+        }
+        
+        
+        // Activate or deactivate physics on a rb --------------------------------------
+        // Get picked object physics components ----------------------------------------
+        private void SetPickedObject()
+        {
+            if (!m_pickedObject)
+                return;
+            
+            // Get the rigidbody and colliders
+            _pickedRB = m_pickedObject.GetComponent<Rigidbody>();
+            _pickedCollider = m_pickedObject.GetComponent<Collider>();
         }
         
         #endregion
@@ -287,7 +292,6 @@ namespace PotatoGame
             _rightDirectionToObject = (objectPos - _rightCastOrigin).normalized;
             
             // For left side ----------
-            //todo need to reset parent transform when its not holding 
             RaycastHit leftEdge;
             if (Physics.Raycast(_leftCastOrigin, _leftDirectionToObject, out leftEdge, m_raycastOffsetX + 10.0f, layerMask))
             {

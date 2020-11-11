@@ -46,7 +46,6 @@ public class PlayerInputController : MonoBehaviour
             MovementInputs();
             ActionInputs();
         }
-        
     }
 
     // ------------------------------------------
@@ -71,21 +70,15 @@ public class PlayerInputController : MonoBehaviour
         if (Input.GetButtonDown("Action"))
         {
             if (_actionController.m_holding)
-            {
                 _actionController.Trow();
-            }
             else
-            {
                 _actionController.PickUp();
-            }
         }
 
         if (Input.GetButtonDown("Plant"))
         {
             if (_actionController.m_holding)
-            {
                 _actionController.Plant();
-            }
         }
     }
     

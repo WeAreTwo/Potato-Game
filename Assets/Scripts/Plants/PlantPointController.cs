@@ -8,6 +8,7 @@ public class PlantPointController : MonoBehaviour
 {
     // public variables -------------------------
     public bool m_occupied;  // Determine if the point is occupied or not
+    public GameObject m_host;  // Host occupying the point
     [Title("Plant type")] 
     public string m_pointIsInBiome;  // What type of biome does this point lives in?
     public bool m_drawGizmos;  // Draw gizmos of this point
@@ -48,9 +49,10 @@ public class PlantPointController : MonoBehaviour
     
     
     // Planting an object at this point ----------------------------------------
-    public void Planted()
+    public void Planted(GameObject newHost)
     {
         // This point is now occupied
+        m_host = newHost;
         m_occupied = true;
     }
     
@@ -58,6 +60,7 @@ public class PlantPointController : MonoBehaviour
     public void Harvested()
     {
         // This point is now available
+        m_host = null;
         m_occupied = false;
     }
 
