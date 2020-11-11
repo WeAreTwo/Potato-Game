@@ -34,6 +34,7 @@ namespace PotatoGame
         private bool _isPlayer;  // Determine if the entity is controlled by the player
         private bool _canPlant;  // Determine if the player can plant or not
         private Transform _planter;  // By where the entity will send a seed
+        private float _closestPointDistance = 0.0f;  // The distance between closest point and planter
         private BoxCollider _interactionBox;  // Collider with a trigger
         private Vector3 _rightCastOrigin = Vector3.zero;  // Used for right hand raycast starting point
         private Vector3 _leftCastOrigin = Vector3.zero;  // Used for left hand raycast starting point
@@ -60,7 +61,9 @@ namespace PotatoGame
         // ------------------------------------------
         void Update()
         {
-            
+            // Always look for available planting points
+            CheckNearestPlantingPoint();
+
             // Hold a picked up object
             if (m_holding)
                 Hold();
@@ -192,17 +195,34 @@ namespace PotatoGame
         // Check nearest planting points from the list -----------------------------
         private void CheckNearestPlantingPoint()
         {
+            // Make sure the list is not empty
             if (m_proximityPoints == null)
             {
+                // No available point, can't plant
                 _canPlant = false;
                 return;
             }
-            
-            // Calculate the which is the closest available point
+
+            // Calculate the closest available point
             foreach (var point in m_proximityPoints)
             {
-                
+                if (!point.GetComponent<PlantPointController>().m_occupied)
+                {
+                    // Capture the distance between the planter and a valid point
+                    var distance = Vector3.Distance(_planter.transform.position, point.transform.position);
+                    
+                    // Compare with other point distance to get the smallest amount
+                    if (distance <= _closestPointDistance || _closestPointDistance == 0.0f)
+                    {
+                        // The best candidate is captured
+                        _closestPointDistance = distance;
+                        m_closestPoint = point;
+                    }
+                }
             }
+            
+            // Reset the closest point distance for next roll
+            _closestPointDistance = 0.0f;
         }
 
         #endregion
@@ -298,6 +318,12 @@ namespace PotatoGame
 
                 Gizmos.color = pointController.m_occupied ? Color.red : pointController.m_pointColor;
                 Gizmos.DrawSphere(point.transform.position, pointController.m_gizmoRadius);
+            }
+
+            if (m_closestPoint != null)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(m_closestPoint.transform.position, 0.5f);
             }
         }
 

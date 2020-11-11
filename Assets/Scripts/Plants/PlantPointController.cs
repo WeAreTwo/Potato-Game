@@ -8,7 +8,6 @@ public class PlantPointController : MonoBehaviour
 {
     // public variables -------------------------
     public bool m_occupied;  // Determine if the point is occupied or not
-    public bool m_playerInRange;  // Is the player in range to plant?
     [Title("Plant type")] 
     public string m_pointIsInBiome;  // What type of biome does this point lives in?
     public bool m_drawGizmos;  // Draw gizmos of this point
