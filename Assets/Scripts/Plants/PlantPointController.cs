@@ -32,7 +32,7 @@ public class PlantPointController : MonoBehaviour
         
         // Capture the action controller and add this point to their list
         var action = col.gameObject.GetComponentInChildren<ActionController>();
-        action.m_proximityPoints.Add(this.gameObject);
+        action.m_proximityPoints.Add(this);
     }
     
     private void OnTriggerExit(Collider col)
@@ -43,7 +43,7 @@ public class PlantPointController : MonoBehaviour
 
         // Capture the action controller and remove this point from their list
         var action = col.gameObject.GetComponentInChildren<ActionController>();
-        action.m_proximityPoints.Remove(this.gameObject);
+        action.m_proximityPoints.Remove(this);
     }
     
     

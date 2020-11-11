@@ -11,8 +11,16 @@ namespace PotatoGame
     [RequireComponent(typeof(Animator))]                //for animation
     [RequireComponent(typeof(IKController))]            //to enabled use of IK
     [RequireComponent(typeof(NavMeshObstacle))]            //the player is an obstacle
+    [RequireComponent(typeof(PlayerInputController))]  // Capture player's input
     public class PlayerController : MovementBase
     {
+        private PlayerInputController _playerInputController;  // Instance of the playerInputController
+        protected override void Start()
+        {
+            base.Start();
+            _playerInputController = GetComponent<PlayerInputController>();
+
+        }
 
         protected override void Update()
         {
@@ -31,8 +39,8 @@ namespace PotatoGame
             movementStep = movementSpeed * Time.deltaTime;
             
             // Take player's inputs
-            heading.x = Input.GetAxis("Horizontal");
-            heading.z = Input.GetAxis("Vertical");
+            heading.x = _playerInputController.m_horizontalAxis;
+            heading.z = _playerInputController.m_verticalAxis;
 
             // Catch the inputs in a vector3
             // (make sure inputs makes sense with camera view)

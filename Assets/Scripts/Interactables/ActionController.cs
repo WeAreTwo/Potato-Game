@@ -6,6 +6,7 @@ using PotatoGame;
 using RootMotion.Demos;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.Analytics;
 using UnityEngine.Serialization;
 
 namespace PotatoGame
@@ -21,13 +22,15 @@ namespace PotatoGame
         public GameObject m_proximityObject;  // Target caught by the trigger
 
         [Title("Planting Points")] 
-        public List<GameObject> m_proximityPoints;  // Holds all near by possible planting points
+        public List<PlantPointController> m_proximityPoints;  // Holds all near by possible planting points
         public GameObject m_closestPoint;  // The closest available planting point
 
         [Title("Physics")] 
         public float m_trowForce = 2.5f;  // Force applied to a trowed object 
         public float m_raycastOffsetX = 2f;  // Offset on the x axis for raycasts
         public float m_raycastOffsetZ = -0.2f;  // Offset on the z axis for raycasts
+        [Space(20)] 
+        public static bool m_drawGizmos;  // Draw gizmos related to all action controllers
 
 
         // private variables ------------------------
@@ -61,12 +64,13 @@ namespace PotatoGame
         // ------------------------------------------
         void Update()
         {
-            // Always look for available planting points
             CheckNearestPlantingPoint();
-
+            
             // Hold a picked up object
             if (m_holding)
+            {
                 Hold();
+            }
         }
 
         // ------------------------------------------
@@ -90,13 +94,13 @@ namespace PotatoGame
         // Check or reset the nearest pickable object ----------------------------------
         private void CheckForNearbyPickableObject(Collider col)
         {
-            if(col.IsType<InteractableObject>() && !m_holding && col.gameObject != m_pickedObject)
+            if(col.CompareTag("DynamicObject") && !m_holding && col.gameObject != m_pickedObject)
                 m_proximityObject = col.gameObject;
         }
 
         private void ResetProximityObject(Collider col)
         {
-            if(col.IsType<InteractableObject>() && !m_holding && col.gameObject != m_pickedObject)
+            if(col.CompareTag("DynamicObject") && !m_holding && col.gameObject != m_pickedObject)
                 m_proximityObject = null;            
         }
         
@@ -107,7 +111,7 @@ namespace PotatoGame
         // Pick up an object -----------------------------------------------------------
         public void PickUp()
         {
-            if (m_proximityObject == null)
+            if (!m_proximityObject)
                 return;
             
             // Get the proximity object as the picked object
@@ -119,6 +123,9 @@ namespace PotatoGame
             
             // Deactivate physics on the picked object
             PhysicsSwitch(false, m_pickedObject.GetComponent<Rigidbody>());
+            
+            // Put hands on the object
+            SetHandTargets();
             
             // Start the pick up process
             StartCoroutine(PickUpProcess(0.3f, m_pickedObject));
@@ -144,6 +151,20 @@ namespace PotatoGame
             // Ready for next action
             ResetInteraction();
         }
+        
+        
+        // Plant an object in a point --------------------------------------------------
+        public void Plant()
+        {
+            if (!m_closestPoint)
+                return;
+            
+            
+            
+            
+            
+        }
+        
 
 
         // Wait before starting to hold and simulate pick up ---------------------------
@@ -206,19 +227,19 @@ namespace PotatoGame
             // Calculate the closest available point
             foreach (var point in m_proximityPoints)
             {
-                if (!point.GetComponent<PlantPointController>().m_occupied)
-                {
-                    // Capture the distance between the planter and a valid point
-                    var distance = Vector3.Distance(_planter.transform.position, point.transform.position);
+                if (point.m_occupied) 
+                    continue;
+                
+                // Capture the distance between the planter and a valid point
+                var distance = Vector3.Distance(_planter.transform.position, point.transform.position);
                     
-                    // Compare with other point distance to get the smallest amount
-                    if (distance <= _closestPointDistance || _closestPointDistance == 0.0f)
-                    {
-                        // The best candidate is captured
-                        _closestPointDistance = distance;
-                        m_closestPoint = point;
-                    }
-                }
+                // Compare with other point distance to get the smallest amount
+                if (!(distance <= _closestPointDistance) && _closestPointDistance != 0.0f) 
+                    continue;
+                
+                // The best candidate is captured
+                _closestPointDistance = distance;
+                m_closestPoint = point.gameObject;
             }
             
             // Reset the closest point distance for next roll
@@ -230,11 +251,11 @@ namespace PotatoGame
         # region Physics
 
         // Activate or deactivate physics on a rb --------------------------------------
-        private void PhysicsSwitch(bool state, Rigidbody rb)
+        private static void PhysicsSwitch(bool state, Rigidbody rb)
         {
             // Change gravity and transform collider behaviour 
             rb.useGravity = state;
-            rb.gameObject.GetComponent<Collider>().isTrigger = state;
+            rb.gameObject.GetComponent<Collider>().isTrigger = !state;
 
             // Change the constraints
             rb.constraints = state ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
@@ -312,18 +333,19 @@ namespace PotatoGame
 
         private void OnDrawGizmos()
         {
+            if (!m_drawGizmos)
+                return;
+            
             foreach (var point in m_proximityPoints)
             {
-                var pointController = point.GetComponent<PlantPointController>();
-
-                Gizmos.color = pointController.m_occupied ? Color.red : pointController.m_pointColor;
-                Gizmos.DrawSphere(point.transform.position, pointController.m_gizmoRadius);
+                Gizmos.color = point.m_occupied ? Color.red : point.m_pointColor;
+                Gizmos.DrawSphere(point.transform.position, point.m_gizmoRadius);
             }
 
             if (m_closestPoint != null)
             {
                 Gizmos.color = Color.green;
-                Gizmos.DrawSphere(m_closestPoint.transform.position, 0.5f);
+                Gizmos.DrawSphere(m_closestPoint.transform.position, 0.3f);
             }
         }
 
