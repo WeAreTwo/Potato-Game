@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using PotatoGame;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -24,24 +25,26 @@ public class PlantPointController : MonoBehaviour
     // Methods
     // ------------------------------------------
     // Get the triggers in action ----------------------------------------------
-    private void OnTriggerStay(Collider col)
+    private void OnTriggerEnter(Collider col)
     {
-        // Check if colliding with the player
-        if (!col.CompareTag("Player")) 
+        // Check if colliding with the player or AI
+        if (!col.CompareTag("Player") && !col.CompareTag("AI")) 
             return;
         
-        // Player in the area
-        m_playerInRange = true;
+        // Capture the action controller and add this point to their list
+        var action = col.gameObject.GetComponentInChildren<ActionController>();
+        action.m_proximityPoints.Add(this.gameObject);
     }
     
     private void OnTriggerExit(Collider col)
     {
-        // Check if colliding with the player
-        if (!col.CompareTag("Player")) 
+        // Check if colliding with the player or AI
+        if (!col.CompareTag("Player") && !col.CompareTag("AI")) 
             return;
-        
-        // Player out of the area
-        m_playerInRange = false;
+
+        // Capture the action controller and remove this point from their list
+        var action = col.gameObject.GetComponentInChildren<ActionController>();
+        action.m_proximityPoints.Remove(this.gameObject);
     }
     
     

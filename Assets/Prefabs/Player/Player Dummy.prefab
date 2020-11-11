@@ -559,7 +559,7 @@ MonoBehaviour:
   m_closestPoint: {fileID: 0}
   m_trowForce: 2.5
   m_raycastOffsetX: 2
-  m_raycastOffsetY: -0.2
+  m_raycastOffsetZ: -0.2
 --- !u!1 &3064457623437008840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1343,7 +1343,6 @@ GameObject:
   - component: {fileID: 3064457623205746645}
   - component: {fileID: 8811146963234699438}
   - component: {fileID: 3064457623205746644}
-  - component: {fileID: 386519607}
   - component: {fileID: 386519608}
   m_Layer: 0
   m_Name: Player Dummy
@@ -1901,25 +1900,7 @@ MonoBehaviour:
   gravityForce: -9.81
   groundMask:
     serializedVersion: 2
-    m_Bits: 0
---- !u!114 &386519607
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6460078239362077429}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db68b509a52f47344971f88cbea23fef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  heading: {x: 0, y: 0, z: 0}
-  groundOffset: 0.2
-  gravityForce: -9.81
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
 --- !u!114 &386519608
 MonoBehaviour:
   m_ObjectHideFlags: 0

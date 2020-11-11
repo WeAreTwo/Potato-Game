@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PotatoGame;
@@ -31,13 +32,14 @@ namespace PotatoGame
 
         // private variables ------------------------
         private bool _isPlayer;  // Determine if the entity is controlled by the player
+        private bool _canPlant;  // Determine if the player can plant or not
         private Transform _planter;  // By where the entity will send a seed
         private BoxCollider _interactionBox;  // Collider with a trigger
         private Vector3 _rightCastOrigin = Vector3.zero;  // Used for right hand raycast starting point
         private Vector3 _leftCastOrigin = Vector3.zero;  // Used for left hand raycast starting point
         private Vector3 _leftDirectionToObject;
         private Vector3 _rightDirectionToObject;
-        private IKController _ik;
+        private IKController _ik;  // Instance of the ik controller
 
         // ------------------------------------------
         // Start is called before update
@@ -58,7 +60,10 @@ namespace PotatoGame
         // ------------------------------------------
         void Update()
         {
-
+            
+            // Hold a picked up object
+            if (m_holding)
+                Hold();
         }
 
         // ------------------------------------------
@@ -96,8 +101,8 @@ namespace PotatoGame
         
         #region Actions
         
-        // Hold an object --------------------------------------------------------------
-        public void Hold()
+        // Pick up an object -----------------------------------------------------------
+        public void PickUp()
         {
             if (m_proximityObject == null)
                 return;
@@ -113,7 +118,7 @@ namespace PotatoGame
             PhysicsSwitch(false, m_pickedObject.GetComponent<Rigidbody>());
             
             // Start the pick up process
-            StartCoroutine(PickUp(0.3f, m_pickedObject));
+            StartCoroutine(PickUpProcess(0.3f, m_pickedObject));
         }
 
 
@@ -137,9 +142,9 @@ namespace PotatoGame
             ResetInteraction();
         }
 
-        
+
         // Wait before starting to hold and simulate pick up ---------------------------
-        private IEnumerator PickUp(float delay, GameObject pickUpObject)
+        private IEnumerator PickUpProcess(float delay, GameObject pickUpObject)
         {
             // Wait the delay before starting to hold
             yield return new WaitForSeconds(delay);
@@ -147,6 +152,25 @@ namespace PotatoGame
             m_holding = true;
             // m_proximityObject = pickUpObject;
             m_pickedObject = pickUpObject;
+        }
+        
+        
+        // Hold a picked up object -----------------------------------------------------
+        private void Hold()
+        {
+            // Hold an object
+            if (m_pickedObject.transform.position.y < transform.position.y)
+            {
+                // Make the object move up to the current position
+                var currentPos = m_pickedObject.transform.position;
+                currentPos = Vector3.MoveTowards(currentPos, transform.position, 4f * Time.deltaTime);
+                m_pickedObject.transform.position = currentPos;
+            }
+            else
+            {
+                // Keep the object stick on its original point and follow collisions
+                m_pickedObject.transform.position = transform.position;
+            }
         }
         
         
@@ -161,6 +185,26 @@ namespace PotatoGame
             m_holding = false;
         }
         
+        #endregion
+
+        #region Planting Points Availability
+
+        // Check nearest planting points from the list -----------------------------
+        private void CheckNearestPlantingPoint()
+        {
+            if (m_proximityPoints == null)
+            {
+                _canPlant = false;
+                return;
+            }
+            
+            // Calculate the which is the closest available point
+            foreach (var point in m_proximityPoints)
+            {
+                
+            }
+        }
+
         #endregion
 
         # region Physics
@@ -238,6 +282,23 @@ namespace PotatoGame
             //reset hand position
             _ik.m_leftHandTarget.parent = newTrans;
             _ik.m_rightHandTarget.parent = newTrans;
+        }
+
+        #endregion
+
+
+        
+        #region Gizmos
+
+        private void OnDrawGizmos()
+        {
+            foreach (var point in m_proximityPoints)
+            {
+                var pointController = point.GetComponent<PlantPointController>();
+
+                Gizmos.color = pointController.m_occupied ? Color.red : pointController.m_pointColor;
+                Gizmos.DrawSphere(point.transform.position, pointController.m_gizmoRadius);
+            }
         }
 
         #endregion

@@ -128,7 +128,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh18622
+  m_Name: pb_Mesh18674
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2435,11 +2435,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3064457623205746644, guid: b2ab34a64663a8b4592ea88d61e2570d,
-        type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6460078239362077429, guid: b2ab34a64663a8b4592ea88d61e2570d,
         type: 3}
       propertyPath: m_Name
@@ -2500,8 +2495,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 386519607, guid: b2ab34a64663a8b4592ea88d61e2570d, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2ab34a64663a8b4592ea88d61e2570d, type: 3}
 --- !u!1 &1218571620
 GameObject:
