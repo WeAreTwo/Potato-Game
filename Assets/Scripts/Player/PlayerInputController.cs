@@ -10,13 +10,22 @@ using Sirenix.OdinInspector;
 public class PlayerInputController : MonoBehaviour
 {
     // public variables -------------------------
-    [ReadOnly] public float m_horizontalAxis = 0f;  // Horizontal axis captured value
-    [ReadOnly] public float m_verticalAxis = 0f;  // Vertical axis captured value
+    [Title("Movement Inputs")]
+    [Range(-1, 1)] public float m_horizontalAxis = 0f;  // Horizontal axis captured value
+    [Range(-1, 1)] public float m_verticalAxis = 0f;  // Vertical axis captured value
+
+    [HorizontalGroup("Split",0.5f)] [Button("Action",(ButtonSizes.Large))]
+    private void ActionBtn() { this._actionBtn = !this._actionBtn; }
+    [HorizontalGroup("Split",0.5f)] [Button("Plant",(ButtonSizes.Large))]
+    private void PlantBtn() { this._actionBtn = !this._actionBtn; }
+    
     
 
     // private variables ------------------------
     private bool _inputsReady = true;  // Determine if inputs are ready to be triggered
     private ActionController _actionController;  // Instance of the player's action controller
+    private bool _actionBtn;  // Use for action button in the inspector
+    private bool _plantBtn;  // Use for plant button in the inspector
 
 
 
@@ -41,11 +50,11 @@ public class PlayerInputController : MonoBehaviour
     // ------------------------------------------
     void Update()
     {
-        if (_inputsReady)
-        {
-            MovementInputs();
-            ActionInputs();
-        }
+        if (!_inputsReady) 
+            return;
+        
+        MovementInputs();
+        ActionInputs();
     }
 
     // ------------------------------------------
@@ -67,23 +76,31 @@ public class PlayerInputController : MonoBehaviour
     private void ActionInputs()
     {
         // If main action input is triggered
-        if (Input.GetButtonDown("Action"))
+        if (Input.GetButtonDown("Action") || _actionBtn)
         {
+            // For inspector
+            _actionBtn = false;
+            
+            // Determine which action to do depending on hold state
             if (_actionController.m_holding)
                 _actionController.Trow();
             else
                 _actionController.PickUp();
         }
 
-        if (Input.GetButtonDown("Plant"))
+        if (Input.GetButtonDown("Plant") || _plantBtn)
         {
+            // For inspector
+            _plantBtn = false;
+            
+            // Make sure the action is in hold state
             if (_actionController.m_holding)
                 _actionController.Plant();
         }
     }
-    
-    
 
     #endregion
-    
+
+
+
 }
