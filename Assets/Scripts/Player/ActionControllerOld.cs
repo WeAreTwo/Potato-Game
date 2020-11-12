@@ -10,53 +10,71 @@ using Random = UnityEngine.Random;
 namespace PotatoGame
 {
     [RequireComponent(typeof(IKController))]
-    public class ActionController : MonoBehaviour
+    public class ActionControllerOld : MonoBehaviour
     {
-        [Header("INTERACTIVE STATES")]
-        [SerializeField] protected bool _holding; // Is an object in hand?
-        [SerializeField] protected bool _interactStationary; // Is an object in hand?
         
-        [Header("INTERACTABLE OBJECTS")]
         // public variables -------------------------
-        public GameObject _pickedObject; // Target caught by a trigger
-        public GameObject _proximityObject; // Target caught by a trigger
-        public GameObject _proximityStationaryObject; // Target caught by a trigger
-        public GameObject _planterObject;
-        
-        [Header("THROWING/RAYCASTING")]
-        public float _throwForce = 2.5f; // Force when an object is trow after holding
-        public float _raycastOffsetX = 2f; // Offset on the x axis for raycasts
-        public float _raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
-
+        [Title("Interactive States")]
+        [SerializeField] protected bool m_holding; // Is an object in hand?
+        [SerializeField] protected bool m_interactStationary; // Is an object in hand?
+        [Title("Interactable Objects")]
+        public GameObject m_pickedObject; // Target caught by a trigger
+        public GameObject m_proximityObject; // Target caught by a trigger
+        public GameObject m_proximityStationaryObject; // Target caught by a trigger
+        public GameObject m_planterObject;
+        [Title("Physics")]
+        public float m_throwForce = 2.5f; // Force when an object is trow after holding
+        public float m_raycastOffsetX = 2f; // Offset on the x axis for raycasts
+        public float m_raycastOffsetZ = -0.2f; // Offset on the z axis for raycasts
         
         // private variables ------------------------
-        protected BoxCollider _interactionBoxCol; // Collider with the trigger
-        protected Vector3 _rightOrigin; // Use for right hand raycast starting point
-        protected Vector3 _leftOrigin; // Use for left hand raycast starting point
+        private bool _isPlayer;  // Determine if the parent is the player or not
+        private BoxCollider _interactionBoxCol; // Collider with the trigger
+        private Vector3 _rightOrigin; // Use for right hand raycast starting point
+        private Vector3 _leftOrigin; // Use for left hand raycast starting point
 
-        protected Vector3 _leftDirectionToObject;
-        protected Vector3 _rightDirectionToObject;
-        protected IKController _ik;
+        private Vector3 _leftDirectionToObject;
+        private Vector3 _rightDirectionToObject;
+        private IKController _ik;
 
         #region Call Methods
 
+        
+        // ------------------------------------------
+        // Start is called before update
+        // ------------------------------------------
         protected void Start()
         {
             // Get components
             _ik = GameManager.Instance.ikController;
             _interactionBoxCol = GetComponent<BoxCollider>();
+            
+            // Is this action controller linked to the player?
+            _isPlayer = gameObject.transform.parent.CompareTag("Player");
         }
         
+        
+        // ------------------------------------------
+        // Update is called every frame
+        // ------------------------------------------
         protected void Update()
         {
-            CheckInputs(); // Always check for inputs
+            // Check inputs only if this action controller is linked to the player
+            if (_isPlayer)
+                CheckInputs(); 
+            
+            
             HoldingState();
         }
         
         #endregion
         
         #region Collision Handling
-
+        
+        
+        // ------------------------------------------
+        // Methods
+        // ------------------------------------------
         // Scan an object when colliding with it ---------------------------------------
         private void OnTriggerEnter(Collider col)
         {
@@ -75,12 +93,12 @@ namespace PotatoGame
             if (col.IsType<InteractableStationary>())
             {
                 Debug.Log(col.gameObject.name + "is near");
-                _interactStationary = true;
-                _proximityStationaryObject = col.gameObject;
+                m_interactStationary = true;
+                m_proximityStationaryObject = col.gameObject;
             }
                 
-            if(col.IsType<InteractableObject>() && !_holding && col.gameObject != _pickedObject)
-                _proximityObject = col.gameObject; 
+            if(col.IsType<InteractableObject>() && !m_holding && col.gameObject != m_pickedObject)
+                m_proximityObject = col.gameObject; 
                            
         }
 
@@ -88,11 +106,11 @@ namespace PotatoGame
         {
             if (col.IsType<InteractableStationary>())
             {
-                _interactStationary = false;
-                _proximityStationaryObject = null;
+                m_interactStationary = false;
+                m_proximityStationaryObject = null;
             }
-            if(col.IsType<InteractableObject>() && !_holding && col.gameObject != _pickedObject)
-                _proximityObject = null;            
+            if(col.IsType<InteractableObject>() && !m_holding && col.gameObject != m_pickedObject)
+                m_proximityObject = null;            
         }
 
         #endregion
@@ -108,10 +126,10 @@ namespace PotatoGame
 
         protected void HoldingActions()
         {
-            if (_holding && _pickedObject)
+            if (m_holding && m_pickedObject)
             {
                 //NOTE while holding the collider for pickup cant be triggered
-                if (Input.GetMouseButtonDown(0) && _interactStationary)
+                if (Input.GetMouseButtonDown(0) && m_interactStationary)
                 {
                     InsertIntoMachine();
                 }
@@ -129,7 +147,7 @@ namespace PotatoGame
         
         protected void DefaultActions()
         {
-            if (!_holding && !_pickedObject)
+            if (!m_holding && !m_pickedObject)
             {
                 
                 // Check if the action button is triggered ----------
@@ -148,19 +166,19 @@ namespace PotatoGame
                 //     }
                 // }                
                 // Check if the action button is triggered ----------
-                if (Input.GetMouseButtonDown(0) && _proximityObject)
+                if (Input.GetMouseButtonDown(0) && m_proximityObject)
                 {
                     // Scan for the correct type of object
-                    if (_proximityObject.TryGetComponent(out InteractableObject interactable))
+                    if (m_proximityObject.TryGetComponent(out InteractableObject interactable))
                     {
                         interactable.PickUp();
                         Hold();
                     }
                 }
 
-                if (Input.GetMouseButtonDown(2) && _proximityObject)
+                if (Input.GetMouseButtonDown(2) && m_proximityObject)
                 {
-                    if (_proximityObject.TryGetComponent(out Plant plant))
+                    if (m_proximityObject.TryGetComponent(out Plant plant))
                     {
                         plant.Harvest(); //call interface method
                         Harvest();
@@ -177,20 +195,20 @@ namespace PotatoGame
         protected void HoldingState()
         {
             // While holding
-            if (_holding)
+            if (m_holding)
             {
                 // Pick up an object
-                if (_pickedObject.transform.position.y < transform.position.y)
+                if (m_pickedObject.transform.position.y < transform.position.y)
                 {
                     // Make the object move up to the current position
-                    Vector3 currentPos = _pickedObject.transform.position;
+                    Vector3 currentPos = m_pickedObject.transform.position;
                     currentPos = Vector3.MoveTowards(currentPos, transform.position, 4f * Time.deltaTime);
-                    _pickedObject.transform.position = currentPos;
+                    m_pickedObject.transform.position = currentPos;
                 }
                 else
                 {
                     // Keep the object stick on its original point and follow collisions
-                    _pickedObject.transform.position = transform.position;
+                    m_pickedObject.transform.position = transform.position;
                 }
             }
             
@@ -198,7 +216,7 @@ namespace PotatoGame
 
         protected void InsertIntoMachine()
         {
-            if (_proximityStationaryObject.TryGetComponent(out MachineBase machine))
+            if (m_proximityStationaryObject.TryGetComponent(out MachineBase machine))
             {
                 ResetHandWeight();
                 // machine.InsertPlant(_pickedObject.GetComponent<Plant>());
@@ -210,13 +228,13 @@ namespace PotatoGame
         protected void Hold()
         {
             Debug.Log("Hold");
-            _pickedObject = _proximityObject;
-            _proximityObject = null;
+            m_pickedObject = m_proximityObject;
+            m_proximityObject = null;
             
-            _pickedObject.HoldObject(this.transform); //hold the object 
+            m_pickedObject.HoldObject(this.transform); //hold the object 
 
             SetHandTargets(); // Put hands on the object
-            StartCoroutine(PickUp(0.3f, _pickedObject)); // Start to pick up
+            StartCoroutine(PickUp(0.3f, m_pickedObject)); // Start to pick up
         }
         
         // Trowing a dynamic object ----------------------------------------------------
@@ -224,8 +242,8 @@ namespace PotatoGame
         {
             ResetHandWeight();
             
-            if (_pickedObject.TryGetComponent(out InteractableObject interactable))
-                interactable.Throw(transform.forward, _throwForce);
+            if (m_pickedObject.TryGetComponent(out InteractableObject interactable))
+                interactable.Throw(transform.forward, m_throwForce);
             
             ResetInteraction();
         }
@@ -237,10 +255,9 @@ namespace PotatoGame
             // Wait the delay before starting to hold
             yield return new WaitForSeconds(delay);
             // Make sure the player did not target another object
-            _holding = true;
+            m_holding = true;
             // m_proximityObject = pickUpObject;
-            _pickedObject = pickUpObject;
-
+            m_pickedObject = pickUpObject;
         }
 
         // For harvesting potatoes when they are ready ---------------------------------
@@ -251,18 +268,18 @@ namespace PotatoGame
             // var inventoryController = GameManager.Instance.inventoryController;
             // inventoryController.InventoryCount(1);
 
-            if (_proximityObject.TryGetComponent(out Plant plant))
+            if (m_proximityObject.TryGetComponent(out Plant plant))
             {
                 for (int i = 0; i < plant.GrowthSettings.harvestYield; i++)
                 {
-                    ParticleController.Instance.EmitAt(_proximityObject.transform.position);
-                    GameObject seed = Instantiate(_proximityObject, _proximityObject.transform.position + Vector3.up, Quaternion.identity) as GameObject;
+                    ParticleController.Instance.EmitAt(m_proximityObject.transform.position);
+                    GameObject seed = Instantiate(m_proximityObject, m_proximityObject.transform.position + Vector3.up, Quaternion.identity) as GameObject;
                     seed.GetComponent<Plant>().HarvestInit();
                 }
             }
             
             // Destroy the object
-            Destroy(_proximityObject);
+            Destroy(m_proximityObject);
         }
 
         //check planting area
@@ -283,12 +300,12 @@ namespace PotatoGame
         //Instant plant
         protected void InstantPlant()
         {
-            if (_pickedObject.TryGetComponent(out Plant plant))
+            if (m_pickedObject.TryGetComponent(out Plant plant))
             {
-                _pickedObject.layer = 0;
+                m_pickedObject.layer = 0;
     
                     var layerMask = LayerMask.GetMask("Ground");
-                    if (Physics.Raycast(_planterObject.transform.position, Vector3.down,
+                    if (Physics.Raycast(m_planterObject.transform.position, Vector3.down,
                         out RaycastHit plantingPosition, 10.0f, layerMask))
                     {
                         if (CanPlant(plantingPosition.point, plant.GrowthSettings.growthRadius))
@@ -309,17 +326,16 @@ namespace PotatoGame
             _ik.ActivateWeight = false; //reset hand position
             _ik.m_leftHandTarget.parent = this.transform;
             _ik.m_rightHandTarget.parent = this.transform;
-
         }
 
         protected void ResetInteraction()
         {
             // Get rid of the object
-            _pickedObject.transform.parent = null;
-            _pickedObject = null;
+            m_pickedObject.transform.parent = null;
+            m_pickedObject = null;
 
             // Clear hold
-            _holding = false;
+            m_holding = false;
         }
         #endregion
 
@@ -334,20 +350,20 @@ namespace PotatoGame
          */
         protected void SetHandTargets()
         {
-            var objectPos = _pickedObject.transform.position;
+            var objectPos = m_pickedObject.transform.position;
             var layerMask = LayerMask.GetMask("InHand");
             _ik.ActivateWeight = true;
 
             // Capture current layer and change it
-            _pickedObject.layer = LayerMask.NameToLayer("InHand");
+            m_pickedObject.layer = LayerMask.NameToLayer("InHand");
 
             // Set origins of the raycasts + offsets
             Vector3 objectPositionOffset = objectPos - transform.position;
 
-            _leftOrigin = transform.TransformPoint((Vector3.left * _raycastOffsetX) +
-                                                    (Vector3.forward * _raycastOffsetZ) + objectPositionOffset);
-            _rightOrigin = transform.TransformPoint((Vector3.right * _raycastOffsetX) +
-                                                     (Vector3.forward * _raycastOffsetZ) + objectPositionOffset);
+            _leftOrigin = transform.TransformPoint((Vector3.left * m_raycastOffsetX) +
+                                                    (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
+            _rightOrigin = transform.TransformPoint((Vector3.right * m_raycastOffsetX) +
+                                                     (Vector3.forward * m_raycastOffsetZ) + objectPositionOffset);
             
             // we will use the normalized direction towards the prox. obj instead of a fixed direction
             _leftDirectionToObject = (objectPos - _leftOrigin).normalized;
@@ -356,11 +372,11 @@ namespace PotatoGame
             // For left side ----------
             //todo need to reset parent transform when its not holding 
             RaycastHit leftEdge;
-            if (Physics.Raycast(_leftOrigin, _leftDirectionToObject, out leftEdge, _raycastOffsetX + 10.0f, layerMask))
+            if (Physics.Raycast(_leftOrigin, _leftDirectionToObject, out leftEdge, m_raycastOffsetX + 10.0f, layerMask))
             {
-                if (_pickedObject)
+                if (m_pickedObject)
                 {
-                    _ik.LeftHandTarget.parent = _pickedObject.transform;
+                    _ik.LeftHandTarget.parent = m_pickedObject.transform;
                     _ik.LeftHandTarget.position = leftEdge.point;
                     _ik.LeftHandTarget.rotation = Quaternion.LookRotation(leftEdge.normal);
                 }
@@ -368,11 +384,11 @@ namespace PotatoGame
             
             // For right side ---------
             RaycastHit rightEdge;
-            if (Physics.Raycast(_rightOrigin, _rightDirectionToObject, out rightEdge, _raycastOffsetX + 10.0f, layerMask))
+            if (Physics.Raycast(_rightOrigin, _rightDirectionToObject, out rightEdge, m_raycastOffsetX + 10.0f, layerMask))
             {
-                if (_pickedObject)
+                if (m_pickedObject)
                 {
-                    _ik.RightHandTarget.parent = _pickedObject.transform;
+                    _ik.RightHandTarget.parent = m_pickedObject.transform;
                     _ik.RightHandTarget.position = rightEdge.point;
                     _ik.RightHandTarget.rotation = Quaternion.LookRotation(rightEdge.normal);
                 }
@@ -389,7 +405,7 @@ namespace PotatoGame
             Gizmos.DrawSphere(_leftOrigin, 0.1f);
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(_rightOrigin, 0.1f);
-            Gizmos.DrawSphere(_planterObject.transform.position, 0.1f);
+            // Gizmos.DrawSphere(m_planterObject.transform.position, 0.1f);
 
             Debug.DrawRay(_leftOrigin, _leftDirectionToObject * 1.5f, Color.magenta);
             Debug.DrawRay(_rightOrigin, _rightDirectionToObject * 1.5f, Color.green);
