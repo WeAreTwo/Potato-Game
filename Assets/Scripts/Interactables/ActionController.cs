@@ -153,6 +153,9 @@ namespace PotatoGame
             m_pickedObject.layer = 0;
             PhysicsSwitch(false, _pickedRB, _pickedCollider);
             
+            // The point is now occupied
+            m_closestPoint.GetComponent<PlantPointController>().m_occupied = true;
+            
             // Plant the object in ground with small animation
             ParticleController.Instance.EmitAt(plantPos);
             m_pickedObject.transform.position = plantPos;

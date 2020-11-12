@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 573527119251680819}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.147253, y: 0, z: 10.30266}
+  m_LocalPosition: {x: -4.7557487, y: 0, z: -8.45013}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -46,10 +46,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_occupied: 0
   m_host: {fileID: 0}
-  m_pointIsInBiome: Type C
+  m_pointIsInBiome: Type B
   m_drawGizmos: 0
-  m_biomeType: 3
-  m_pointColor: {r: 0.3, g: 0.5, b: 0.95, a: 1}
+  m_biomeType: 2
+  m_pointColor: {r: 0.95, g: 0.3, b: 0.7, a: 1}
   m_gizmoRadius: 0.2
 --- !u!135 &7125811568855897141
 SphereCollider:
