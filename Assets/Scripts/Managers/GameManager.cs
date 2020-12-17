@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace PotatoGame
 {
@@ -17,6 +18,8 @@ namespace PotatoGame
         public PlantsController plantsController;
         public ShaderController shaderController;
         public VarietyPoolController varietyPoolController;
+        
+        
 
         protected void Awake()
         {
