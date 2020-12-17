@@ -81,48 +81,49 @@ public static class PoissonDiscSampling
     static bool IsValid(Vector2 candidate, Vector2 sampleRegionSize, float cellSize, float radius, List<Vector2> points, int[,] grid)
     {
         // Does the candidate lies within the sample region?
-        if (candidate.x >= 0 && candidate.x < sampleRegionSize.x &&
-            candidate.y >= 0 && candidate.y < sampleRegionSize.y)
-        {
-            // In which cell the candidate does lie in? (to search surrounding cells)
-            int cellX = (int) (candidate.x / cellSize);
-            int cellY = (int) (candidate.y / cellSize);
+        if (!(candidate.x >= 0) || !(candidate.x < sampleRegionSize.x) || 
+            !(candidate.y >= 0) ||
+            !(candidate.y < sampleRegionSize.y)) 
+            return false;
+        
+        
+        // In which cell the candidate does lie in? (to search surrounding cells)
+        var cellX = (int) (candidate.x / cellSize);
+        var cellY = (int) (candidate.y / cellSize);
             
-            // Search the 5x5 block around the cell (2 on the left, and 2 on the right)
-            // Min Max to make sure it doesn't go out of bounds of our grid
-            int searchStartX = Mathf.Max(0,cellX - 2);
-            int searchEndX = Mathf.Min(cellX + 2, grid.GetLength(0) - 1);
-            int searchStartY = Mathf.Max(0,cellY - 2);
-            int searchEndY = Mathf.Min(cellY + 2, grid.GetLength(1) - 1);
+        // Search the 5x5 block around the cell (2 on the left, and 2 on the right)
+        // Min Max to make sure it doesn't go out of bounds of our grid
+        var searchStartX = Mathf.Max(0,cellX - 2);
+        var searchEndX = Mathf.Min(cellX + 2, grid.GetLength(0) - 1);
+        var searchStartY = Mathf.Max(0,cellY - 2);
+        var searchEndY = Mathf.Min(cellY + 2, grid.GetLength(1) - 1);
 
-            for (int x = searchStartX; x <= searchEndX; x++)
+        for (var x = searchStartX; x <= searchEndX; x++)
+        {
+            for (var y = searchStartY; y <= searchEndY; y++)
             {
-                for (int y = searchStartY; y <= searchEndY; y++)
-                {
-                    // Catch a point index
-                    int pointIndex = grid[x, y] - 1;
+                // Catch a point index
+                var pointIndex = grid[x, y] - 1;
                     
-                    // If the point index is equal to -1, that means, no point in that cell
-                    if (pointIndex != -1)
-                    {
-                        // I use sqr for optimisation (less costly for magnitude)
-                        // That's why radius is squared in the check
-                        float sqrDistance = (candidate - points[pointIndex]).sqrMagnitude;
+                // If the point index is equal to -1, that means, no point in that cell
+                if (pointIndex == -1) 
+                    continue;
+                    
+                // I use sqr for optimisation (less costly for magnitude)
+                // That's why radius is squared in the check
+                var sqrDistance = (candidate - points[pointIndex]).sqrMagnitude;
                         
-                        // Is it less than the radius?
-                        if (sqrDistance < radius * radius)
-                        {
-                            // Candidate is too close to the point, not valid
-                            return false;
-                        }
-                    }
+                // Is it less than the radius?
+                if (sqrDistance < radius * radius)
+                {
+                    // Candidate is too close to the point, not valid
+                    return false;
                 }
             }
-            // Candidate is valid
-            return true;
         }
-        
+        // Candidate is valid
+        return true;
+
         // Not valid
-        return false;
     }
 }

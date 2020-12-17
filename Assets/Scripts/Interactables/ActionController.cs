@@ -144,7 +144,7 @@ namespace PotatoGame
         // Plant an object in a point --------------------------------------------------
         public void Plant()
         {
-            if (!m_closestPoint)
+            if (!m_closestPoint || !m_pickedObject.IsType<PlantController>())
                 return;
             
             var plantPos = m_closestPoint.transform.position;
@@ -154,7 +154,13 @@ namespace PotatoGame
             PhysicsSwitch(false, _pickedRB, _pickedCollider);
             
             // The point is now occupied
-            m_closestPoint.GetComponent<PlantPointController>().m_occupied = true;
+            var pointControl = m_closestPoint.GetComponent<PlantPointController>();
+            pointControl.m_occupied = true;
+
+            // Set the plant object
+            var plantControl = m_pickedObject.GetComponent<PlantController>();
+            plantControl.m_planted = true;
+            plantControl.m_biome = pointControl.m_biomeType;
             
             // Plant the object in ground with small animation
             ParticleController.Instance.EmitAt(plantPos);
